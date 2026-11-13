@@ -116,7 +116,6 @@ nav.ctl small{color:var(--muted);font-size:14px}
   <p id="pp"></p>
   <div class="yournum" id="pyou"></div>
  </section>
- <div class="modlink"><a href="#moderation" onclick="event.preventDefault();openMod()">Moderation</a></div>
 </main>
 
 <!-- ================= MODERATION ================= -->
@@ -298,6 +297,7 @@ document.addEventListener('keydown',e=>{if($('mod').hidden||e.target.matches('in
  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();if(!$('next').disabled)go(1)}
  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();if(!$('back').disabled)go(-1)}});
 if(location.hash==='#moderation')openMod();
+window.addEventListener('hashchange',()=>{if(location.hash==='#moderation'&&$('mod').hidden)openMod()});
 </script>
 </body>
 </html>
