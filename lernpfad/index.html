@@ -27,9 +27,10 @@ body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-ap
 a{color:var(--accent)}
 main{max-width:1100px;margin:0 auto;padding:24px 16px 56px}
 h1{font-size:1.6rem;margin:0 0 4px}
-.lead{color:var(--muted);margin:0 0 18px;max-width:780px}
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
-@media (max-width:720px){.steps{grid-template-columns:1fr 1fr}}
+.lead{color:var(--muted);margin:0 0 12px;max-width:820px}
+.topbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+@media (max-width:820px){.steps{grid-template-columns:1fr 1fr}}
 .step{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;font:inherit;color:var(--text)}
 .step b{display:block;font-size:.78rem;color:var(--muted);font-weight:600}
 .step span{font-weight:600}
@@ -38,174 +39,215 @@ h1{font-size:1.6rem;margin:0 0 4px}
 .panel h2{font-size:1.15rem;margin:0 0 6px}
 .panel > p.intro{color:var(--muted);margin:0 0 14px}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media (max-width:820px){.cols{grid-template-columns:1fr}}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:820px){.cols,.cols3{grid-template-columns:1fr}}
 .card{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--code-bg)}
 .card h3{font-size:1rem;margin:0 0 6px}
 .card p{margin:0 0 8px}
 label{display:block;font-weight:600;font-size:.88rem;margin:12px 0 4px}
+label .req{color:var(--danger)}
 .hint{font-weight:400;color:var(--muted);font-size:.82rem}
-input[type=text],input[type=url],select,textarea{
+input[type=text],input[type=url],input[type=number],select,textarea{
   width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
   background:var(--panel);color:var(--text);font:inherit}
-textarea{font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;min-height:160px;resize:vertical}
-textarea.prose{font:inherit;min-height:70px}
-input:focus,select:focus,textarea:focus,button:focus-visible,a.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+textarea{min-height:70px;resize:vertical}
+textarea.code{font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;min-height:150px}
+textarea.prompt{font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;min-height:220px;background:var(--code-bg)}
+input:focus,select:focus,textarea:focus,button:focus-visible,a.btn:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 button,a.btn{font:inherit;font-weight:600;border-radius:8px;padding:9px 14px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--text);text-decoration:none;display:inline-flex;align-items:center;gap:6px;justify-content:center}
 button.primary,a.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
 a.btn.fb{border-color:var(--fb);color:var(--fb);background:var(--fb-soft)}
-button.small{font-size:.82rem;padding:5px 10px;font-weight:500}
+button.small,a.btn.small{font-size:.82rem;padding:5px 10px;font-weight:500}
 button.danger{color:var(--danger)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.launch{display:flex;flex-direction:column;gap:6px}
-.launch a.btn{font-size:1.02rem;padding:12px 16px}
 .badge{display:inline-block;font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--accent)}
 .badge.pay{background:var(--warn-bg);color:var(--warn)}
 .badge.free{background:var(--ok-bg);color:var(--ok)}
+.badge.fbb{background:var(--fb-soft);color:var(--fb)}
+.badge.done{background:var(--ok-bg);color:var(--ok)}
 .msg{border-radius:8px;padding:10px 12px;margin-top:12px;font-size:.88rem}
 .msg.warn{background:var(--warn-bg);color:var(--warn)}
 .msg.ok{background:var(--ok-bg);color:var(--ok)}
 ul.tight{margin:4px 0 0;padding-left:18px}
-.copybox{border:1px dashed var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;background:var(--panel)}
-.copybox p{margin:0 0 6px;font-size:.9rem}
+.promptbox{border:1px solid var(--accent);border-radius:10px;padding:12px;margin-top:12px;background:var(--soft)}
+.promptbox h3{font-size:.95rem;margin:0 0 6px}
+.promptbox .row{margin-top:8px}
 .station{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--code-bg)}
 .station-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .station-head .num{font-weight:700;color:var(--accent);min-width:2.2em}
 .station-head input{flex:1 1 220px}
-.station-head select{flex:0 1 220px}
-.station .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media (max-width:720px){.station .grid2{grid-template-columns:1fr}}
-.linkrow{display:grid;grid-template-columns:140px 1fr 1.4fr auto;gap:6px;margin-bottom:6px}
-@media (max-width:720px){.linkrow{grid-template-columns:1fr}}
+details summary{cursor:pointer;font-weight:600;margin-top:10px}
 .mode{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 14px}
 .mode label{font-weight:500;margin:0;display:flex;gap:6px;align-items:center}
-iframe.preview{width:100%;height:560px;border:1px solid var(--line);border-radius:8px;background:#fff}
+iframe.preview{width:100%;height:600px;border:1px solid var(--line);border-radius:8px;background:#fff}
 .checks label{font-weight:400;display:flex;gap:8px;margin:4px 0}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.actions button{flex:1 1 220px}
-.actions.col{flex-direction:column}
-.actions.col button{flex:0 0 auto}
-.footer-nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px}
+.actions{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.footer-nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px;flex-wrap:wrap}
 .hidden{display:none !important}
 code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.85em}
-.phases{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.phases span{font-size:.78rem;border:1px solid var(--line);border-radius:99px;padding:2px 8px;background:var(--panel)}
-.phases span.fbp{border-color:var(--fb);color:var(--fb)}
+.howto{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 16px}
+@media (max-width:720px){.howto{grid-template-columns:1fr}}
+.howto div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--panel);font-size:.9rem}
+.howto b{display:block;color:var(--accent)}
 </style>
 </head>
 <body>
 <main>
   <h1>Lernpfad-Baukasten</h1>
-  <p class="lead">Begleiter zum Workflow mit <b>Pfadie</b> in AIS.chat. Geplant und generiert wird in Pfadie. Hier sammeln Sie die Ergebnisse, bauen die Feedback-Aufgaben aus PEER oder FelloFish ein und laden den fertigen Lernpfad für Moodle, LOGINEO.LMS oder TaskCards herunter. Alles bleibt in Ihrem Browser.</p>
+  <p class="lead">Lernpfade Schritt für Schritt mit KI erarbeiten. Sie füllen hier Felder aus und erhalten passende Prompts. Die Prompts geben Sie in <b>AIS.chat</b> oder ein anderes KI-System ein. Die Ergebnisse kopieren Sie zurück. Am Ende laden Sie den fertigen Lernpfad als SCORM-Paket (Moodle, LOGINEO.LMS) oder als HTML-Datei (TaskCards) herunter.</p>
+  <div class="howto" aria-label="So funktioniert es">
+    <div><b>1 · Ausfüllen</b>Angaben in die Felder eintragen.</div>
+    <div><b>2 · Prompt kopieren</b>In AIS.chat einfügen und die Antwort der KI prüfen.</div>
+    <div><b>3 · Ergebnis zurückholen</b>Antwort bzw. HTML-Code hier einfügen.</div>
+  </div>
+  <div class="topbar">
+    <button class="small" id="btnExport">Projekt speichern (.json)</button>
+    <button class="small" id="btnImport">Projekt laden …</button>
+    <input type="file" id="fileImport" accept=".json,application/json" class="hidden">
+    <span class="hint" style="align-self:center">Ihre Eingaben werden automatisch in diesem Browser gespeichert.</span>
+  </div>
 
   <div class="steps" role="tablist">
-    <button class="step" role="tab" data-step="1" aria-selected="true"><b>Schritt 1</b><span>Mit Pfadie planen</span></button>
-    <button class="step" role="tab" data-step="2" aria-selected="false"><b>Schritt 2</b><span>Feedback-Aufgaben</span></button>
-    <button class="step" role="tab" data-step="3" aria-selected="false"><b>Schritt 3</b><span>Stationen einfügen</span></button>
-    <button class="step" role="tab" data-step="4" aria-selected="false"><b>Schritt 4</b><span>Prüfen &amp; herunterladen</span></button>
+    <button class="step" role="tab" data-step="1" aria-selected="true"><b>Schritt 1</b><span>Eckdaten</span></button>
+    <button class="step" role="tab" data-step="2" aria-selected="false"><b>Schritt 2</b><span>Lernpfad planen</span></button>
+    <button class="step" role="tab" data-step="3" aria-selected="false"><b>Schritt 3</b><span>Feedback-Aufgabe</span></button>
+    <button class="step" role="tab" data-step="4" aria-selected="false"><b>Schritt 4</b><span>Stationen erstellen</span></button>
+    <button class="step" role="tab" data-step="5" aria-selected="false"><b>Schritt 5</b><span>Prüfen &amp; herunterladen</span></button>
   </div>
 
   <!-- SCHRITT 1 -->
   <section class="panel" data-panel="1">
-    <h2>1 · Lernpfad mit Pfadie planen</h2>
-    <p class="intro">Öffnen Sie Pfadie und planen Sie dort Lernziel, Lernprodukt und Stationen. Pfadie fragt fehlende Informationen selbst nach. Tragen Sie die Eckdaten anschließend hier ein: Sie erscheinen im fertigen Lernpfad auf der Startseite.</p>
+    <h2>1 · Eckdaten des Lernpfads</h2>
+    <p class="intro">Diese Angaben fließen in alle Prompts ein. Pflichtfelder sind mit <span style="color:var(--danger)">*</span> markiert. Je genauer die Angaben, desto passender die Ergebnisse.</p>
     <div class="cols">
       <div class="card">
-        <h3>Pfadie öffnen</h3>
-        <div class="launch">
-          <a class="btn primary" href="https://url.nrw/Pfadie" target="_blank" rel="noopener">Pfadie in AIS.chat öffnen ↗</a>
+        <h3>Zielgruppe</h3>
+        <div class="cols3" style="grid-template-columns:1fr 1fr">
+          <div><label for="m_fach">Fach <span class="req">*</span></label><input type="text" id="m_fach" data-m="fach" placeholder="z. B. Deutsch"></div>
+          <div><label for="m_jahrgang">Jahrgang <span class="req">*</span></label><input type="text" id="m_jahrgang" data-m="jahrgang" placeholder="z. B. 8"></div>
         </div>
-        <p class="hint" style="margin-top:8px">Anmeldung in AIS.chat erforderlich. Noch kein Zugang? <a href="https://www.lernen-digital.nrw/zugang-zu-AIS.chat" target="_blank" rel="noopener">Zugang zu AIS.chat</a></p>
-        <p style="margin-top:10px"><b>Tipp:</b> Nutzen Sie die Promptvorschläge in Pfadie. Lassen Sie sich dort auch gleich die Aufgaben für das formative Assessment erstellen (Schritt 2).</p>
-        <p class="hint">Systemprompt, Promptbausteine und technische Hinweise: <a href="https://url.nrw/LP_Material" target="_blank" rel="noopener">Material-TaskCard</a></p>
-        <label>Die Phasen eines Lernpfads</label>
-        <div class="phases" id="phaseChips"></div>
-        <p class="hint" style="margin-top:6px">Nicht jeder Pfad braucht alle Phasen als eigene Station, aber jede Station braucht eine klare didaktische Funktion.</p>
+        <label for="m_schulform">Schulform / Bildungsgang <span class="req">*</span></label>
+        <input type="text" id="m_schulform" data-m="schulform" placeholder="z. B. Gesamtschule, Berufsfachschule">
+        <label for="m_bundesland">Bundesland</label>
+        <input type="text" id="m_bundesland" data-m="bundesland">
+        <label for="m_niveau">Kompetenzniveau / Anforderungsbereich <span class="hint">(optional)</span></label>
+        <input type="text" id="m_niveau" data-m="niveau" placeholder="z. B. AFB II">
+        <label for="m_anrede">Anrede der Lernenden</label>
+        <select id="m_anrede" data-m="anrede"><option>Sie</option><option>du</option><option>unpersönliche Form</option></select>
       </div>
       <div class="card">
-        <h3>Eckdaten aus Pfadie übernehmen</h3>
-        <label for="lpTitle">Titel des Lernpfads</label>
-        <input type="text" id="lpTitle" placeholder="z. B. Argumentieren mit Belegen">
-        <label for="lpAudience">Zielgruppe <span class="hint">(optional)</span></label>
-        <input type="text" id="lpAudience" placeholder="z. B. Klasse 8, Deutsch">
-        <label for="lpGoal">Lernziel</label>
-        <textarea id="lpGoal" class="prose" placeholder="Am Ende können Sie …"></textarea>
-        <label for="lpProduct">Lernprodukt</label>
-        <textarea id="lpProduct" class="prose" placeholder="Was erstellen die Lernenden? z. B. eine begründete Stellungnahme"></textarea>
+        <h3>Inhalt und Ziel</h3>
+        <label for="m_thema">Thema <span class="req">*</span></label>
+        <input type="text" id="m_thema" data-m="thema" placeholder="z. B. Argumentieren mit Belegen">
+        <label for="m_ziel">Lernziel <span class="req">*</span> <span class="hint">(konkret und beobachtbar)</span></label>
+        <textarea id="m_ziel" data-m="ziel" placeholder="Die Lernenden können …"></textarea>
+        <label for="m_produkt">Zentrales Lernprodukt <span class="req">*</span></label>
+        <input type="text" id="m_produkt" data-m="produkt" placeholder="z. B. eine begründete Stellungnahme">
+        <div class="cols3" style="grid-template-columns:1fr 1fr">
+          <div><label for="m_operator">Zentraler Operator <span class="req">*</span></label><input type="text" id="m_operator" data-m="operator" placeholder="z. B. begründen"></div>
+          <div><label for="m_operatoren">Ergänzende Operatoren</label><input type="text" id="m_operatoren" data-m="operatoren" placeholder="z. B. nennen, erläutern"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Rahmen</h3>
+        <div class="cols3" style="grid-template-columns:1fr 1fr">
+          <div><label for="m_zeit">Gesamtzeit <span class="req">*</span></label><input type="text" id="m_zeit" data-m="zeit" placeholder="z. B. 90 Minuten"></div>
+          <div><label for="m_anzahl">Stationen (ca.)</label><input type="text" id="m_anzahl" data-m="anzahl" placeholder="z. B. 5–7"></div>
+        </div>
+        <label for="m_plattform">Zielplattform</label>
+        <select id="m_plattform" data-m="plattform">
+          <option>Moodle / LOGINEO.LMS (SCORM) und TaskCards</option>
+          <option>Moodle / LOGINEO.LMS (SCORM)</option>
+          <option>TaskCards (HTML-Datei)</option>
+        </select>
+        <label for="m_feedbacktool">Feedback-Tool für das formative Assessment</label>
+        <select id="m_feedbacktool" data-m="feedbacktool"><option>PEER</option><option>FelloFish</option><option>kein externes Feedback-Tool</option></select>
+        <label class="hint" style="font-weight:400;display:flex;gap:8px;align-items:center"><input type="checkbox" id="m_offline" data-m="offline"> Lernpfad muss vollständig offline funktionieren (keine externen Inhalte)</label>
+      </div>
+      <div class="card">
+        <h3>Vorhandenes <span class="hint">(optional)</span></h3>
+        <label for="m_material">Vorhandene Materialien oder Inhalte</label>
+        <textarea id="m_material" data-m="material" placeholder="Texte, Links, Aufgaben, die genutzt werden sollen …"></textarea>
+        <label for="m_opliste">Verbindliche Operatorenliste</label>
+        <textarea id="m_opliste" data-m="opliste" placeholder="Wenn vorhanden: Operatoren mit Definitionen einfügen"></textarea>
       </div>
     </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Lieber mit dem Assistenten Pfadie arbeiten?</h3>
+      <p>Pfadie ist ein Assistent in AIS.chat, der fehlende Angaben selbst nachfragt. Sie können die Ergebnisse von Pfadie in Schritt 2 und 4 genauso einfügen.</p>
+      <div class="row"><a class="btn" href="https://url.nrw/Pfadie" target="_blank" rel="noopener noreferrer">Pfadie in AIS.chat öffnen ↗</a>
+      <span class="hint">Anmeldung in AIS.chat erforderlich · <a href="https://www.lernen-digital.nrw/zugang-zu-AIS.chat" target="_blank" rel="noopener noreferrer">Zugang zu AIS.chat</a> · <a href="https://url.nrw/LP_Material" target="_blank" rel="noopener noreferrer">Material-TaskCard</a></span></div>
+    </div>
+    <div id="check1"></div>
     <div class="footer-nav"><span></span><button class="primary" data-goto="2">Weiter zu Schritt 2 →</button></div>
   </section>
 
   <!-- SCHRITT 2 -->
   <section class="panel hidden" data-panel="2">
-    <h2>2 · Feedback-Aufgaben für das formative Assessment</h2>
-    <p class="intro">Legen Sie die von Pfadie erstellten Aufgaben in PEER oder FelloFish an und speichern Sie hier die Links. Das geschieht <b>vor</b> dem Generieren der Stationen, weil die Links in die Stationen eingebaut werden.</p>
-    <div class="cols">
-      <div class="card">
-        <h3>PEER <span class="badge free">kostenfrei</span></h3>
-        <p>Vorgegebene Aufsatztypen, Aufgabe und Material in einem Feld, Kriterien optional anpassbar.</p>
-        <div class="launch"><a class="btn fb" href="https://url.nrw/PEER" target="_blank" rel="noopener">PEER öffnen ↗</a></div>
-      </div>
-      <div class="card">
-        <h3>FelloFish <span class="badge pay">kostenpflichtiger Account notwendig</span></h3>
-        <p>Frei formulierbare Textart, getrennte Felder für Aufgabe und Material, individuelle und gewichtete Kriterien.</p>
-        <div class="launch"><a class="btn fb" href="https://url.nrw/FF" target="_blank" rel="noopener">FelloFish öffnen ↗</a></div>
-        <p class="hint" style="margin-top:8px">Hinweis: Für FelloFish ist ein kostenpflichtiger Account erforderlich.</p>
-      </div>
+    <h2>2 · Lernpfad planen</h2>
+    <p class="intro">Kopieren Sie den Prompt in AIS.chat. Die KI plant den Lernpfad rückwärts vom Lernprodukt aus. Wenn Angaben fehlen, fragt sie nach. Fügen Sie die fertige Planung anschließend unten ein und übernehmen Sie die Stationen.</p>
+    <div class="promptbox">
+      <h3>Prompt: Lernpfad planen</h3>
+      <textarea class="prompt" id="promptPlan" readonly aria-label="Prompt zur Planung"></textarea>
+      <div class="row"><button class="primary small" data-copyfrom="promptPlan">Prompt kopieren</button><span class="hint">Danach in AIS.chat oder ein anderes KI-System einfügen.</span></div>
     </div>
-
-    <div class="card" style="margin-top:16px">
-      <h3>Links zu den Feedback-Aufgaben</h3>
-      <p class="hint">Den Link zur Aufgabe kopieren Sie nach dem Anlegen in PEER bzw. FelloFish. In Schritt 3 können Sie jeden Link einer Station zuordnen.</p>
-      <div id="fbLinks"></div>
-      <button class="small" id="addLink">+ Link hinzufügen</button>
-    </div>
-
-    <div class="card" style="margin-top:16px">
-      <h3>Kurz-Check: Ist die Aufgabe formativ?</h3>
-      <ul class="tight">
-        <li>Die Kriterien sind <b>lernzielbezogen, beobachtbar und eindeutig</b> (z. B. „Das Urteil wird mit mindestens zwei fachlichen Kriterien begründet.“).</li>
-        <li>Nach dem Feedback folgt ein <b>Überarbeitungsauftrag</b>: Er greift ein Kriterium auf, verlangt eine konkrete Veränderung und führt zu einer zweiten Fassung.</li>
-      </ul>
-    </div>
+    <label for="planText">Antwort der KI (Planung) einfügen</label>
+    <textarea id="planText" style="min-height:180px" placeholder="Komplette Antwort einfügen. Wichtig ist die Übersicht am Ende mit den Zeilen „STATION | …“."></textarea>
+    <div class="row" style="margin-top:8px"><button class="primary" id="btnParse">Stationen aus der Planung übernehmen</button></div>
+    <div id="parseResult"></div>
+    <h3 style="margin:18px 0 6px;font-size:1rem">Stationsübersicht</h3>
+    <p class="hint" style="margin:0 0 8px">Sie können Stationen auch von Hand anlegen, umbenennen oder umsortieren.</p>
+    <div id="stationList"></div>
+    <button class="small" id="addStation">+ Station hinzufügen</button>
     <div class="footer-nav"><button data-goto="1">← Zurück</button><button class="primary" data-goto="3">Weiter zu Schritt 3 →</button></div>
   </section>
 
   <!-- SCHRITT 3 -->
   <section class="panel hidden" data-panel="3">
-    <h2>3 · Stationen aus Pfadie einfügen</h2>
-    <p class="intro">Lassen Sie Pfadie die interaktiven Stationen generieren und kopieren Sie den HTML-Code hierher. Wenn Pfadie den Lernpfad bereits komplett zusammengefügt hat, wählen Sie „Fertiger Lernpfad aus Pfadie“.</p>
-    <div class="mode">
-      <label><input type="radio" name="mode" value="stations" checked> Einzelne Stationen zusammenstellen</label>
-      <label><input type="radio" name="mode" value="full"> Fertiger Lernpfad aus Pfadie</label>
-    </div>
-
-    <div id="modeStations">
-      <div class="copybox">
-        <p><b>Formulierungshilfe für Pfadie</b> <span class="hint">(zum Kopieren, nicht zum Prompten hier)</span></p>
-        <p id="askStations">Bitte gib jede Station als eigenen, vollständigen HTML-Baustein aus. Baue in die Feedback-Station keinen eigenen Link-Button ein, den ergänze ich selbst.</p>
-        <button class="small" data-copy="askStations">Text kopieren</button>
+    <h2>3 · Feedback-Aufgabe für das formative Assessment</h2>
+    <p class="intro">Legen Sie die Feedback-Aufgabe <b>vor</b> den Stationen an, damit der Link in den Lernpfad eingebaut werden kann. Der Prompt liefert alle Felder in genau der Form, die PEER bzw. FelloFish verlangt. Die Überarbeitung steuert das Feedback-Tool selbst.</p>
+    <div class="cols">
+      <div class="card">
+        <h3>PEER <span class="badge free">kostenfrei</span></h3>
+        <p>Vorgegebene Aufsatztypen, Aufgabe und Material in einem Feld, Kriterien optional anpassbar.</p>
+        <a class="btn fb" href="https://url.nrw/PEER" target="_blank" rel="noopener noreferrer">PEER öffnen ↗</a>
       </div>
-      <div id="stations" style="margin-top:14px"></div>
-      <div class="row"><button id="addStation">+ Station hinzufügen</button></div>
+      <div class="card">
+        <h3>FelloFish <span class="badge pay">kostenpflichtiger Account notwendig</span></h3>
+        <p>Frei formulierbare Textart, getrennte Felder für Aufgabe und Material, gewichtete Kriterien.</p>
+        <a class="btn fb" href="https://url.nrw/FF" target="_blank" rel="noopener noreferrer">FelloFish öffnen ↗</a>
+        <p class="hint" style="margin-top:8px">Hinweis: Für FelloFish ist ein kostenpflichtiger Account erforderlich.</p>
+      </div>
     </div>
-
-    <div id="modeFull" class="hidden">
-      <label for="fullCode">HTML-Code des fertigen Lernpfads</label>
-      <textarea id="fullCode" spellcheck="false" style="min-height:320px" placeholder="Kompletten Code aus Pfadie einfügen (von <!DOCTYPE html> bis </html>) …"></textarea>
-      <p class="hint">Feedback-Links sollten in diesem Fall bereits von Pfadie eingebaut sein.</p>
-    </div>
+    <div id="tasks" style="margin-top:16px"></div>
+    <button class="small" id="addTask">+ weitere Feedback-Aufgabe</button>
     <div class="footer-nav"><button data-goto="2">← Zurück</button><button class="primary" data-goto="4">Weiter zu Schritt 4 →</button></div>
   </section>
 
   <!-- SCHRITT 4 -->
   <section class="panel hidden" data-panel="4">
-    <h2>4 · Prüfen und herunterladen</h2>
-    <p class="intro">Testen Sie den Lernpfad aus Sicht der Lernenden. Wenn etwas nicht passt, passen Sie es in Pfadie an und fügen den neuen Code in Schritt 3 ein.</p>
+    <h2>4 · Stationen erstellen</h2>
+    <p class="intro">Für jede Station gibt es einen eigenen Prompt. Die KI erstellt daraus eine vollständige HTML-Datei. Fügen Sie den Code bei der Station ein. Navigation, Fortschrittsanzeige und Feedback-Button ergänzt der Baukasten automatisch.</p>
+    <div class="mode">
+      <label><input type="radio" name="mode" value="stations" checked> Stationen einzeln erstellen (empfohlen)</label>
+      <label><input type="radio" name="mode" value="full"> Fertigen Lernpfad als Ganzes einfügen (z. B. von Pfadie)</label>
+    </div>
+    <div id="modeStations"><div id="stationBuild"></div></div>
+    <div id="modeFull" class="hidden">
+      <label for="fullCode">HTML-Code des fertigen Lernpfads</label>
+      <textarea id="fullCode" class="code" spellcheck="false" style="min-height:320px" placeholder="Kompletten Code einfügen (von <!DOCTYPE html> bis </html>) …"></textarea>
+      <p class="hint">Feedback-Links müssen in diesem Fall bereits im Code enthalten sein.</p>
+    </div>
+    <div class="footer-nav"><button data-goto="3">← Zurück</button><button class="primary" data-goto="5">Weiter zu Schritt 5 →</button></div>
+  </section>
+
+  <!-- SCHRITT 5 -->
+  <section class="panel hidden" data-panel="5">
+    <h2>5 · Prüfen und herunterladen</h2>
+    <p class="intro">Testen Sie den Lernpfad aus Sicht der Lernenden. Wenn eine Station nicht passt, bitten Sie die KI im selben Chat um Änderungen und fügen den neuen Code in Schritt 4 ein.</p>
     <div id="problems"></div>
     <div class="row" style="margin:10px 0"><button class="small" id="refresh">Vorschau aktualisieren</button></div>
     <iframe class="preview" id="preview" title="Vorschau des Lernpfads"></iframe>
-
     <div class="cols" style="margin-top:16px">
       <div class="card checks">
         <h3>Prüfschleife: Qualitätsmerkmale</h3>
@@ -219,7 +261,7 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.85em}
       </div>
       <div class="card">
         <h3>Herunterladen</h3>
-        <div class="actions col" style="margin-top:4px">
+        <div class="actions">
           <button class="primary" id="dlScorm">SCORM-Paket für Moodle / LOGINEO.LMS (.zip)</button>
           <button id="dlHtml">HTML-Datei (.html) – auch für TaskCards</button>
         </div>
@@ -227,23 +269,40 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.85em}
         <p class="hint" style="margin-top:10px"><b>Moodle / LOGINEO.LMS:</b> Aktivität „Lernpaket“ anlegen und die .zip-Datei hochladen. Abgeschlossen gilt der Pfad, sobald die letzte Seite erreicht ist.<br><b>TaskCards:</b> Die .html-Datei als Anhang auf eine Karte laden. Lernende öffnen den Pfad ohne Login.</p>
       </div>
     </div>
-    <div class="footer-nav"><button data-goto="3">← Zurück</button><button class="small danger" id="reset">Alles löschen und neu beginnen</button></div>
+    <div class="footer-nav"><button data-goto="4">← Zurück</button><button class="small danger" id="reset">Alles löschen und neu beginnen</button></div>
   </section>
 </main>
+
+<datalist id="phaseList">
+  <option>Orientierung</option><option>Vorwissen aktivieren</option><option>Input</option><option>Verarbeitung</option>
+  <option>Lernprodukt vorbereiten</option><option>Lernprodukt erstellen</option><option>Feedback erhalten</option>
+  <option>Überarbeiten</option><option>Reflektieren oder übertragen</option>
+</datalist>
+<datalist id="interList">
+  <option>keine besondere Interaktion</option><option>Multiple Choice mit Rückmeldung</option><option>Wahr/Falsch</option>
+  <option>Zuordnen</option><option>Sortieren</option><option>Lückentext</option><option>Drag-and-drop</option>
+  <option>Freitext mit Ergebnisansicht</option><option>Checkliste</option><option>Aufklappbare Hinweise</option>
+  <option>Entscheidungsszenario</option><option>Video oder Audio einbinden</option>
+</datalist>
 
 <script>
 (function(){
 "use strict";
 const $ = id => document.getElementById(id);
-const PHASES = ["Orientierung","Vorwissen aktivieren","Input","Verarbeitung","Lernprodukt erstellen","Feedback erhalten","Überarbeiten","Transfer"];
-const STORE = "lernpfad-baukasten-v1";
+const STORE = "lernpfad-baukasten-v2";
+const PEER_TYPES = ["Bericht","Geschichte","Erörterung","Essay","Gedichtsanalyse","Inhaltsangabe","Kurzgeschichte","Rezension","Sachtextanalyse","Szenenanalyse","Brief","Dialog"];
+const REQUIRED = {fach:"Fach", jahrgang:"Jahrgang", schulform:"Schulform / Bildungsgang", thema:"Thema", ziel:"Lernziel", produkt:"Lernprodukt", operator:"zentraler Operator", zeit:"Gesamtzeit"};
 
-let state = {
-  title:"", audience:"", goal:"", product:"", mode:"stations", full:"",
-  links:[{tool:"PEER", label:"", url:""}],
-  stations:[{title:"", phase:"Orientierung", html:"", link:-1}]
-};
-try { const s = JSON.parse(localStorage.getItem(STORE) || "null"); if (s && s.stations) state = Object.assign(state, s); } catch(e){}
+function newStation(o){ return Object.assign({title:"", phase:"", action:"", result:"", minutes:"", content:"", inter:"", html:""}, o||{}); }
+function newTask(){ return {tool:"", station:-1, textsorte:"", umfang:"", zeit:"", abgabe:"direkt als Text", material:"", url:""}; }
+const DEFAULT = () => ({
+  v:2,
+  meta:{fach:"", jahrgang:"", schulform:"", bundesland:"Nordrhein-Westfalen", niveau:"", anrede:"Sie", thema:"", ziel:"", produkt:"", operator:"", operatoren:"",
+        zeit:"", anzahl:"", plattform:"Moodle / LOGINEO.LMS (SCORM) und TaskCards", feedbacktool:"PEER", offline:false, material:"", opliste:""},
+  plan:"", stations:[], tasks:[newTask()], mode:"stations", full:""
+});
+let state = DEFAULT();
+try { const s = JSON.parse(localStorage.getItem(STORE) || "null"); if (s && s.v === 2) state = Object.assign(DEFAULT(), s, {meta:Object.assign(DEFAULT().meta, s.meta)}); } catch(e){}
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(e){} }
 
 function esc(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
@@ -251,110 +310,415 @@ function slug(s){
   return (s||"").trim().toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss")
     .normalize("NFKD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60) || "lernpfad";
 }
+const M = () => state.meta;
+const toolName = t => (t.tool || M().feedbacktool);
+function line(label, v){ v = (v ?? "").toString().trim(); return v ? `${label}: ${v}\n` : ""; }
+function block(label, v){ v = (v ?? "").toString().trim(); return v ? `${label}:\n${v}\n` : ""; }
+function anredeText(){ const a = M().anrede; return a === "du" ? "Sprich die Lernenden durchgehend mit „du“ an." : a === "Sie" ? "Sprich die Lernenden durchgehend mit „Sie“ an." : "Formuliere durchgehend in unpersönlicher Form (ohne direkte Anrede)."; }
+function missingMeta(){ return Object.keys(REQUIRED).filter(k => !String(M()[k]||"").trim()).map(k => REQUIRED[k]); }
+function context(){
+  const m = M();
+  return line("Fach", m.fach) + line("Schulform / Bildungsgang", m.schulform) + line("Jahrgang", m.jahrgang) + line("Bundesland", m.bundesland) +
+    line("Kompetenzniveau / Anforderungsbereich", m.niveau) + line("Thema", m.thema) + line("Lernziel", m.ziel) + line("Zentrales Lernprodukt", m.produkt) +
+    line("Zentraler Operator", m.operator) + line("Ergänzende Operatoren", m.operatoren) + line("Gesamtzeit", m.zeit);
+}
+function opRule(){
+  return M().opliste.trim()
+    ? "Verwende ausschließlich Operatoren aus der folgenden verbindlichen Operatorenliste und nutze sie in der dort festgelegten Bedeutung.\n" + M().opliste.trim() + "\n"
+    : "Es liegt keine verbindliche Operatorenliste vor. Kennzeichne von dir vorgeschlagene Operatoren als vorläufig und weise darauf hin, dass sie mit den fachlichen Vorgaben abgeglichen werden müssen. Erfinde keine angeblich verbindlichen Operatorenlisten.\n";
+}
 
-/* ---------- Navigation ---------- */
+/* ================= PROMPTS ================= */
+function promptPlan(){
+  const m = M(), fb = m.feedbacktool;
+  const fbRule = fb.startsWith("kein")
+    ? "- Es wird kein externes Feedback-Tool genutzt. Plane trotzdem eine Station mit kriteriengeleitetem Feedback (z. B. Selbst- oder Peer-Feedback anhand einer Checkliste) und eine anschließende Überarbeitung.\n"
+    : `- Plane genau eine Station, in der die Lernenden ihr Lernprodukt in ${fb} einreichen und ein kriteriengeleitetes Feedback erhalten. Die Überarbeitung wird in ${fb} gesteuert. Plane dafür keinen eigenen Überarbeitungsauftrag.\n- Plane nicht für jede Station ein externes Assessment.\n`;
+  return `Du bist ein didaktischer Assistent für die Entwicklung linearer digitaler Lernpfade. Plane einen vollständigen linearen Lernpfad. Erstelle noch keinen HTML-Code.
+
+ANGABEN
+${context()}${line("Ungefähre Anzahl der Stationen", m.anzahl)}${line("Zielplattform", m.plattform)}${block("Vorhandene Materialien", m.material)}
+OPERATOREN
+${opRule()}
+PRÜFE ZUERST
+- Ist das Lernziel konkret und beobachtbar?
+- Passt der zentrale Operator zum Lernziel?
+- Passt das Lernprodukt zur Operatorenleistung? (Operator = erwartete Denkleistung, Textsorte = Form, Lernprodukt = sichtbares Ergebnis)
+- Ist der Lernpfad in der Gesamtzeit realistisch?
+Wenn wesentliche Angaben fehlen oder ein deutlicher Widerspruch besteht, frage zuerst gezielt nach und plane erst danach.
+
+PLANUNG
+- Plane vom Lernprodukt rückwärts und bestimme die notwendigen Lernhandlungen.
+- Mögliche Grundstruktur: Orientierung, Vorwissen aktivieren, Input, Verarbeitung, Lernprodukt vorbereiten, Lernprodukt erstellen, Feedback erhalten, Überarbeiten, Reflektieren oder übertragen. Phasen dürfen zusammengefasst oder weggelassen werden, wenn das didaktisch sinnvoll ist.
+- Ein Lernpfad ist keine Materialsammlung: Jede Station muss eine erkennbare Lernhandlung auslösen und eine klare Funktion im Lernprozess haben.
+${fbRule}- Setze Interaktivität nur ein, wenn sie einen erkennbaren didaktischen Zweck erfüllt.
+- ${anredeText()}
+
+AUSGABE
+Beschreibe für jede Station: Titel, Funktion, Teilziel, Inhalt, Lernhandlung, erwartetes Ergebnis, ungefähre Bearbeitungszeit, benötigtes Material, sinnvolle Interaktion, Übergang zur nächsten Station.
+Prüfe danach kurz die Gesamtzeit und die Passung von Lernziel, Operator, Lernprodukt und Feedback.
+
+Gib ganz am Ende zusätzlich eine Übersicht aus: genau eine Zeile pro Station, ohne Tabelle und ohne Aufzählungszeichen, in diesem Format:
+STATION | Titel | Funktion | Lernhandlung | erwartetes Ergebnis | Minuten | Feedback ja/nein
+`;
+}
+
+function stationLabel(i){ const s = state.stations[i]; return s ? `Station ${i+1}${s.title ? " „" + s.title + "“" : ""}` : "keine Station"; }
+
+function promptTask(ti){
+  const m = M(), t = state.tasks[ti], tool = toolName(t);
+  const st = t.station >= 0 ? state.stations[t.station] : null;
+  const common = `${context()}${line("Bearbeitungszeit für diese Aufgabe", t.zeit)}${line("Erwarteter Umfang", t.umfang)}${line("Abgabeform", t.abgabe === "als PDF aus der HTML-Station" ? "Die Lernenden erstellen den Text in einer HTML-Station des Lernpfads, speichern ihn über die Druckfunktion des Browsers als PDF und laden die PDF hoch." : "Die Lernenden geben ihren Text direkt im Feedback-Tool ein bzw. fügen ihn dort ein.")}${st ? line("Station im Lernpfad", `${stationLabel(t.station)} – Lernhandlung: ${st.action || "–"}; erwartetes Ergebnis: ${st.result || "–"}`) : ""}${block("Vorhandenes Zusatzmaterial", t.material || m.material)}`;
+  const criteria = `FEEDBACKKRITERIEN
+Formuliere drei bis sechs Kriterien. Jedes Kriterium
+- bezieht sich direkt auf Lernziel, Aufgabe und zentralen Operator,
+- ist beobachtbar und eindeutig,
+- ist als vollständiger Aussagesatz formuliert,
+- prüft nur einen Qualitätsaspekt,
+- ist für die Lernenden verständlich,
+- ermöglicht eine konkrete Überarbeitung.
+Vermeide vage Kriterien wie „Der Text ist gut.“ oder „Der Text ist kreativ.“`;
+  const material = `ZUSATZMATERIAL
+Erstelle nur Material, das notwendig oder hilfreich ist (z. B. Informationstext, Fallbeispiel, Daten, Strukturhilfe, fachliche Maßstäbe). Es muss zur Zielgruppe passen, die für den Operator nötigen Informationen und Maßstäbe enthalten und darf die Lösung nicht vorwegnehmen.`;
+  const noRevise = `Erstelle keinen eigenen Abschnitt, der zur Überarbeitung auffordert. Die Überarbeitung wird im Feedback-Tool gesteuert.`;
+  if (tool === "FelloFish"){
+    return `Du bist ein didaktischer Assistent für formatives Assessment. Erstelle eine Aufgabe für das Feedback-Tool FelloFish.
+
+ANGABEN
+${common}${line("Gewünschte Art des Textes", t.textsorte)}
+OPERATOREN
+${opRule()}
+Wenn wesentliche Angaben fehlen oder Lernziel, Operator und Textsorte nicht zueinander passen, frage zuerst nach.
+
+ART DES TEXTES
+Nenne eine konkrete, passende Textsorte (z. B. begründete Stellungnahme, Analyse, formelle E-Mail, Handlungsempfehlung).
+
+AUFGABENSTELLUNG
+Die Aufgabenstellung enthält bei Bedarf Ausgangssituation, Rolle, Adressat, Schreibziel, zentralen und ergänzende Operatoren, inhaltliche Anforderungen, Textsorte, Umfang sowie sprachliche und formale Anforderungen. Vermeide unklare Aufträge wie „Schreibe etwas über …“. ${anredeText()}${t.abgabe === "als PDF aus der HTML-Station" ? "\nErkläre in der Aufgabenstellung eindeutig, dass die Lernenden die PDF aus dem Lernpfad hochladen." : ""}
+
+${material}
+Wenn kein Material benötigt wird, schreibe: „Kein Zusatzmaterial erforderlich.“
+
+${criteria}
+
+GEWICHTUNG
+Ordne jedem Kriterium eine Gewichtung zu: stark (zentral für Lernziel und Operator), normal (wichtig für die Gesamtqualität), schwach (ergänzender sprachlicher oder formaler Aspekt). Gewichte nicht alle gleich. Gib keine Begründung der Gewichtung aus.
+
+${noRevise}
+
+AUSGABEFORMAT (exakt so)
+### Art des Textes
+### Zentraler Operator
+### Ergänzende Operatoren
+### Überschrift
+### Aufgabenstellung
+### Zusatzmaterial
+### Feedbackkriterien und Gewichtung
+1. Kriterium:
+   Gewichtung:
+   Bezug zum Operator:
+(Nummerierung bis zur benötigten Zahl fortsetzen)
+`;
+  }
+  return `Du bist ein didaktischer Assistent für formatives Assessment. Erstelle eine Aufgabe für das Feedback-Tool PEER.
+
+ANGABEN
+${common}
+OPERATOREN
+${opRule()}
+Wenn wesentliche Angaben fehlen oder Lernziel, Operator und Aufsatztyp nicht zueinander passen, frage zuerst nach.
+
+AUFSATZTYP
+Verwende ausschließlich einen dieser Aufsatztypen: ${PEER_TYPES.join(", ")}. Erfinde keinen weiteren.
+Wähle den fachlich am besten passenden (z. B. zusammenfassen → Inhaltsangabe, Argumente abwägen und urteilen → Erörterung, adressatenbezogen schreiben → Brief). Wähle nicht automatisch „Bericht“. Wenn keine Kategorie genau passt, wähle die nächstliegende und begründe das knapp.
+
+AUFGABENTITEL
+Kurz und eindeutig, höchstens acht Wörter, keine vollständige Aufgabenstellung.
+
+SCHULART, JAHRGANG, BUNDESLAND
+Übernimm sie aus den Angaben. Wenn die Zielgruppe nicht schulisch ist, schlage eine technische Näherung vor und kennzeichne sie als solche.
+
+ZUSATZMATERIAL UND AUFGABENSTELLUNG
+PEER hat dafür ein gemeinsames Feld. Erstelle einen vollständig kopierbaren Text in dieser Reihenfolge:
+### Ausgangssituation oder Kontext
+### Zusatzmaterial
+### Aufgabe
+${material}
+Wenn kein Material benötigt wird, schreibe: „Kein zusätzliches Material erforderlich.“
+Die Aufgabe enthält den zentralen Operator, das Schreibziel, die Inhalte, den Aufsatztyp, den Umfang und sprachliche sowie formale Anforderungen. ${anredeText()}${t.abgabe === "als PDF aus der HTML-Station" ? "\nErkläre in der Aufgabe eindeutig, dass die Lernenden die PDF aus dem Lernpfad hochladen." : ""}
+
+${criteria}
+PEER verwendet keine Gewichtung. Gib keine Gewichtung aus.
+
+${noRevise}
+
+AUSGABEFORMAT (exakt so)
+### Aufgabentitel
+### Aufsatztyp
+### Hinweis zur Auswahl des Aufsatztyps
+### Schulart
+### Jahrgang
+### Bundesland
+### Zentraler Operator
+### Ergänzende Operatoren
+### Zusatzmaterial und Aufgabenstellung
+### Angepasste Feedbackkriterien
+1. Kriterium:
+2. Kriterium:
+3. Kriterium:
+(Nummerierung bis zur benötigten Zahl fortsetzen)
+`;
+}
+
+function taskForStation(i){ return state.tasks.findIndex(t => t.station === i); }
+
+function promptStation(i){
+  const m = M(), s = state.stations[i], n = state.stations.length;
+  const prev = state.stations[i-1], next = state.stations[i+1];
+  const ti = taskForStation(i), t = ti >= 0 ? state.tasks[ti] : null;
+  const fbPart = t ? `
+FEEDBACK IN DIESER STATION
+In dieser Station reichen die Lernenden ihr Lernprodukt (${s.result || m.produkt}) in ${toolName(t)} ein und erhalten ein kriteriengeleitetes Feedback.
+- Der Lernpfad zeigt unter dieser Station automatisch einen Abschnitt „Aufgabe bearbeiten und Feedback erhalten“ mit einem Button an, der ${toolName(t)} in einem neuen Tab öffnet. Baue selbst keinen Link und keinen iframe zu ${toolName(t)} ein und erfinde keinen Link.
+- Erkläre den Ablauf knapp: Aufgabe über den Button öffnen, Text einreichen, Feedback lesen, im Feedback-Tool überarbeiten, danach zum Lernpfad zurückkehren.
+- Erstelle keinen eigenen Überarbeitungsauftrag. Die Überarbeitung wird in ${toolName(t)} gesteuert.${t.abgabe === "als PDF aus der HTML-Station" ? `
+- Die Lernenden schreiben ihren Text in dieser Station. Stelle ein ausreichend großes, beschriftetes Textfeld bereit, einen Button „Ergebnisansicht vorbereiten“ und einen Button „Drucken oder als PDF speichern“ (window.print() mit Druckstylesheet). Formuliere: „Wählen Sie im Druckdialog Ihres Browsers ‚Als PDF sichern‘ beziehungsweise ‚Als PDF speichern‘.“ Behaupte nicht, dass automatisch eine PDF entsteht.` : ""}
+` : "";
+  return `Du bist ein didaktischer Assistent für interaktive HTML-Lernbausteine. Erstelle Station ${i+1} von ${n} eines linearen Lernpfads als vollständige HTML-Datei.
+
+LERNPFAD
+${line("Thema", m.thema)}${line("Fach", m.fach)}${line("Zielgruppe", [m.schulform, m.jahrgang ? "Jahrgang " + m.jahrgang : "", m.bundesland].filter(Boolean).join(", "))}${line("Lernziel des Lernpfads", m.ziel)}${line("Zentrales Lernprodukt", m.produkt)}${line("Zentraler Operator", m.operator)}
+DIESE STATION
+${line("Titel", s.title)}${line("Funktion im Lernpfad", s.phase)}${line("Lernhandlung", s.action)}${line("Erwartetes Ergebnis", s.result)}${line("Bearbeitungszeit", s.minutes ? s.minutes + " Minuten" : "")}${line("Gewünschte Interaktion", s.inter)}${block("Inhalt / fachlicher Input / Material", s.content)}${line("Vorherige Station", prev ? `${prev.title} (${prev.phase})` : "keine – dies ist die erste Station")}${line("Nächste Station", next ? `${next.title} (${next.phase})` : "keine – dies ist die letzte Station")}
+${fbPart}
+DIDAKTIK
+- Die Station muss die genannte Lernhandlung auslösen und ihre Funktion im Lernpfad erfüllen.
+- Enthalte nur die Bereiche, die für die Funktion nötig sind: kurze Orientierung, sichtbares Teilziel, knapper fachlicher Input, Aktivierungs- oder Verständnisfrage, operatorengerechter Arbeitsauftrag, Hinweise in einem Aufklappfeld (<details>), Übergang zur nächsten Station.
+- Interaktion nur mit didaktischem Zweck. Rückmeldungen erklären, warum etwas passt oder nicht passt; Fehlversuche und erneutes Bearbeiten sind möglich; es gibt eine Zurücksetzen-Funktion.
+- Drag-and-drop nur mit alternativer Bedienung (z. B. Auswahl per Klick oder Dropdown).
+- Formuliere knapp, klar und adressatengerecht, ohne kindliche Sprache. ${anredeText()}
+- Erfinde keine fachlichen Inhalte, deren Richtigkeit unsicher ist. Wenn wesentliche Angaben fehlen, frage zuerst nach.
+
+TECHNIK
+- Vollständige HTML5-Datei mit <!DOCTYPE html>, <html lang="de">, <head> mit <meta charset="utf-8"> und viewport, <body>.
+- Internes CSS in einem <style>-Element, responsives Layout, maximale Inhaltsbreite ca. 900 px, heller Hintergrund, gut lesbare Schrift, deutliche Kontraste, Bedienelemente mindestens ca. 44 px hoch.
+- JavaScript nur bei klarem didaktischem Mehrwert, reines JavaScript ohne externe Bibliotheken.
+${m.offline ? "- Die Datei muss vollständig offline funktionieren: keine externen Skripte, Schriftarten, Bilder, Medien oder APIs.\n" : "- Keine externen Bibliotheken oder Schriftarten. Bilder und Medien nur über vollständige URLs oder eingebettet.\n"}- Die Station wird innerhalb eines Lernpfads angezeigt, der Navigation, Fortschrittsanzeige und Gesamttitel bereitstellt. Baue keine Navigation zu anderen Stationen und keine Gesamt-Fortschrittsanzeige ein. Vermeide Layouts mit fester Höhe (z. B. height:100vh).
+- Die Datei wird in TaskCards und als SCORM-Paket in Moodle bzw. LOGINEO.LMS genutzt. Erstelle keine Sonderfassung mit ausschließlich Inline-CSS.
+- Barrierearm: logische Überschriften, semantische Elemente, eindeutige Labels, sichtbare Fokusmarkierung, Tastaturbedienung, Rückmeldung nicht nur über Farbe, keine automatisch startenden Medien.
+- Datenschutz: keine personenbezogenen Daten abfragen oder übertragen, kein Tracking. localStorage nur, wenn nötig, mit sichtbarem Button zum Löschen.
+- Externe Links mit target="_blank" und rel="noopener noreferrer" und dem Hinweis, dass sich eine externe Seite öffnet.
+
+AUSGABE
+Gib ausschließlich den vollständigen HTML-Code aus, ohne Erklärungen davor oder danach.
+`;
+}
+
+/* ================= NAVIGATION & HELFER ================= */
 function go(n){
   document.querySelectorAll(".step").forEach(b => b.setAttribute("aria-selected", b.dataset.step == n));
   document.querySelectorAll("[data-panel]").forEach(p => p.classList.toggle("hidden", p.dataset.panel != n));
-  if (n == 4) refreshPreview();
+  if (n == 2){ $("promptPlan").value = promptPlan(); renderStationList(); }
+  if (n == 3) renderTasks();
+  if (n == 4) renderStationBuild();
+  if (n == 5) refreshPreview();
+  if (n == 1) renderCheck1();
   window.scrollTo({top:0, behavior:"smooth"});
 }
 document.querySelectorAll(".step").forEach(b => b.onclick = () => go(b.dataset.step));
 document.querySelectorAll("[data-goto]").forEach(b => b.onclick = () => go(b.dataset.goto));
-document.querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => {
-  const t = $(b.dataset.copy).textContent;
-  try { await navigator.clipboard.writeText(t); b.textContent = "Kopiert ✓"; } catch(e){ b.textContent = "Bitte manuell markieren"; }
-  setTimeout(() => b.textContent = "Text kopieren", 1800);
+async function copyText(text, btn){
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; } catch(e){
+    const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand("copy"); } catch(_){} ta.remove();
+  }
+  if (btn){ const old = btn.dataset.label || btn.textContent; btn.dataset.label = old; btn.textContent = ok ? "Kopiert ✓" : "Bitte manuell markieren"; setTimeout(() => btn.textContent = old, 1800); }
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-copyfrom]"); if (!b) return;
+  copyText($(b.dataset.copyfrom).value, b);
 });
-$("phaseChips").innerHTML = PHASES.map(p => `<span class="${/Feedback|Überarb/.test(p)?"fbp":""}">${p}</span>`).join("");
+function stripFences(h){ return String(h||"").trim().replace(/^```[a-zA-Z]*\s*\n/, "").replace(/\n```\s*$/, "").trim(); }
 
-/* ---------- Schritt 1 ---------- */
-[["lpTitle","title"],["lpAudience","audience"],["lpGoal","goal"],["lpProduct","product"]].forEach(([id,k]) => {
-  $(id).value = state[k] || "";
-  $(id).addEventListener("input", e => { state[k] = e.target.value; save(); });
+/* ================= SCHRITT 1 ================= */
+document.querySelectorAll("[data-m]").forEach(el => {
+  const k = el.dataset.m;
+  if (el.type === "checkbox") el.checked = !!M()[k]; else el.value = M()[k] ?? "";
+  el.addEventListener(el.type === "checkbox" || el.tagName === "SELECT" ? "change" : "input", () => {
+    M()[k] = el.type === "checkbox" ? el.checked : el.value; save();
+    if (k === "feedbacktool") state.tasks.forEach(t => { if (!t.tool) t.tool = ""; });
+  });
 });
+function renderCheck1(){
+  const miss = missingMeta();
+  $("check1").innerHTML = miss.length ? `<div class="msg warn">Noch offen: ${miss.map(esc).join(", ")}</div>` : `<div class="msg ok">Alle Pflichtangaben sind ausgefüllt.</div>`;
+}
 
-/* ---------- Schritt 2: Links ---------- */
-function renderLinks(){
-  $("fbLinks").innerHTML = state.links.map((l,i) => `
-    <div class="linkrow" data-i="${i}">
-      <select data-k="tool" aria-label="Tool">${["PEER","FelloFish","anderes Tool"].map(t=>`<option ${l.tool===t?"selected":""}>${t}</option>`).join("")}</select>
-      <input type="text" data-k="label" value="${esc(l.label)}" placeholder="Bezeichnung, z. B. Stellungnahme – Feedback" aria-label="Bezeichnung">
-      <input type="url" data-k="url" value="${esc(l.url)}" placeholder="https://…" aria-label="Link">
-      <button class="small danger" data-del="${i}" aria-label="Link entfernen">✕</button>
-    </div>`).join("");
-  $("fbLinks").querySelectorAll(".linkrow").forEach(row => {
-    const i = +row.dataset.i;
-    row.querySelectorAll("[data-k]").forEach(inp => inp.addEventListener("input", e => { state.links[i][e.target.dataset.k] = e.target.value; save(); renderStationLinkOptions(); }));
+/* ================= SCHRITT 2: Planung & Stationsliste ================= */
+$("planText").value = state.plan || "";
+$("planText").addEventListener("input", e => { state.plan = e.target.value; save(); });
+function parsePlan(text){
+  const out = [];
+  String(text||"").split(/\r?\n/).forEach(raw => {
+    let l = raw.trim().replace(/^[-*•>]\s*/, "").replace(/^\|/, "").replace(/\*\*/g, "").trim();
+    if (!/^STATION\s*\|/i.test(l)) return;
+    const p = l.split("|").map(x => x.trim());
+    if (p.length < 3) return;
+    if (/^titel$/i.test(p[1])) return; // Kopfzeile
+    out.push({ title:p[1]||"", phase:p[2]||"", action:p[3]||"", result:p[4]||"", minutes:(p[5]||"").replace(/[^\d–\-]/g,""), fb:/^ja/i.test(p[6]||"") });
   });
-  $("fbLinks").querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
-    const i = +b.dataset.del; state.links.splice(i,1);
-    state.stations.forEach(s => { if (s.link === i) s.link = -1; else if (s.link > i) s.link--; });
-    save(); renderLinks(); renderStations();
-  });
+  return out;
 }
-$("addLink").onclick = () => { state.links.push({tool:"PEER", label:"", url:""}); save(); renderLinks(); renderStationLinkOptions(); };
-function linkName(l, i){ return (l.label || l.tool + " – Aufgabe " + (i+1)) + (l.url ? "" : " (Link fehlt)"); }
-
-/* ---------- Schritt 3: Stationen ---------- */
-function linkOptions(sel){
-  return `<option value="-1">keine</option>` + state.links.map((l,i)=>`<option value="${i}" ${sel===i?"selected":""}>${esc(linkName(l,i))}</option>`).join("");
-}
-function renderStationLinkOptions(){
-  document.querySelectorAll("select[data-k=link]").forEach(s => { const i = +s.closest(".station").dataset.i; s.innerHTML = linkOptions(state.stations[i].link); });
-}
-function renderStations(){
-  $("stations").innerHTML = state.stations.map((s,i) => `
+$("btnParse").onclick = () => {
+  const rows = parsePlan(state.plan);
+  if (!rows.length){ $("parseResult").innerHTML = `<div class="msg warn">Keine Zeilen „STATION | …“ gefunden. Bitten Sie die KI im selben Chat: „Gib die Übersicht am Ende im vereinbarten Format STATION | … aus.“ Sie können Stationen auch unten von Hand anlegen.</div>`; return; }
+  if (state.stations.some(s => s.html.trim()) && !confirm("Vorhandene Stationen (mit eingefügtem Code) werden ersetzt. Fortfahren?")) return;
+  state.stations = rows.map(r => newStation(r));
+  const fbIdx = rows.findIndex(r => r.fb);
+  if (fbIdx >= 0 && state.tasks.length) state.tasks[0].station = fbIdx;
+  else state.tasks.forEach(t => { if (t.station >= state.stations.length) t.station = -1; });
+  save(); renderStationList();
+  $("parseResult").innerHTML = `<div class="msg ok">${rows.length} Stationen übernommen${fbIdx >= 0 ? `. Feedback-Station: ${esc(stationLabel(fbIdx))}` : ""}.</div>`;
+};
+function renderStationList(){
+  if (!state.stations.length){ $("stationList").innerHTML = `<p class="hint">Noch keine Stationen.</p>`; return; }
+  $("stationList").innerHTML = state.stations.map((s,i) => `
     <div class="station" data-i="${i}">
       <div class="station-head">
         <span class="num">${i+1}.</span>
-        <input type="text" data-k="title" value="${esc(s.title)}" placeholder="Titel der Station" aria-label="Titel der Station ${i+1}">
-        <select data-k="phase" aria-label="Phase">${PHASES.map(p=>`<option ${s.phase===p?"selected":""}>${p}</option>`).join("")}</select>
+        <input type="text" data-k="title" value="${esc(s.title)}" placeholder="Titel" aria-label="Titel der Station ${i+1}">
+        <input type="text" data-k="phase" value="${esc(s.phase)}" list="phaseList" placeholder="Funktion" aria-label="Funktion" style="flex:0 1 220px">
+        ${taskForStation(i) >= 0 ? `<span class="badge fbb">Feedback</span>` : ""}
         <button class="small" data-act="up" ${i===0?"disabled":""} aria-label="nach oben">↑</button>
         <button class="small" data-act="down" ${i===state.stations.length-1?"disabled":""} aria-label="nach unten">↓</button>
         <button class="small danger" data-act="del" aria-label="Station entfernen">✕</button>
       </div>
-      <label>HTML-Code der Station aus Pfadie</label>
-      <textarea data-k="html" spellcheck="false" placeholder="Code der Station einfügen …">${esc(s.html)}</textarea>
-      <div class="grid2">
-        <div>
-          <label>Feedback-Aufgabe unter dieser Station <span class="hint">(aus Schritt 2)</span></label>
-          <select data-k="link">${linkOptions(s.link)}</select>
-        </div>
-        <div>
-          <label>Überarbeitungsauftrag <span class="hint">(optional, erscheint beim Feedback-Button)</span></label>
-          <input type="text" data-k="revise" value="${esc(s.revise||"")}" placeholder="z. B. Überarbeiten Sie Ihre Begründung anhand des Feedbacks.">
-        </div>
+      <div class="cols3" style="margin-top:6px;grid-template-columns:2fr 2fr 1fr">
+        <div><label>Lernhandlung</label><input type="text" data-k="action" value="${esc(s.action)}"></div>
+        <div><label>Erwartetes Ergebnis</label><input type="text" data-k="result" value="${esc(s.result)}"></div>
+        <div><label>Minuten</label><input type="text" data-k="minutes" value="${esc(s.minutes)}"></div>
       </div>
     </div>`).join("");
-  $("stations").querySelectorAll(".station").forEach(el => {
+  bindStationInputs($("stationList"), renderStationList);
+}
+function bindStationInputs(root, rerender){
+  root.querySelectorAll(".station").forEach(el => {
     const i = +el.dataset.i;
-    el.querySelectorAll("[data-k]").forEach(inp => {
-      const ev = inp.tagName === "SELECT" ? "change" : "input";
-      inp.addEventListener(ev, e => {
-        const k = e.target.dataset.k;
-        state.stations[i][k] = k === "link" ? +e.target.value : e.target.value;
-        if (k === "phase" && /Feedback|Überarb/.test(e.target.value) && state.stations[i].link === -1 && state.links.length === 1) {
-          state.stations[i].link = 0; renderStationLinkOptions();
-        }
-        save();
-      });
-    });
+    el.querySelectorAll("[data-k]").forEach(inp => inp.addEventListener("input", e => {
+      state.stations[i][e.target.dataset.k] = e.target.value; save();
+      const pb = el.querySelector("textarea.prompt"); if (pb) pb.value = promptStation(i);
+    }));
     el.querySelectorAll("[data-act]").forEach(b => b.onclick = () => {
       const a = b.dataset.act, st = state.stations;
-      if (a === "del"){ if (st.length > 1 || confirm("Letzte Station leeren?")) { st.splice(i,1); if (!st.length) st.push({title:"",phase:"Orientierung",html:"",link:-1}); } }
-      if (a === "up" && i > 0) [st[i-1], st[i]] = [st[i], st[i-1]];
-      if (a === "down" && i < st.length-1) [st[i+1], st[i]] = [st[i], st[i+1]];
-      save(); renderStations();
+      const remap = f => state.tasks.forEach(t => { t.station = f(t.station); });
+      if (a === "del"){
+        if (st[i].html.trim() && !confirm("Station mit eingefügtem Code löschen?")) return;
+        st.splice(i,1); remap(x => x === i ? -1 : x > i ? x-1 : x);
+      }
+      if (a === "up" && i > 0){ [st[i-1], st[i]] = [st[i], st[i-1]]; remap(x => x === i ? i-1 : x === i-1 ? i : x); }
+      if (a === "down" && i < st.length-1){ [st[i+1], st[i]] = [st[i], st[i+1]]; remap(x => x === i ? i+1 : x === i+1 ? i : x); }
+      save(); rerender();
     });
   });
 }
-$("addStation").onclick = () => {
-  const last = state.stations[state.stations.length-1];
-  const next = PHASES[Math.min(PHASES.length-1, PHASES.indexOf(last ? last.phase : "") + 1)] || "Orientierung";
-  state.stations.push({title:"", phase:next, html:"", link:-1}); save(); renderStations();
-  const all = $("stations").querySelectorAll(".station"); all[all.length-1].querySelector("input").focus();
-};
+$("addStation").onclick = () => { state.stations.push(newStation()); save(); renderStationList(); const all = $("stationList").querySelectorAll(".station"); all[all.length-1].querySelector("input").focus(); };
+
+/* ================= SCHRITT 3: Feedback-Aufgaben ================= */
+function renderTasks(){
+  const m = M();
+  if (m.feedbacktool.startsWith("kein") && state.tasks.every(t => !t.tool)){
+    $("tasks").innerHTML = `<div class="msg warn">In Schritt 1 ist „kein externes Feedback-Tool“ gewählt. Sie können trotzdem eine Aufgabe anlegen, indem Sie unten das Tool auswählen.</div>` + tasksHtml();
+  } else $("tasks").innerHTML = tasksHtml();
+  $("tasks").querySelectorAll(".task").forEach(el => {
+    const i = +el.dataset.i, t = state.tasks[i];
+    el.querySelectorAll("[data-t]").forEach(inp => {
+      inp.addEventListener(inp.tagName === "SELECT" ? "change" : "input", e => {
+        const k = e.target.dataset.t;
+        t[k] = k === "station" ? +e.target.value : e.target.value;
+        if (k === "station" && t.station >= 0) state.tasks.forEach((o,j) => { if (j !== i && o.station === t.station) o.station = -1; });
+        save();
+        if (k === "tool" || k === "station") renderTasks();
+        else el.querySelector("textarea.prompt").value = promptTask(i);
+      });
+    });
+    const del = el.querySelector("[data-deltask]");
+    if (del) del.onclick = () => { state.tasks.splice(i,1); if (!state.tasks.length) state.tasks.push(newTask()); save(); renderTasks(); };
+  });
+}
+function tasksHtml(){
+  const m = M();
+  return state.tasks.map((t,i) => {
+    const tool = toolName(t) === "kein externes Feedback-Tool" ? "PEER" : toolName(t);
+    if (!t.tool && m.feedbacktool.startsWith("kein")) t.tool = "PEER";
+    const ff = tool === "FelloFish";
+    return `<div class="card task" data-i="${i}" style="margin-bottom:14px">
+      <div class="row" style="justify-content:space-between"><h3 style="margin:0">Feedback-Aufgabe ${state.tasks.length > 1 ? i+1 : ""}</h3>${state.tasks.length > 1 ? `<button class="small danger" data-deltask>Entfernen</button>` : ""}</div>
+      <div class="cols3">
+        <div><label>Tool</label><select data-t="tool"><option value="PEER" ${tool==="PEER"?"selected":""}>PEER (kostenfrei)</option><option value="FelloFish" ${ff?"selected":""}>FelloFish (kostenpflichtiger Account)</option></select></div>
+        <div><label>Station im Lernpfad</label><select data-t="station"><option value="-1">noch keine</option>${state.stations.map((s,j)=>`<option value="${j}" ${t.station===j?"selected":""}>${esc(stationLabel(j))}</option>`).join("")}</select></div>
+        <div><label>Abgabeform</label><select data-t="abgabe">${["direkt als Text","als PDF aus der HTML-Station"].map(o=>`<option ${t.abgabe===o?"selected":""}>${o}</option>`).join("")}</select></div>
+      </div>
+      <div class="cols3">
+        ${ff ? `<div><label>Art des Textes</label><input type="text" data-t="textsorte" value="${esc(t.textsorte)}" placeholder="z. B. begründete Stellungnahme"></div>` : `<div><label>Aufsatztyp</label><input type="text" disabled value="wählt die KI aus der PEER-Liste"></div>`}
+        <div><label>Umfang</label><input type="text" data-t="umfang" value="${esc(t.umfang)}" placeholder="z. B. 250–350 Wörter"></div>
+        <div><label>Bearbeitungszeit</label><input type="text" data-t="zeit" value="${esc(t.zeit)}" placeholder="z. B. 30 Minuten"></div>
+      </div>
+      <label>Zusatzmaterial für die Aufgabe <span class="hint">(optional, sonst wird das Material aus Schritt 1 genutzt)</span></label>
+      <textarea data-t="material">${esc(t.material)}</textarea>
+      <div class="promptbox">
+        <h3>Prompt: Aufgabe für ${esc(tool)}</h3>
+        <textarea class="prompt" id="promptTask${i}" readonly>${esc(promptTask(i))}</textarea>
+        <div class="row"><button class="primary small" data-copyfrom="promptTask${i}">Prompt kopieren</button>
+        <a class="btn small fb" href="${tool==="FelloFish"?"https://url.nrw/FF":"https://url.nrw/PEER"}" target="_blank" rel="noopener noreferrer">${esc(tool)} öffnen ↗</a>
+        <span class="hint">Ergebnis der KI in ${esc(tool)} übertragen und die Aufgabe dort anlegen.</span></div>
+      </div>
+      <label>Link zur angelegten Aufgabe in ${esc(tool)} <span class="req">*</span></label>
+      <input type="url" data-t="url" value="${esc(t.url)}" placeholder="https://…">
+      <p class="hint">Den Link kopieren Sie nach dem Anlegen der Aufgabe aus ${esc(tool)}. Er wird als Button unter der gewählten Station eingebaut.</p>
+    </div>`;
+  }).join("");
+}
+$("addTask").onclick = () => { state.tasks.push(newTask()); save(); renderTasks(); };
+
+/* ================= SCHRITT 4: Stationen erstellen ================= */
+function renderStationBuild(){
+  if (!state.stations.length){ $("stationBuild").innerHTML = `<div class="msg warn">Noch keine Stationen. Bitte zuerst in Schritt 2 die Planung übernehmen oder Stationen anlegen.</div>`; return; }
+  $("stationBuild").innerHTML = state.stations.map((s,i) => {
+    const ti = taskForStation(i);
+    return `<div class="station" data-i="${i}">
+      <div class="station-head">
+        <span class="num">${i+1}.</span><b style="flex:1 1 auto">${esc(s.title || "Station " + (i+1))}</b>
+        <span class="badge">${esc(s.phase || "ohne Funktion")}</span>
+        ${ti >= 0 ? `<span class="badge fbb">Feedback: ${esc(toolName(state.tasks[ti]))}${state.tasks[ti].url ? "" : " (Link fehlt)"}</span>` : ""}
+        <span class="badge ${s.html.trim() ? "done" : "pay"}" data-status>${s.html.trim() ? "Code eingefügt ✓" : "Code fehlt"}</span>
+      </div>
+      <div class="cols" style="gap:10px">
+        <div><label>Gewünschte Interaktion <span class="hint">(optional)</span></label><input type="text" data-k="inter" list="interList" value="${esc(s.inter)}" placeholder="z. B. Zuordnen"></div>
+        <div><label>Lernhandlung</label><input type="text" data-k="action" value="${esc(s.action)}"></div>
+      </div>
+      <label>Inhalt, fachlicher Input oder Material für diese Station <span class="hint">(optional, z. B. Ausschnitt aus der Planung)</span></label>
+      <textarea data-k="content">${esc(s.content)}</textarea>
+      <div class="promptbox">
+        <h3>Prompt: Station ${i+1} erstellen</h3>
+        <details><summary>Prompt ansehen</summary><textarea class="prompt" id="promptSt${i}" readonly>${esc(promptStation(i))}</textarea></details>
+        <div class="row"><button class="primary small" data-copyfrom="promptSt${i}">Prompt kopieren</button><span class="hint">Tipp: alle Stationen im selben Chat wie die Planung erstellen lassen.</span></div>
+      </div>
+      <label>HTML-Code der Station einfügen</label>
+      <textarea class="code" data-k="html" spellcheck="false" placeholder="Antwort der KI (HTML-Code) einfügen …">${esc(s.html)}</textarea>
+    </div>`;
+  }).join("");
+  $("stationBuild").querySelectorAll(".station").forEach(el => {
+    const i = +el.dataset.i;
+    el.querySelectorAll("[data-k]").forEach(inp => inp.addEventListener("input", e => {
+      const k = e.target.dataset.k;
+      state.stations[i][k] = k === "html" ? e.target.value : e.target.value; save();
+      if (k !== "html") el.querySelector("textarea.prompt").value = promptStation(i);
+      else { const b = el.querySelector("[data-status]"), ok = !!e.target.value.trim(); b.className = "badge " + (ok ? "done" : "pay"); b.textContent = ok ? "Code eingefügt ✓" : "Code fehlt"; }
+    }));
+    el.querySelector("textarea.code").addEventListener("blur", e => { const c = stripFences(e.target.value); if (c !== e.target.value){ e.target.value = c; state.stations[i].html = c; save(); } });
+  });
+}
 function setMode(m){
   state.mode = m; save();
   document.querySelectorAll("input[name=mode]").forEach(r => r.checked = r.value === m);
@@ -365,25 +729,28 @@ document.querySelectorAll("input[name=mode]").forEach(r => r.onchange = () => se
 $("fullCode").value = state.full || "";
 $("fullCode").addEventListener("input", e => { state.full = e.target.value; save(); });
 
-/* ---------- Lernpfad zusammenbauen ---------- */
+/* ================= LERNPFAD ZUSAMMENBAUEN ================= */
 function stationDoc(html){
-  let h = (html || "").trim();
+  let h = stripFences(html);
   if (!/<html[\s>]/i.test(h)) {
     h = `<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><style>body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55;margin:16px;color:#1d1d1f}</style></head><body>${h}</body></html>`;
   }
+  if (!/<head[\s>]/i.test(h)) h = h.replace(/<html([^>]*)>/i, '<html$1><head></head>');
   if (!/<meta[^>]+charset/i.test(h)) h = h.replace(/<head([^>]*)>/i, '<head$1><meta charset="utf-8">');
-  // Links in Stationen in neuem Tab öffnen (PEER/FelloFish lassen sich nicht einbetten)
-  if (!/<base\s/i.test(h)) h = /<head[\s>]/i.test(h) ? h.replace(/<head([^>]*)>/i, '<head$1><base target="_blank">') : h.replace(/<html([^>]*)>/i, '<html$1><head><base target="_blank"></head>');
+  if (!/<base\s/i.test(h)) h = h.replace(/<head([^>]*)>/i, '<head$1><base target="_blank">');
   return h;
 }
+function pathTitle(){ return (M().thema || "").trim() || "Lernpfad"; }
 function buildPath(){
+  const m = M();
   const data = {
-    title: state.title.trim() || "Lernpfad",
-    audience: state.audience.trim(), goal: state.goal.trim(), product: state.product.trim(),
-    stations: state.stations.filter(s => s.html.trim()).map((s,i) => {
-      const l = s.link >= 0 ? state.links[s.link] : null;
-      return { title: s.title.trim() || ("Station " + (i+1)), phase: s.phase, doc: stationDoc(s.html),
-               fb: l && l.url.trim() ? { tool: l.tool, label: l.label.trim(), url: l.url.trim(), revise: (s.revise||"").trim() } : null };
+    title: pathTitle(),
+    audience: [m.fach, m.jahrgang ? "Jahrgang " + m.jahrgang : ""].filter(Boolean).join(" · "),
+    goal: m.ziel.trim(), product: m.produkt.trim(), you: m.anrede,
+    stations: state.stations.map((s,i) => ({ s, i })).filter(o => o.s.html.trim()).map(({s,i}) => {
+      const ti = taskForStation(i), t = ti >= 0 ? state.tasks[ti] : null;
+      return { title: s.title.trim() || ("Station " + (i+1)), phase: s.phase.trim(), doc: stationDoc(s.html),
+               fb: t && t.url.trim() ? { tool: toolName(t), url: t.url.trim() } : null };
     })
   };
   const json = JSON.stringify(data).replace(/</g,"\\u003c").replace(new RegExp(String.fromCharCode(0x2028),"g"),"\\u2028").replace(new RegExp(String.fromCharCode(0x2029),"g"),"\\u2029");
@@ -394,7 +761,7 @@ function buildPath(){
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(data.title)}</title>
 <style>
-:root{--bg:#f5f6f8;--panel:#fff;--text:#1d1d1f;--muted:#5f6368;--line:#dde1e6;--accent:#2f5f8a;--accent-text:#fff;--fb:#6a3d9a;--fb-soft:#f3edf9}
+:root{--bg:#f5f6f8;--panel:#fff;--text:#1d1d1f;--muted:#5f6368;--line:#dde1e6;--accent:#1f5f99;--accent-text:#fff;--fb:#1f5f99;--fb-soft:#eef4fa}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .wrap{max-width:900px;margin:0 auto;padding:20px 16px 40px}
@@ -406,16 +773,18 @@ header h1{font-size:1.45rem;margin:0 0 10px}
 .phase{display:inline-block;font-size:.78rem;font-weight:600;color:var(--accent);background:#e8eff6;border-radius:99px;padding:2px 10px;margin-bottom:6px}
 h2{font-size:1.2rem;margin:0 0 12px}
 iframe{width:100%;min-height:320px;border:0;display:block}
-.fb{margin-top:14px;border:1px solid var(--fb);background:var(--fb-soft);border-radius:10px;padding:14px}
-.fb p{margin:0 0 10px}
-.btn{font:inherit;font-weight:600;border-radius:8px;padding:10px 16px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--text);text-decoration:none;display:inline-block}
+.fb{margin-top:14px;border:2px solid var(--fb);background:var(--fb-soft);border-radius:10px;padding:16px}
+.fb h3{margin:0 0 10px;font-size:1.05rem}
+.fb p{margin:10px 0 0}
+.btn{font:inherit;font-weight:700;border-radius:8px;padding:12px 18px;min-height:44px;cursor:pointer;border:2px solid var(--line);background:var(--panel);color:var(--text);text-decoration:none;display:inline-block}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
 .btn.fbb{background:var(--fb);border-color:var(--fb);color:#fff}
 .btn:disabled{opacity:.4;cursor:default}
-.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn:focus-visible{outline:3px solid #f0a000;outline-offset:2px}
 nav{display:flex;justify-content:space-between;gap:8px;margin-top:16px}
 ol.toc{padding-left:22px} ol.toc li{margin:4px 0}
 .goal{background:#e8eff6;border-radius:10px;padding:12px 14px;margin:0 0 12px}
+.hidden{visibility:hidden}
 </style>
 </head>
 <body>
@@ -431,63 +800,70 @@ ol.toc{padding-left:22px} ol.toc li{margin:4px 0}
 <script>
 (function(){
 var LP = ${json};
+var du = LP.you === "du";
+var T = du ? {your:"Dein Lernpfad", product:"Dein Lernprodukt:", how:"Bearbeite die Stationen der Reihe nach.", done:"Du hast alle Stationen bearbeitet.", check:"Prüfe selbst: Erreichst du das Lernziel?", back:"Über „Zurück“ kannst du jede Station noch einmal öffnen.", fb:"Die Aufgabe wird in einem externen Feedback-Tool in einem neuen Tab geöffnet. Kehre anschließend zu diesem Lernpfad zurück und nutze die Rückmeldung für die Überarbeitung deines Ergebnisses."}
+          : {your:"Ihr Lernpfad", product:"Ihr Lernprodukt:", how:"Bearbeiten Sie die Stationen der Reihe nach.", done:"Sie haben alle Stationen bearbeitet.", check:"Prüfen Sie selbst: Erreichen Sie das Lernziel?", back:"Über „Zurück“ können Sie jede Station noch einmal öffnen.", fb:"Die Aufgabe wird in einem externen Feedback-Tool in einem neuen Tab geöffnet. Kehren Sie anschließend zu diesem Lernpfad zurück und nutzen Sie die Rückmeldung für die Überarbeitung Ihres Ergebnisses."};
 var n = LP.stations.length, cur = 0, KEY = "lernpfad:" + LP.title;
 try { var s = parseInt(localStorage.getItem(KEY), 10); if (s >= 0 && s <= n + 1) cur = s; } catch(e){}
 function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function br(s){ return esc(s).replace(/\\n/g,"<br>"); }
 var card = document.getElementById("lpCard");
 document.getElementById("lpT").textContent = LP.title;
-
 function fit(f){
   try {
     var d = f.contentDocument; if (!d || !d.body) return;
     var adjust = function(){
-      var cs = d.defaultView.getComputedStyle(d.body);
-      var h = Math.ceil(d.body.getBoundingClientRect().height + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom));
-      h = Math.min(Math.max(h, 320), 8000);
-      if (Math.abs(h - f.offsetHeight) > 2) f.style.height = h + "px";
+      try {
+        if (!f.isConnected || !d.defaultView) return;
+        var cs = d.defaultView.getComputedStyle(d.body);
+        var h = Math.ceil(d.body.getBoundingClientRect().height + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom));
+        h = Math.min(Math.max(h, 320), 8000);
+        if (Math.abs(h - f.offsetHeight) > 2) f.style.height = h + "px";
+      } catch(e){}
     };
+    d.documentElement.style.overflowY = "hidden";
     adjust();
-    if (window.ResizeObserver) new ResizeObserver(adjust).observe(d.body);
+    var pending = false;
+    var RO = d.defaultView && d.defaultView.ResizeObserver;
+    if (RO) new RO(function(){ if (pending) return; pending = true; requestAnimationFrame(function(){ pending = false; adjust(); }); }).observe(d.body);
     setTimeout(adjust, 400); setTimeout(adjust, 1500);
   } catch(e){}
 }
-
 function render(){
   var pct = n ? Math.round(Math.min(cur, n) / n * 100) : 0;
   document.getElementById("lpBar").style.width = (cur > n ? 100 : pct) + "%";
   var pos = document.getElementById("lpPos"), ph = document.getElementById("lpPhaseSmall");
   var prev = document.getElementById("lpPrev"), next = document.getElementById("lpNext");
-  prev.disabled = cur === 0; next.classList.toggle("hidden", false);
+  prev.disabled = cur === 0; next.classList.remove("hidden");
   if (cur === 0){
     pos.textContent = "Start"; ph.textContent = n + " Stationen";
     card.innerHTML = (LP.audience ? '<span class="phase">' + esc(LP.audience) + '</span>' : '') +
-      '<h2>Ihr Lernpfad</h2>' +
+      '<h2>' + T.your + '</h2>' +
       (LP.goal ? '<div class="goal"><b>Lernziel</b><br>' + br(LP.goal) + '</div>' : '') +
-      (LP.product ? '<p><b>Ihr Lernprodukt:</b> ' + br(LP.product) + '</p>' : '') +
-      '<p><b>So gehen Sie vor:</b> Bearbeiten Sie die Stationen der Reihe nach.</p><ol class="toc">' +
-      LP.stations.map(function(s){ return '<li>' + esc(s.title) + ' <span style="color:#5f6368">(' + esc(s.phase) + ')</span></li>'; }).join("") + '</ol>';
+      (LP.product ? '<p><b>' + T.product + '</b> ' + br(LP.product) + '</p>' : '') +
+      '<p>' + T.how + '</p><ol class="toc">' +
+      LP.stations.map(function(s){ return '<li>' + esc(s.title) + (s.phase ? ' <span style="color:#5f6368">(' + esc(s.phase) + ')</span>' : '') + '</li>'; }).join("") + '</ol>';
     next.textContent = "Los geht’s →"; next.disabled = n === 0;
   } else if (cur <= n){
     var s = LP.stations[cur - 1];
     pos.textContent = "Station " + cur + " von " + n; ph.textContent = s.phase;
-    card.innerHTML = '<span class="phase">' + esc(s.phase) + '</span><h2>' + esc(s.title) + '</h2>';
+    card.innerHTML = (s.phase ? '<span class="phase">' + esc(s.phase) + '</span>' : '') + '<h2>' + esc(s.title) + '</h2>';
     var f = document.createElement("iframe"); f.title = s.title;
     f.addEventListener("load", function(){ fit(f); });
     f.srcdoc = s.doc; card.appendChild(f);
     if (s.fb){
       var box = document.createElement("div"); box.className = "fb";
-      box.innerHTML = '<p><b>Feedback einholen</b>' + (s.fb.label ? ': ' + esc(s.fb.label) : '') + '<br>Laden Sie Ihr Lernprodukt hoch und lesen Sie das Feedback genau.</p>' +
-        '<a class="btn fbb" target="_blank" rel="noopener" href="' + esc(s.fb.url) + '">Zur Feedback-Aufgabe in ' + esc(s.fb.tool === "anderes Tool" ? "neuem Tab" : s.fb.tool) + ' ↗</a>' +
-        (s.fb.revise ? '<p style="margin:12px 0 0"><b>Danach:</b> ' + br(s.fb.revise) + '</p>' : '');
+      box.innerHTML = '<h3>Aufgabe bearbeiten und Feedback erhalten</h3>' +
+        '<a class="btn fbb" target="_blank" rel="noopener noreferrer" href="' + esc(s.fb.url) + '">Aufgabe in ' + esc(s.fb.tool) + ' öffnen ↗</a>' +
+        '<p>' + T.fb + '</p>';
       card.appendChild(box);
     }
     next.textContent = cur === n ? "Abschließen ✓" : "Weiter →"; next.disabled = false;
   } else {
     pos.textContent = "Geschafft"; ph.textContent = "";
-    card.innerHTML = '<h2>Geschafft!</h2><p>Sie haben alle Stationen bearbeitet.</p>' +
-      (LP.goal ? '<div class="goal"><b>Prüfen Sie selbst:</b> Erreichen Sie das Lernziel?<br>' + br(LP.goal) + '</div>' : '') +
-      '<p>Über „Zurück“ können Sie jede Station noch einmal öffnen.</p>';
+    card.innerHTML = '<h2>Geschafft!</h2><p>' + T.done + '</p>' +
+      (LP.goal ? '<div class="goal"><b>' + T.check + '</b><br>' + br(LP.goal) + '</div>' : '') +
+      '<p>' + T.back + '</p>';
     next.classList.add("hidden");
     if (window.SCORM) SCORM.complete();
   }
@@ -495,7 +871,6 @@ function render(){
 }
 document.getElementById("lpPrev").onclick = function(){ if (cur > 0){ cur--; render(); window.scrollTo(0,0); } };
 document.getElementById("lpNext").onclick = function(){ if (cur <= n){ cur++; render(); window.scrollTo(0,0); } };
-var st = document.createElement("style"); st.textContent = ".hidden{visibility:hidden}"; document.head.appendChild(st);
 render();
 })();
 <\/script>
@@ -504,9 +879,9 @@ render();
 }
 function currentOutput(){
   if (state.mode === "full"){
-    let h = (state.full || "").trim();
+    let h = stripFences(state.full);
     if (!h) return "";
-    if (!/<html[\s>]/i.test(h)) h = `<!DOCTYPE html>\n<html lang="de">\n<head>\n<meta charset="utf-8">\n<title>${esc(state.title||"Lernpfad")}</title>\n</head>\n<body>\n${h}\n</body>\n</html>`;
+    if (!/<html[\s>]/i.test(h)) h = `<!DOCTYPE html>\n<html lang="de">\n<head>\n<meta charset="utf-8">\n<title>${esc(pathTitle())}</title>\n</head>\n<body>\n${h}\n</body>\n</html>`;
     if (!/^<!doctype/i.test(h)) h = "<!DOCTYPE html>\n" + h;
     if (!/<head[\s>]/i.test(h)) h = h.replace(/<html([^>]*)>/i, "<html$1>\n<head></head>");
     if (!/<meta[^>]+charset/i.test(h)) h = h.replace(/<head([^>]*)>/i, '<head$1>\n<meta charset="utf-8">');
@@ -515,23 +890,23 @@ function currentOutput(){
   return state.stations.some(s => s.html.trim()) ? buildPath() : "";
 }
 
-/* ---------- Prüfung ---------- */
+/* ================= PRÜFUNG ================= */
 function problems(){
-  const p = [];
-  if (!state.title.trim()) p.push("Noch kein Titel (Schritt 1).");
-  if (state.mode === "full"){
-    if (!state.full.trim()) p.push("Noch kein Code des fertigen Lernpfads eingefügt (Schritt 3).");
-    return p;
+  const p = [], miss = missingMeta();
+  if (miss.length) p.push("Eckdaten unvollständig (Schritt 1): " + miss.map(esc).join(", ") + ".");
+  if (state.mode === "full"){ if (!state.full.trim()) p.push("Noch kein Code des fertigen Lernpfads eingefügt (Schritt 4)."); return p; }
+  if (!state.stations.length) p.push("Noch keine Stationen geplant (Schritt 2).");
+  state.stations.forEach((s,i) => { if (!s.html.trim()) p.push(`${esc(stationLabel(i))}: kein HTML-Code eingefügt – die Station wird ausgelassen.`); });
+  const usesTool = !M().feedbacktool.startsWith("kein") || state.tasks.some(t => t.url.trim());
+  if (usesTool){
+    const linked = state.tasks.filter(t => t.station >= 0 && t.url.trim());
+    if (!linked.length) p.push("Keine Feedback-Aufgabe mit Link ist einer Station zugeordnet (Schritt 3). Ohne Feedback fehlt das formative Assessment.");
+    state.tasks.forEach((t,i) => {
+      if (t.url.trim() && !/^https?:\/\//i.test(t.url.trim())) p.push(`Feedback-Aufgabe ${i+1}: Der Link beginnt nicht mit https:// – bitte prüfen.`);
+      if (t.station >= 0 && !t.url.trim()) p.push(`${esc(stationLabel(t.station))}: Link zur Feedback-Aufgabe fehlt (Schritt 3).`);
+      if (t.url.trim() && t.station < 0) p.push(`Feedback-Aufgabe ${i+1}: Link vorhanden, aber keiner Station zugeordnet (Schritt 3).`);
+    });
   }
-  if (!state.goal.trim()) p.push("Kein Lernziel eingetragen – es erscheint sonst nicht auf der Startseite (Schritt 1).");
-  const filled = state.stations.filter(s => s.html.trim());
-  if (!filled.length) p.push("Noch keine Station mit Code (Schritt 3).");
-  state.stations.forEach((s,i) => { if (!s.html.trim() && (s.title.trim() || state.stations.length > 1)) p.push(`Station ${i+1}${s.title?` „${esc(s.title)}“`:""} hat keinen Code und wird ausgelassen.`); });
-  const fbUsed = state.stations.some(s => s.link >= 0);
-  if (!fbUsed) p.push("Keiner Station ist eine Feedback-Aufgabe zugeordnet. Für formatives Assessment braucht der Pfad Feedback und Überarbeitung.");
-  state.stations.forEach((s,i) => { if (s.link >= 0 && !(state.links[s.link]?.url||"").trim()) p.push(`Bei Station ${i+1} fehlt der Link zur Feedback-Aufgabe (Schritt 2).`); });
-  state.links.forEach((l,i) => { if (l.url.trim() && !/^https?:\/\//i.test(l.url.trim())) p.push(`Link ${i+1} beginnt nicht mit https:// – bitte prüfen.`); });
-  if (!state.stations.some(s => s.phase === "Überarbeiten") && fbUsed && !state.stations.some(s => (s.revise||"").trim())) p.push("Nach dem Feedback fehlt ein Überarbeitungsauftrag (eigene Station „Überarbeiten“ oder Feld beim Feedback).");
   return p;
 }
 function refreshPreview(){
@@ -542,7 +917,6 @@ function refreshPreview(){
 }
 $("refresh").onclick = refreshPreview;
 
-/* ---------- SCORM ---------- */
 const SCORM_RUNTIME = `(function(){
   var api=null,started=Date.now(),finished=false;
   function findAPI(w){var n=0;while(w&&n<25){try{if(w.API)return w.API;}catch(e){}if(w.parent===w)break;w=w.parent;n++;}return null;}
@@ -606,7 +980,7 @@ function makeZip(files){
   return new Blob([...parts,...central,new Uint8Array(e.buffer)],{type:"application/zip"});
 }
 
-/* ---------- Downloads ---------- */
+/* ================= DOWNLOADS ================= */
 function download(blob, name){
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
@@ -614,38 +988,50 @@ function download(blob, name){
 function out(kind, html){ $("result").innerHTML = `<div class="msg ${kind}">${html}</div>`; }
 function needOutput(){
   const h = currentOutput();
-  if (!h){ out("warn", "Es gibt noch keinen Inhalt. Bitte in Schritt 3 Code einfügen."); return null; }
+  if (!h){ out("warn", "Es gibt noch keinen Inhalt. Bitte in Schritt 4 Code einfügen."); return null; }
   return h;
 }
-const fname = () => slug(state.title || "lernpfad");
+const fname = () => slug(pathTitle());
 $("dlHtml").onclick = () => { const h = needOutput(); if (!h) return; download(new Blob([h],{type:"text/html;charset=utf-8"}), fname()+".html"); out("ok", `<b>${fname()}.html</b> wurde heruntergeladen. Für TaskCards als Anhang auf eine Karte laden.`); };
 $("dlScorm").onclick = () => {
   let h = needOutput(); if (!h) return;
   h = h.replace(/<head([^>]*)>/i, '<head$1>\n<script src="scorm-api.js"><\/script>');
-  if (state.mode === "full" && !/SCORM\s*\.\s*complete/.test(h)) {
-    // Fertiger Pfad aus Pfadie: beim Öffnen als abgeschlossen melden
-    h = h.replace(/<\/body>/i, '<script>if(window.SCORM)SCORM.complete();<\/script>\n</body>');
-  }
+  if (state.mode === "full" && !/SCORM\s*\.\s*complete/.test(h)) h = h.replace(/<\/body>/i, '<script>if(window.SCORM)SCORM.complete();<\/script>\n</body>');
   const enc = new TextEncoder();
-  const zip = makeZip([
-    {name:"imsmanifest.xml", data: enc.encode(manifest(state.title.trim() || "Lernpfad"))},
+  download(makeZip([
+    {name:"imsmanifest.xml", data: enc.encode(manifest(pathTitle()))},
     {name:"index.html", data: enc.encode(h)},
     {name:"scorm-api.js", data: enc.encode(SCORM_RUNTIME)}
-  ]);
-  download(zip, fname()+"_scorm.zip");
+  ]), fname()+"_scorm.zip");
   out("ok", `<b>${fname()}_scorm.zip</b> wurde heruntergeladen (SCORM 1.2). In Moodle bzw. LOGINEO.LMS als „Lernpaket“ hochladen.` +
-    (state.mode === "full" ? "<br>Da der Pfad komplett aus Pfadie stammt, gilt er beim Öffnen als abgeschlossen." : ""));
+    (state.mode === "full" ? "<br>Da der Pfad als Ganzes eingefügt wurde, gilt er beim Öffnen als abgeschlossen." : ""));
 };
 
+/* ================= PROJEKT SPEICHERN / LADEN ================= */
+$("btnExport").onclick = () => {
+  download(new Blob([JSON.stringify(Object.assign({app:"lernpfad-baukasten", savedAt:new Date().toISOString()}, state), null, 2)], {type:"application/json"}), fname() + "_projekt.json");
+};
+$("btnImport").onclick = () => $("fileImport").click();
+$("fileImport").onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (d.app !== "lernpfad-baukasten" || d.v !== 2 || !d.meta || !Array.isArray(d.stations)) throw new Error("Format");
+    if (!confirm("Aktuelle Eingaben durch das geladene Projekt ersetzen?")) return;
+    delete d.app; delete d.savedAt;
+    state = Object.assign(DEFAULT(), d, {meta:Object.assign(DEFAULT().meta, d.meta)}); save(); location.reload();
+  } catch(err){ alert("Die Datei ist kein gültiges Projekt des Lernpfad-Baukastens."); }
+};
 $("reset").onclick = () => {
-  if (!confirm("Alle Eingaben in diesem Baukasten löschen?")) return;
+  if (!confirm("Alle Eingaben in diesem Baukasten löschen? Tipp: Vorher „Projekt speichern“ nutzen.")) return;
   try { localStorage.removeItem(STORE); } catch(e){}
   location.reload();
 };
 
-/* ---------- Start ---------- */
-renderLinks(); renderStations(); setMode(state.mode || "stations");
-window.__lp = { buildPath, currentOutput, problems, makeZip, manifest, get state(){ return state; } };
+/* ================= START ================= */
+setMode(state.mode || "stations");
+renderCheck1();
+window.__lp = { buildPath, currentOutput, problems, parsePlan, promptPlan, promptTask, promptStation, get state(){ return state; } };
 })();
 </script>
 </body>
