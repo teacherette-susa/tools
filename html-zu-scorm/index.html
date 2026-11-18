@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTML zu SCORM</title>
+<style>
+:root{
+  --bg:#f6f5f2; --panel:#ffffff; --text:#1d1d1f; --muted:#5f6368; --line:#dcdad5;
+  --accent:#2f6f5e; --accent-text:#ffffff; --soft:#e7f0ec; --warn-bg:#fff4e0; --warn:#8a5a00;
+  --ok-bg:#e7f3ea; --ok:#22693a; --code-bg:#fbfbfa;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16181a; --panel:#1f2224; --text:#ececec; --muted:#a3a7ab; --line:#33373a;
+    --accent:#6cc3a7; --accent-text:#0f1a16; --soft:#203330; --warn-bg:#3a2e17; --warn:#f2c46b;
+    --ok-bg:#1c3324; --ok:#8fd6a3; --code-bg:#181a1c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16181a; --panel:#1f2224; --text:#ececec; --muted:#a3a7ab; --line:#33373a;
+  --accent:#6cc3a7; --accent-text:#0f1a16; --soft:#203330; --warn-bg:#3a2e17; --warn:#f2c46b;
+  --ok-bg:#1c3324; --ok:#8fd6a3; --code-bg:#181a1c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:1.6rem;margin:0 0 4px}
+.lead{color:var(--muted);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.panel h2{font-size:1rem;margin:0 0 12px}
+label{display:block;font-weight:600;font-size:.88rem;margin:12px 0 4px}
+label:first-of-type{margin-top:0}
+.hint{font-weight:400;color:var(--muted);font-size:.82rem}
+input[type=text],input[type=number],select,textarea{
+  width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
+  background:var(--code-bg);color:var(--text);font:inherit}
+textarea{font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;min-height:340px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row > *{flex:1 1 auto}
+button{font:inherit;font-weight:600;border-radius:8px;padding:9px 14px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--text)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+button:hover{filter:brightness(.97)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.actions button{flex:1 1 200px}
+.small-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.small-btns button{font-size:.82rem;padding:5px 10px;font-weight:500}
+.radio{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.radio label{font-weight:400;margin:0;display:flex;gap:8px;align-items:flex-start}
+.radio input{margin-top:4px}
+.msg{border-radius:8px;padding:10px 12px;margin-top:12px;font-size:.88rem}
+.msg.warn{background:var(--warn-bg);color:var(--warn)}
+.msg.ok{background:var(--ok-bg);color:var(--ok)}
+.msg ul{margin:4px 0 0;padding-left:18px}
+iframe{width:100%;height:340px;border:1px solid var(--line);border-radius:8px;background:#fff}
+details{margin-top:16px}
+summary{cursor:pointer;font-weight:600}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.85em}
+pre{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:10px;overflow:auto;font-size:.8rem}
+ol{padding-left:20px}
+.filelist{font-size:.85rem;color:var(--muted);margin-top:4px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<main>
+  <h1>HTML zu SCORM</h1>
+  <p class="lead">HTML-Code aus einem Vibe-Coding-Tool einfügen und als <b>HTML-Datei</b> oder als <b>SCORM-Paket</b> für Moodle (Aktivität „Lernpaket“) herunterladen. Alles läuft lokal im Browser, es wird nichts hochgeladen.</p>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>1 · HTML-Code</h2>
+      <div class="small-btns">
+        <button type="button" id="btnOpen">HTML-Datei öffnen …</button>
+        <button type="button" id="btnExample">Beispiel-Quiz einfügen</button>
+        <button type="button" id="btnClear">Leeren</button>
+        <input type="file" id="fileOpen" accept=".html,.htm,text/html" class="hidden">
+      </div>
+      <textarea id="code" spellcheck="false" placeholder="Hier den kompletten HTML-Code einfügen (von <!DOCTYPE html> bis </html>) …"></textarea>
+      <div id="checks"></div>
+      <label>Vorschau</label>
+      <iframe id="preview" sandbox="allow-scripts allow-forms allow-modals allow-popups" title="Vorschau"></iframe>
+    </section>
+
+    <section class="panel">
+      <h2>2 · Einstellungen</h2>
+
+      <label for="title">Titel des Lernpakets</label>
+      <input type="text" id="title" placeholder="z. B. Bruchrechnen – Übung 1">
+
+      <label for="fname">Dateiname <span class="hint">(ohne Endung, wird automatisch bereinigt)</span></label>
+      <input type="text" id="fname" placeholder="bruchrechnen-uebung-1">
+
+      <label for="version">SCORM-Version</label>
+      <select id="version">
+        <option value="1.2" selected>SCORM 1.2 (empfohlen für Moodle)</option>
+        <option value="2004">SCORM 2004 4th Edition</option>
+      </select>
+
+      <label>Wann gilt das Lernpaket als abgeschlossen?</label>
+      <div class="radio">
+        <label><input type="radio" name="mode" value="load" checked> Sofort beim Öffnen</label>
+        <label><input type="radio" name="mode" value="time"> Nach einer Mindestzeit von
+          <input type="number" id="seconds" value="60" min="1" style="width:80px;padding:3px 6px"> Sekunden</label>
+        <label><input type="radio" name="mode" value="manual"> Nur wenn der Code es meldet <span class="hint">(per <code>SCORM.complete()</code> oder <code>SCORM.setScore()</code>)</span></label>
+      </div>
+
+      <label for="passing">Bestehensgrenze in % <span class="hint">(optional, nur wirksam mit <code>SCORM.setScore()</code>)</span></label>
+      <input type="number" id="passing" min="0" max="100" placeholder="leer = keine Bestehensgrenze">
+
+      <label>Zusätzliche Dateien <span class="hint">(Bilder, Audio, CSS, JS, auf die der Code verweist)</span></label>
+      <div class="small-btns">
+        <button type="button" id="btnAssets">Dateien hinzufügen …</button>
+        <button type="button" id="btnAssetsClear">Entfernen</button>
+        <input type="file" id="assets" multiple class="hidden">
+      </div>
+      <div class="filelist" id="assetList">Keine zusätzlichen Dateien.</div>
+
+      <div class="actions">
+        <button type="button" id="btnHtml">HTML-Datei herunterladen</button>
+        <button type="button" class="primary" id="btnScorm">SCORM-Paket (.zip) herunterladen</button>
+      </div>
+      <div id="result"></div>
+
+      <details>
+        <summary>So kommt das Paket in Moodle</summary>
+        <ol>
+          <li>Kurs öffnen → <b>Bearbeiten einschalten</b> → <b>Aktivität oder Material anlegen</b> → <b>Lernpaket</b>.</li>
+          <li>Unter <b>Paket</b> die heruntergeladene <code>.zip</code>-Datei hochladen (nicht entpacken).</li>
+          <li>Unter <b>Bewertung</b> z. B. „Höchste Bewertung“ wählen, wenn Punkte übertragen werden.</li>
+          <li>Unter <b>Aktivitätsabschluss</b> „Status erforderlich: Abgeschlossen“ bzw. „Bestanden“ einstellen.</li>
+          <li>Speichern und als Teilnehmer/in (Rolle wechseln) testen.</li>
+        </ol>
+      </details>
+
+      <details>
+        <summary>Punkte aus dem eigenen Code an Moodle melden</summary>
+        <p>Im SCORM-Paket steht im HTML-Code automatisch ein Objekt <code>SCORM</code> zur Verfügung. Diese Zeilen kann man in den eigenen Code (oder in den Prompt fürs Vibe-Coding-Tool) aufnehmen:</p>
+<pre>// Ergebnis melden: erreichte Punkte, maximale Punkte
+if (window.SCORM) SCORM.setScore(7, 10);
+
+// Nur „abgeschlossen“ melden, ohne Punkte
+if (window.SCORM) SCORM.complete();</pre>
+        <p class="hint">Prompt-Baustein für das KI-Tool: „Wenn das Quiz beendet ist, rufe <code>if (window.SCORM) SCORM.setScore(punkte, maxPunkte);</code> auf. Alles in einer einzigen HTML-Datei.“</p>
+        <p class="hint">An Moodle wird der Prozentwert (0–100) übertragen – passend zur Standard-Höchstbewertung 100.</p>
+        <p class="hint">Außerhalb von Moodle (z. B. beim Öffnen der HTML-Datei) passiert dabei einfach nichts.</p>
+      </details>
+    </section>
+  </div>
+</main>
+
+<script>
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
+const code = $("code"), preview = $("preview");
+let assets = []; // {name, data:Uint8Array}
+
+/* ---------- Beispiel ---------- */
+const EXAMPLE = `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Mini-Quiz</title>
+<style>
+ body{font-family:system-ui,sans-serif;max-width:560px;margin:2rem auto;padding:0 1rem}
+ .q{margin:1rem 0;padding:1rem;border:1px solid #ccc;border-radius:8px}
+ button{padding:.6rem 1.2rem;font-size:1rem}
+</style>
+</head>
+<body>
+<h1>Mini-Quiz</h1>
+<div class="q">1) 3 · 4 = ? <input id="a1" size="4"></div>
+<div class="q">2) 12 : 3 = ? <input id="a2" size="4"></div>
+<button onclick="pruefen()">Auswerten</button>
+<p id="out"></p>
+<script>
+function pruefen(){
+  let p = 0;
+  if (document.getElementById('a1').value.trim() === '12') p++;
+  if (document.getElementById('a2').value.trim() === '4') p++;
+  document.getElementById('out').textContent = p + ' von 2 Punkten';
+  if (window.SCORM) SCORM.setScore(p, 2);
+}
+<\/script>
+</body>
+</html>`;
+
+/* ---------- Helfer ---------- */
+function slug(s){
+  return (s||"").trim().toLowerCase()
+    .replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss")
+    .normalize("NFKD").replace(/[̀-ͯ]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60) || "lernpaket";
+}
+function xmlEsc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function detectTitle(html){
+  const m = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  return m ? m[1].replace(/\s+/g," ").trim() : "";
+}
+function getTitle(){ return $("title").value.trim() || detectTitle(code.value) || "Lernpaket"; }
+function getFname(){ return slug($("fname").value || getTitle()); }
+function download(blob, name){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+}
+function showResult(kind, html){ $("result").innerHTML = `<div class="msg ${kind}">${html}</div>`; }
+
+/* ---------- Prüfungen ---------- */
+function analyse(html){
+  const warn = [];
+  if (!html.trim()) return warn;
+  if (!/<html[\s>]/i.test(html)) warn.push("Kein <code>&lt;html&gt;</code>-Element gefunden – evtl. wurde nur ein Ausschnitt kopiert. Das Tool ergänzt ein Grundgerüst.");
+  if (!/<meta[^>]+charset/i.test(html)) warn.push("Keine Zeichensatz-Angabe – <code>&lt;meta charset=\"utf-8\"&gt;</code> wird ergänzt, damit Umlaute stimmen.");
+  // relative Verweise
+  const refs = new Set();
+  const re = /\b(?:src|href)\s*=\s*["']([^"'#]+)["']/gi; let m;
+  while ((m = re.exec(html))){
+    const u = m[1].trim();
+    if (/^(https?:|data:|mailto:|tel:|javascript:|blob:|\/\/)/i.test(u)) continue;
+    refs.add(u.split("?")[0]);
+  }
+  const have = new Set(assets.map(a=>a.name));
+  const missing = [...refs].filter(r => !have.has(r));
+  if (missing.length) warn.push("Der Code verweist auf lokale Dateien, die noch nicht hinzugefügt sind: " +
+    missing.slice(0,8).map(x=>`<code>${xmlEsc(x)}</code>`).join(", ") + (missing.length>8?" …":"") +
+    ". Bitte unter „Zusätzliche Dateien“ hinzufügen (Dateiname muss exakt passen).");
+  if (/\b(?:src|href)\s*=\s*["'](?:https?:)?\/\//i.test(html)) warn.push("Der Code lädt Inhalte aus dem Internet (z. B. Schriften, Bibliotheken). Das funktioniert in Moodle nur mit Internetverbindung.");
+  if (/localStorage|sessionStorage/.test(html)) warn.push("Der Code nutzt Browser-Speicher (localStorage). Fortschritt wird dadurch nicht in Moodle gespeichert, nur im jeweiligen Browser.");
+  return warn;
+}
+function renderChecks(){
+  const w = analyse(code.value);
+  $("checks").innerHTML = w.length ? `<div class="msg warn"><b>Hinweise</b><ul>${w.map(x=>`<li>${x}</li>`).join("")}</ul></div>` : "";
+}
+
+/* ---------- HTML normalisieren & SCORM-Skript einbinden ---------- */
+function normalize(html){
+  let h = html.trim();
+  if (!/<html[\s>]/i.test(h)){
+    h = `<!DOCTYPE html>\n<html lang="de">\n<head>\n<title>${xmlEsc(getTitle())}</title>\n</head>\n<body>\n${h}\n</body>\n</html>`;
+  }
+  if (!/^<!doctype/i.test(h)) h = "<!DOCTYPE html>\n" + h;
+  if (!/<head[\s>]/i.test(h)) h = h.replace(/<html([^>]*)>/i, "<html$1>\n<head></head>");
+  if (!/<meta[^>]+charset/i.test(h)) h = h.replace(/<head([^>]*)>/i, '<head$1>\n<meta charset="utf-8">');
+  return h;
+}
+function injectScorm(html){
+  return html.replace(/<head([^>]*)>/i, '<head$1>\n<script src="scorm-api.js"><\/script>');
+}
+
+/* ---------- SCORM-Laufzeit (kommt ins Paket) ---------- */
+function runtime(cfg){
+return `/* SCORM-Anbindung – erzeugt mit „HTML zu SCORM“ */
+(function(){
+  var CFG = ${JSON.stringify(cfg)};
+  var v12 = CFG.version === "1.2";
+  var api = null, started = Date.now(), finished = false;
+
+  function findAPI(w){
+    var n = 0;
+    while (w && n < 25){
+      try { if (v12 && w.API) return w.API; if (!v12 && w.API_1484_11) return w.API_1484_11; } catch(e){}
+      if (w.parent === w) break; w = w.parent; n++;
+    }
+    return null;
+  }
+  api = findAPI(window);
+  if (!api && window.opener) api = findAPI(window.opener);
+
+  function set(k, v){ try { return v12 ? api.LMSSetValue(k, String(v)) : api.SetValue(k, String(v)); } catch(e){} }
+  function get(k){ try { return v12 ? api.LMSGetValue(k) : api.GetValue(k); } catch(e){ return ""; } }
+  function commit(){ try { v12 ? api.LMSCommit("") : api.Commit(""); } catch(e){} }
+
+  function pad(n){ return (n < 10 ? "0" : "") + n; }
+  function sessionTime(){
+    var s = Math.max(0, Math.round((Date.now() - started) / 1000));
+    var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+    return v12 ? (h < 10 ? "000" : h < 100 ? "00" : h < 1000 ? "0" : "") + h + ":" + pad(m) + ":" + pad(sec)
+               : "PT" + h + "H" + m + "M" + sec + "S";
+  }
+
+  function complete(){
+    if (!api) return false;
+    if (v12){
+      var st = get("cmi.core.lesson_status");
+      if (st !== "passed" && st !== "failed") set("cmi.core.lesson_status", "completed");
+    } else {
+      set("cmi.completion_status", "completed");
+    }
+    commit(); return true;
+  }
+
+  function setScore(raw, max){
+    if (!api) return false;
+    raw = Number(raw) || 0; max = Number(max) || 100;
+    var pct = Math.max(0, Math.min(100, raw / max * 100));
+    var p = Math.round(pct * 100) / 100; // Moodle rechnet mit 0–100
+    if (v12){
+      set("cmi.core.score.min", 0); set("cmi.core.score.max", 100); set("cmi.core.score.raw", p);
+      if (CFG.passing !== null) set("cmi.core.lesson_status", pct >= CFG.passing ? "passed" : "failed");
+      else set("cmi.core.lesson_status", "completed");
+    } else {
+      set("cmi.score.min", 0); set("cmi.score.max", 100); set("cmi.score.raw", p);
+      set("cmi.score.scaled", (pct / 100).toFixed(4));
+      set("cmi.completion_status", "completed");
+      if (CFG.passing !== null) set("cmi.success_status", pct >= CFG.passing ? "passed" : "failed");
+    }
+    commit(); return true;
+  }
+
+  function finish(){
+    if (!api || finished) return; finished = true;
+    set(v12 ? "cmi.core.session_time" : "cmi.session_time", sessionTime());
+    commit();
+    try { v12 ? api.LMSFinish("") : api.Terminate(""); } catch(e){}
+  }
+
+  window.SCORM = { complete: complete, setScore: setScore, finish: finish,
+                   get connected(){ return !!api; }, get: get, set: set, commit: commit };
+
+  if (!api){ if (window.console) console.info("SCORM: keine Lernplattform gefunden – Inhalt läuft ohne Datenübertragung."); return; }
+
+  try { v12 ? api.LMSInitialize("") : api.Initialize(""); } catch(e){}
+  if (v12){
+    var s = get("cmi.core.lesson_status");
+    if (!s || s === "not attempted") set("cmi.core.lesson_status", "incomplete");
+  } else {
+    var c = get("cmi.completion_status");
+    if (!c || c === "unknown" || c === "not attempted") set("cmi.completion_status", "incomplete");
+  }
+  commit();
+
+  if (CFG.mode === "load") complete();
+  else if (CFG.mode === "time") setTimeout(complete, CFG.seconds * 1000);
+
+  window.addEventListener("pagehide", finish);
+  window.addEventListener("beforeunload", finish);
+})();
+`;
+}
+
+/* ---------- Manifest ---------- */
+function manifest(cfg, title, fileNames){
+  const id = "PKG-" + Date.now().toString(36).toUpperCase();
+  const files = fileNames.map(f=>`      <file href="${xmlEsc(f)}"/>`).join("\n");
+  const t = xmlEsc(title);
+  if (cfg.version === "1.2"){
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="${id}" version="1.0"
+  xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+  xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>1.2</schemaversion>
+  </metadata>
+  <organizations default="ORG-1">
+    <organization identifier="ORG-1">
+      <title>${t}</title>
+      <item identifier="ITEM-1" identifierref="RES-1" isvisible="true">
+        <title>${t}</title>${cfg.passing !== null ? `\n        <adlcp:masteryscore>${cfg.passing}</adlcp:masteryscore>` : ""}
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="RES-1" type="webcontent" adlcp:scormtype="sco" href="index.html">
+${files}
+    </resource>
+  </resources>
+</manifest>
+`;
+  }
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="${id}" version="1"
+  xmlns="http://www.imsglobal.org/xsd/imscp_v1p1"
+  xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3"
+  xmlns:adlseq="http://www.adlnet.org/xsd/adlseq_v1p3"
+  xmlns:adlnav="http://www.adlnet.org/xsd/adlnav_v1p3"
+  xmlns:imsss="http://www.imsglobal.org/xsd/imsss"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.imsglobal.org/xsd/imscp_v1p1 imscp_v1p1.xsd http://www.adlnet.org/xsd/adlcp_v1p3 adlcp_v1p3.xsd http://www.adlnet.org/xsd/adlseq_v1p3 adlseq_v1p3.xsd http://www.adlnet.org/xsd/adlnav_v1p3 adlnav_v1p3.xsd http://www.imsglobal.org/xsd/imsss imsss_v1p0.xsd">
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>2004 4th Edition</schemaversion>
+  </metadata>
+  <organizations default="ORG-1">
+    <organization identifier="ORG-1">
+      <title>${t}</title>
+      <item identifier="ITEM-1" identifierref="RES-1">
+        <title>${t}</title>
+      </item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="RES-1" type="webcontent" adlcp:scormType="sco" href="index.html">
+${files}
+    </resource>
+  </resources>
+</manifest>
+`;
+}
+
+/* ---------- ZIP (ohne Kompression, ohne Bibliothek) ---------- */
+const CRC_TABLE = (()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[n]=c>>>0;}return t;})();
+function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC_TABLE[(c^b[i])&0xFF]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function makeZip(files){
+  const enc = new TextEncoder(), parts = [], central = [];
+  let offset = 0;
+  const d = new Date();
+  const time = (d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1);
+  const date = ((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+  for (const f of files){
+    const name = enc.encode(f.name), data = f.data, crc = crc32(data), sz = data.length;
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true); h.setUint16(4,20,true); h.setUint16(6,0x0800,true); h.setUint16(8,0,true);
+    h.setUint16(10,time,true); h.setUint16(12,date,true); h.setUint32(14,crc,true);
+    h.setUint32(18,sz,true); h.setUint32(22,sz,true); h.setUint16(26,name.length,true); h.setUint16(28,0,true);
+    parts.push(new Uint8Array(h.buffer), name, data);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true); c.setUint16(4,20,true); c.setUint16(6,20,true); c.setUint16(8,0x0800,true);
+    c.setUint16(10,0,true); c.setUint16(12,time,true); c.setUint16(14,date,true); c.setUint32(16,crc,true);
+    c.setUint32(20,sz,true); c.setUint32(24,sz,true); c.setUint16(28,name.length,true);
+    c.setUint32(42,offset,true);
+    central.push(new Uint8Array(c.buffer), name);
+    offset += 30 + name.length + sz;
+  }
+  const cdSize = central.reduce((a,b)=>a+b.length,0);
+  const e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true); e.setUint16(8,files.length,true); e.setUint16(10,files.length,true);
+  e.setUint32(12,cdSize,true); e.setUint32(16,offset,true);
+  return new Blob([...parts, ...central, new Uint8Array(e.buffer)], {type:"application/zip"});
+}
+
+/* ---------- Aktionen ---------- */
+function needCode(){
+  if (!code.value.trim()){ showResult("warn","Bitte zuerst HTML-Code einfügen."); code.focus(); return false; }
+  return true;
+}
+$("btnHtml").onclick = () => {
+  if (!needCode()) return;
+  const html = normalize(code.value);
+  download(new Blob([html],{type:"text/html;charset=utf-8"}), getFname() + ".html");
+  showResult("ok", `<b>${getFname()}.html</b> wurde heruntergeladen.`);
+};
+$("btnScorm").onclick = () => {
+  if (!needCode()) return;
+  const mode = document.querySelector('input[name=mode]:checked').value;
+  const pRaw = $("passing").value.trim();
+  const cfg = {
+    version: $("version").value, mode,
+    seconds: Math.max(1, parseInt($("seconds").value,10) || 60),
+    passing: pRaw === "" ? null : Math.max(0, Math.min(100, Number(pRaw)))
+  };
+  const enc = new TextEncoder();
+  const title = getTitle();
+  const files = [
+    {name:"index.html", data: enc.encode(injectScorm(normalize(code.value)))},
+    {name:"scorm-api.js", data: enc.encode(runtime(cfg))},
+    ...assets.filter(a => !["index.html","scorm-api.js","imsmanifest.xml"].includes(a.name))
+  ];
+  files.unshift({name:"imsmanifest.xml", data: enc.encode(manifest(cfg, title, files.map(f=>f.name)))});
+  const zipName = getFname() + "_scorm" + (cfg.version === "1.2" ? "12" : "2004") + ".zip";
+  download(makeZip(files), zipName);
+  const modeTxt = {load:"beim Öffnen", time:`nach ${cfg.seconds} Sekunden`, manual:"wenn der Code es meldet"}[mode];
+  showResult("ok", `<b>${zipName}</b> wurde heruntergeladen.<br>SCORM ${cfg.version === "1.2" ? "1.2" : "2004"} · ${files.length} Dateien · abgeschlossen ${modeTxt}` +
+    (cfg.passing !== null ? ` · bestanden ab ${cfg.passing} %` : "") +
+    (mode === "manual" && !/SCORM\s*\.\s*(complete|setScore)/.test(code.value) ? `<br><b>Achtung:</b> Der Code ruft weder <code>SCORM.complete()</code> noch <code>SCORM.setScore()</code> auf – das Paket würde nie als abgeschlossen gelten.` : ""));
+};
+
+/* Datei öffnen */
+$("btnOpen").onclick = () => $("fileOpen").click();
+$("fileOpen").onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  code.value = await f.text();
+  if (!$("fname").value) $("fname").value = slug(f.name.replace(/\.html?$/i,""));
+  update(); e.target.value = "";
+};
+$("btnExample").onclick = () => { code.value = EXAMPLE; $("title").value = "Mini-Quiz"; update(); };
+$("btnClear").onclick = () => { code.value = ""; update(); $("result").innerHTML = ""; };
+
+/* Zusatzdateien */
+$("btnAssets").onclick = () => $("assets").click();
+$("assets").onchange = async e => {
+  for (const f of e.target.files){
+    const data = new Uint8Array(await f.arrayBuffer());
+    assets = assets.filter(a => a.name !== f.name).concat({name:f.name, data});
+  }
+  e.target.value = ""; renderAssets(); renderChecks();
+};
+$("btnAssetsClear").onclick = () => { assets = []; renderAssets(); renderChecks(); };
+function renderAssets(){
+  $("assetList").innerHTML = assets.length
+    ? assets.map(a => `${xmlEsc(a.name)} <span class="hint">(${(a.data.length/1024).toFixed(1)} KB)</span>`).join("<br>")
+    : "Keine zusätzlichen Dateien.";
+}
+
+/* Vorschau */
+let t;
+function update(){
+  renderChecks();
+  $("fname").placeholder = slug(getTitle());
+  clearTimeout(t);
+  t = setTimeout(() => { preview.srcdoc = code.value; }, 400);
+}
+code.addEventListener("input", update);
+$("title").addEventListener("input", () => { $("fname").placeholder = slug(getTitle()); });
+code.addEventListener("input", () => { if (!$("title").value) $("title").placeholder = detectTitle(code.value) || "z. B. Bruchrechnen – Übung 1"; });
+
+/* Für Tests */
+window.__html2scorm = { makeZip, manifest, runtime, normalize, injectScorm };
+})();
+</script>
+</body>
+</html>
