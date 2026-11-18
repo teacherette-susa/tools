@@ -291,6 +291,10 @@ code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.85em}
 const $ = id => document.getElementById(id);
 const STORE = "lernpfad-baukasten-v2";
 const PEER_TYPES = ["Bericht","Geschichte","Erörterung","Essay","Gedichtsanalyse","Inhaltsangabe","Kurzgeschichte","Rezension","Sachtextanalyse","Szenenanalyse","Brief","Dialog"];
+const TOOL_INFO = {
+  "PEER": "Hinweis: PEER ist ein KI-gestütztes Feedback-Tool. Die Lernenden reichen ihren Text ein und erhalten eine automatische, kriteriengeleitete Rückmeldung der KI. Es ist kein Peer-Feedback zwischen Lernenden und keine Moodle-Aktivität.",
+  "FelloFish": "Hinweis: FelloFish ist ein KI-gestütztes Feedback-Tool. Die Lernenden reichen ihren Text ein und erhalten eine automatische, kriteriengeleitete Rückmeldung der KI. Es ist kein Peer-Feedback zwischen Lernenden und keine Moodle-Aktivität."
+};
 const REQUIRED = {fach:"Fach", jahrgang:"Jahrgang", schulform:"Schulform / Bildungsgang", thema:"Thema", ziel:"Lernziel", produkt:"Lernprodukt", operator:"zentraler Operator", zeit:"Gesamtzeit"};
 
 function newStation(o){ return Object.assign({title:"", phase:"", action:"", result:"", minutes:"", content:"", inter:"", html:""}, o||{}); }
@@ -333,7 +337,7 @@ function promptPlan(){
   const m = M(), fb = m.feedbacktool;
   const fbRule = fb.startsWith("kein")
     ? "- Es wird kein externes Feedback-Tool genutzt. Plane trotzdem eine Station mit kriteriengeleitetem Feedback (z. B. Selbst- oder Peer-Feedback anhand einer Checkliste) und eine anschließende Überarbeitung.\n"
-    : `- Plane genau eine Station, in der die Lernenden ihr Lernprodukt in ${fb} einreichen und ein kriteriengeleitetes Feedback erhalten. Die Überarbeitung wird in ${fb} gesteuert. Plane dafür keinen eigenen Überarbeitungsauftrag.\n- Plane nicht für jede Station ein externes Assessment.\n`;
+    : `- Plane genau eine Station, in der die Lernenden ihr Lernprodukt in ${fb} einreichen und ein kriteriengeleitetes Feedback erhalten. ${TOOL_INFO[fb]} Die Überarbeitung wird in ${fb} gesteuert. Plane dafür keinen eigenen Überarbeitungsauftrag.\n- Plane nicht für jede Station ein externes Assessment.\n`;
   return `Du bist ein didaktischer Assistent für die Entwicklung linearer digitaler Lernpfade. Plane einen vollständigen linearen Lernpfad. Erstelle noch keinen HTML-Code.
 
 ANGABEN
@@ -358,8 +362,10 @@ AUSGABE
 Beschreibe für jede Station: Titel, Funktion, Teilziel, Inhalt, Lernhandlung, erwartetes Ergebnis, ungefähre Bearbeitungszeit, benötigtes Material, sinnvolle Interaktion, Übergang zur nächsten Station.
 Prüfe danach kurz die Gesamtzeit und die Passung von Lernziel, Operator, Lernprodukt und Feedback.
 
-Gib ganz am Ende zusätzlich eine Übersicht aus: genau eine Zeile pro Station, ohne Tabelle und ohne Aufzählungszeichen, in diesem Format:
-STATION | Titel | Funktion | Lernhandlung | erwartetes Ergebnis | Minuten | Feedback ja/nein
+Gib ganz am Ende zusätzlich eine Übersicht aus: genau eine Zeile pro Station, ohne Tabelle, ohne Aufzählungszeichen, ohne Fettdruck und ohne Leerzeilen dazwischen. Jede Zeile beginnt mit dem Wort STATION (ohne Nummer). Die letzte Spalte enthält nur „ja“ oder „nein“. Format:
+STATION | Titel | Funktion | Lernhandlung | erwartetes Ergebnis | Minuten | ja/nein
+Beispiel:
+STATION | Worum geht es? | Orientierung | Lernziel lesen und Vorwissen notieren | Notizen zum Vorwissen | 10 | nein
 `;
 }
 
@@ -478,7 +484,7 @@ function promptStation(i){
   const ti = taskForStation(i), t = ti >= 0 ? state.tasks[ti] : null;
   const fbPart = t ? `
 FEEDBACK IN DIESER STATION
-In dieser Station reichen die Lernenden ihr Lernprodukt (${s.result || m.produkt}) in ${toolName(t)} ein und erhalten ein kriteriengeleitetes Feedback.
+In dieser Station reichen die Lernenden ihr Lernprodukt (${s.result || m.produkt}) in ${toolName(t)} ein und erhalten ein kriteriengeleitetes Feedback. ${TOOL_INFO[toolName(t)] || ""}
 - Der Lernpfad zeigt unter dieser Station automatisch einen Abschnitt „Aufgabe bearbeiten und Feedback erhalten“ mit einem Button an, der ${toolName(t)} in einem neuen Tab öffnet. Baue selbst keinen Link und keinen iframe zu ${toolName(t)} ein und erfinde keinen Link.
 - Erkläre den Ablauf knapp: Aufgabe über den Button öffnen, Text einreichen, Feedback lesen, im Feedback-Tool überarbeiten, danach zum Lernpfad zurückkehren.
 - Erstelle keinen eigenen Überarbeitungsauftrag. Die Überarbeitung wird in ${toolName(t)} gesteuert.${t.abgabe === "als PDF aus der HTML-Station" ? `
@@ -558,16 +564,50 @@ function renderCheck1(){
 /* ================= SCHRITT 2: Planung & Stationsliste ================= */
 $("planText").value = state.plan || "";
 $("planText").addEventListener("input", e => { state.plan = e.target.value; save(); });
+/* Ausführliche Abschnitte „# Station 3: Titel“ aus der Planung lesen */
+function planSections(text){
+  const t = String(text||"").replace(/\r\n/g, "\n");
+  const re = /^#{1,4}\s*(?:\*\*)?\s*Station\s*(\d+)\s*[:.\-–)]?\s*(.*?)(?:\*\*)?\s*$/gim;
+  const heads = []; let m;
+  while ((m = re.exec(t))) heads.push({ num:+m[1], title:m[2].trim(), start:m.index, bodyStart:m.index + m[0].length });
+  return heads.map((h, i) => {
+    const end = i + 1 < heads.length ? heads[i+1].start : t.length;
+    let body = t.slice(h.bodyStart, end);
+    const cut = body.search(/^#{1,2}\s+\S/m); // nächste große Überschrift (z. B. „# Zeitprüfung“)
+    if (cut > 0) body = body.slice(0, cut);
+    body = body.replace(/\n-{3,}\s*$/,"").trim();
+    const field = name => {
+      const r = new RegExp("\\*\\*" + name + "[^*]*?:?\\*\\*:?[ \\t]*([^\\n]*)(?:\\n[ \\t]*([^\\n#*][^\\n]*))?", "i").exec(body);
+      return r ? ((r[1] || "").trim() || (r[2] || "").trim()).replace(/\*\*/g, "") : "";
+    };
+    return { num:h.num, title:h.title.replace(/\*\*/g,""), body, phase:field("Funktion"), action:field("Lernhandlung"),
+             result:field("Erwartetes Ergebnis"), minutes:(field("Ungefähre Bearbeitungszeit") || field("Bearbeitungszeit")).replace(/[^\d–\-]/g,""),
+             inter:field("Sinnvolle Interaktion") };
+  });
+}
 function parsePlan(text){
   const out = [];
   String(text||"").split(/\r?\n/).forEach(raw => {
-    let l = raw.trim().replace(/^[-*•>]\s*/, "").replace(/^\|/, "").replace(/\*\*/g, "").trim();
-    if (!/^STATION\s*\|/i.test(l)) return;
-    const p = l.split("|").map(x => x.trim());
+    let l = raw.trim().replace(/^[-*•>]\s*/, "").replace(/^\|/, "").replace(/\*\*|`/g, "").trim();
+    if (!/^STATION\s*\d*\s*[:.)]?\s*\|/i.test(l)) return;
+    const p = l.replace(/\|\s*$/, "").split("|").map(x => x.trim());
     if (p.length < 3) return;
     if (/^titel$/i.test(p[1])) return; // Kopfzeile
-    out.push({ title:p[1]||"", phase:p[2]||"", action:p[3]||"", result:p[4]||"", minutes:(p[5]||"").replace(/[^\d–\-]/g,""), fb:/^ja/i.test(p[6]||"") });
+    out.push({ title:p[1]||"", phase:p[2]||"", action:p[3]||"", result:p[4]||"", minutes:(p[5]||"").replace(/[^\d–\-]/g,""),
+               fb:/\bja\b|\byes\b/i.test(p[6]||"") });
   });
+  const secs = planSections(text);
+  if (!out.length) secs.forEach(s => out.push({ title:s.title, phase:s.phase, action:s.action, result:s.result, minutes:s.minutes, fb:false }));
+  // Ausführliche Beschreibung als Inhalt für den Stationsprompt übernehmen
+  out.forEach((r, i) => {
+    const s = secs.find(x => x.num === i + 1) || secs.find(x => x.title && x.title.toLowerCase() === r.title.toLowerCase());
+    if (s){ r.content = s.body; if (s.inter) r.inter = s.inter; }
+  });
+  if (!out.some(r => r.fb)){
+    const tool = (M().feedbacktool || "").toLowerCase();
+    const k = tool && !tool.startsWith("kein") ? out.findIndex(r => (r.title + " " + r.phase + " " + r.action).toLowerCase().includes(tool)) : -1;
+    if (k >= 0) out[k].fb = true;
+  }
   return out;
 }
 $("btnParse").onclick = () => {
