@@ -6,3 +6,4 @@ Kleine HTML-Werkzeuge für Fortbildungen und Unterricht, veröffentlicht über G
 |---|---|
 | Der Algorithmus entscheidet | https://teacherette-susa.github.io/tools/algorithmus/ |
 | HTML zu SCORM | https://teacherette-susa.github.io/tools/html-zu-scorm/ |
+| Lernpfad-Baukasten | https://teacherette-susa.github.io/tools/lernpfad/ |

@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lernpfad-Baukasten</title>
+<style>
+:root{
+  --bg:#f6f5f2; --panel:#ffffff; --text:#1d1d1f; --muted:#5f6368; --line:#dcdad5;
+  --accent:#2f5f8a; --accent-text:#ffffff; --soft:#e8eff6; --warn-bg:#fff4e0; --warn:#8a5a00;
+  --ok-bg:#e7f3ea; --ok:#22693a; --code-bg:#fbfbfa; --fb:#6a3d9a; --fb-soft:#f1eaf8; --danger:#b3261e;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16181a; --panel:#1f2224; --text:#ececec; --muted:#a3a7ab; --line:#33373a;
+    --accent:#7fb2e0; --accent-text:#0d1720; --soft:#1e2a36; --warn-bg:#3a2e17; --warn:#f2c46b;
+    --ok-bg:#1c3324; --ok:#8fd6a3; --code-bg:#181a1c; --fb:#c9a6ef; --fb-soft:#2b2236; --danger:#ff8a80;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16181a; --panel:#1f2224; --text:#ececec; --muted:#a3a7ab; --line:#33373a;
+  --accent:#7fb2e0; --accent-text:#0d1720; --soft:#1e2a36; --warn-bg:#3a2e17; --warn:#f2c46b;
+  --ok-bg:#1c3324; --ok:#8fd6a3; --code-bg:#181a1c; --fb:#c9a6ef; --fb-soft:#2b2236; --danger:#ff8a80;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 56px}
+h1{font-size:1.6rem;margin:0 0 4px}
+.lead{color:var(--muted);margin:0 0 18px;max-width:780px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+@media (max-width:720px){.steps{grid-template-columns:1fr 1fr}}
+.step{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px;text-align:left;cursor:pointer;font:inherit;color:var(--text)}
+.step b{display:block;font-size:.78rem;color:var(--muted);font-weight:600}
+.step span{font-weight:600}
+.step[aria-selected="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--soft)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.panel h2{font-size:1.15rem;margin:0 0 6px}
+.panel > p.intro{color:var(--muted);margin:0 0 14px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){.cols{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:10px;padding:14px;background:var(--code-bg)}
+.card h3{font-size:1rem;margin:0 0 6px}
+.card p{margin:0 0 8px}
+label{display:block;font-weight:600;font-size:.88rem;margin:12px 0 4px}
+.hint{font-weight:400;color:var(--muted);font-size:.82rem}
+input[type=text],input[type=url],select,textarea{
+  width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
+  background:var(--panel);color:var(--text);font:inherit}
+textarea{font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;min-height:160px;resize:vertical}
+textarea.prose{font:inherit;min-height:70px}
+input:focus,select:focus,textarea:focus,button:focus-visible,a.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button,a.btn{font:inherit;font-weight:600;border-radius:8px;padding:9px 14px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--text);text-decoration:none;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+button.primary,a.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+a.btn.fb{border-color:var(--fb);color:var(--fb);background:var(--fb-soft)}
+button.small{font-size:.82rem;padding:5px 10px;font-weight:500}
+button.danger{color:var(--danger)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.launch{display:flex;flex-direction:column;gap:6px}
+.launch a.btn{font-size:1.02rem;padding:12px 16px}
+.badge{display:inline-block;font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--accent)}
+.badge.pay{background:var(--warn-bg);color:var(--warn)}
+.badge.free{background:var(--ok-bg);color:var(--ok)}
+.msg{border-radius:8px;padding:10px 12px;margin-top:12px;font-size:.88rem}
+.msg.warn{background:var(--warn-bg);color:var(--warn)}
+.msg.ok{background:var(--ok-bg);color:var(--ok)}
+ul.tight{margin:4px 0 0;padding-left:18px}
+.copybox{border:1px dashed var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;background:var(--panel)}
+.copybox p{margin:0 0 6px;font-size:.9rem}
+.station{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:12px;background:var(--code-bg)}
+.station-head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.station-head .num{font-weight:700;color:var(--accent);min-width:2.2em}
+.station-head input{flex:1 1 220px}
+.station-head select{flex:0 1 220px}
+.station .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:720px){.station .grid2{grid-template-columns:1fr}}
+.linkrow{display:grid;grid-template-columns:140px 1fr 1.4fr auto;gap:6px;margin-bottom:6px}
+@media (max-width:720px){.linkrow{grid-template-columns:1fr}}
+.mode{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0 14px}
+.mode label{font-weight:500;margin:0;display:flex;gap:6px;align-items:center}
+iframe.preview{width:100%;height:560px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.checks label{font-weight:400;display:flex;gap:8px;margin:4px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.actions button{flex:1 1 220px}
+.actions.col{flex-direction:column}
+.actions.col button{flex:0 0 auto}
+.footer-nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px}
+.hidden{display:none !important}
+code{background:var(--soft);padding:1px 5px;border-radius:4px;font-size:.85em}
+.phases{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.phases span{font-size:.78rem;border:1px solid var(--line);border-radius:99px;padding:2px 8px;background:var(--panel)}
+.phases span.fbp{border-color:var(--fb);color:var(--fb)}
+</style>
+</head>
+<body>
+<main>
+  <h1>Lernpfad-Baukasten</h1>
+  <p class="lead">Begleiter zum Workflow mit <b>Pfadie</b> in AIS.chat. Geplant und generiert wird in Pfadie. Hier sammeln Sie die Ergebnisse, bauen die Feedback-Aufgaben aus PEER oder FelloFish ein und laden den fertigen Lernpfad für Moodle, LOGINEO.LMS oder TaskCards herunter. Alles bleibt in Ihrem Browser.</p>
+
+  <div class="steps" role="tablist">
+    <button class="step" role="tab" data-step="1" aria-selected="true"><b>Schritt 1</b><span>Mit Pfadie planen</span></button>
+    <button class="step" role="tab" data-step="2" aria-selected="false"><b>Schritt 2</b><span>Feedback-Aufgaben</span></button>
+    <button class="step" role="tab" data-step="3" aria-selected="false"><b>Schritt 3</b><span>Stationen einfügen</span></button>
+    <button class="step" role="tab" data-step="4" aria-selected="false"><b>Schritt 4</b><span>Prüfen &amp; herunterladen</span></button>
+  </div>
+
+  <!-- SCHRITT 1 -->
+  <section class="panel" data-panel="1">
+    <h2>1 · Lernpfad mit Pfadie planen</h2>
+    <p class="intro">Öffnen Sie Pfadie und planen Sie dort Lernziel, Lernprodukt und Stationen. Pfadie fragt fehlende Informationen selbst nach. Tragen Sie die Eckdaten anschließend hier ein: Sie erscheinen im fertigen Lernpfad auf der Startseite.</p>
+    <div class="cols">
+      <div class="card">
+        <h3>Pfadie öffnen</h3>
+        <div class="launch">
+          <a class="btn primary" href="https://url.nrw/Pfadie" target="_blank" rel="noopener">Pfadie in AIS.chat öffnen ↗</a>
+        </div>
+        <p class="hint" style="margin-top:8px">Anmeldung in AIS.chat erforderlich. Noch kein Zugang? <a href="https://www.lernen-digital.nrw/zugang-zu-AIS.chat" target="_blank" rel="noopener">Zugang zu AIS.chat</a></p>
+        <p style="margin-top:10px"><b>Tipp:</b> Nutzen Sie die Promptvorschläge in Pfadie. Lassen Sie sich dort auch gleich die Aufgaben für das formative Assessment erstellen (Schritt 2).</p>
+        <p class="hint">Systemprompt, Promptbausteine und technische Hinweise: <a href="https://url.nrw/LP_Material" target="_blank" rel="noopener">Material-TaskCard</a></p>
+        <label>Die Phasen eines Lernpfads</label>
+        <div class="phases" id="phaseChips"></div>
+        <p class="hint" style="margin-top:6px">Nicht jeder Pfad braucht alle Phasen als eigene Station, aber jede Station braucht eine klare didaktische Funktion.</p>
+      </div>
+      <div class="card">
+        <h3>Eckdaten aus Pfadie übernehmen</h3>
+        <label for="lpTitle">Titel des Lernpfads</label>
+        <input type="text" id="lpTitle" placeholder="z. B. Argumentieren mit Belegen">
+        <label for="lpAudience">Zielgruppe <span class="hint">(optional)</span></label>
+        <input type="text" id="lpAudience" placeholder="z. B. Klasse 8, Deutsch">
+        <label for="lpGoal">Lernziel</label>
+        <textarea id="lpGoal" class="prose" placeholder="Am Ende können Sie …"></textarea>
+        <label for="lpProduct">Lernprodukt</label>
+        <textarea id="lpProduct" class="prose" placeholder="Was erstellen die Lernenden? z. B. eine begründete Stellungnahme"></textarea>
+      </div>
+    </div>
+    <div class="footer-nav"><span></span><button class="primary" data-goto="2">Weiter zu Schritt 2 →</button></div>
+  </section>
+
+  <!-- SCHRITT 2 -->
+  <section class="panel hidden" data-panel="2">
+    <h2>2 · Feedback-Aufgaben für das formative Assessment</h2>
+    <p class="intro">Legen Sie die von Pfadie erstellten Aufgaben in PEER oder FelloFish an und speichern Sie hier die Links. Das geschieht <b>vor</b> dem Generieren der Stationen, weil die Links in die Stationen eingebaut werden.</p>
+    <div class="cols">
+      <div class="card">
+        <h3>PEER <span class="badge free">kostenfrei</span></h3>
+        <p>Vorgegebene Aufsatztypen, Aufgabe und Material in einem Feld, Kriterien optional anpassbar.</p>
+        <div class="launch"><a class="btn fb" href="https://url.nrw/PEER" target="_blank" rel="noopener">PEER öffnen ↗</a></div>
+      </div>
+      <div class="card">
+        <h3>FelloFish <span class="badge pay">kostenpflichtiger Account notwendig</span></h3>
+        <p>Frei formulierbare Textart, getrennte Felder für Aufgabe und Material, individuelle und gewichtete Kriterien.</p>
+        <div class="launch"><a class="btn fb" href="https://url.nrw/FF" target="_blank" rel="noopener">FelloFish öffnen ↗</a></div>
+        <p class="hint" style="margin-top:8px">Hinweis: Für FelloFish ist ein kostenpflichtiger Account erforderlich.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Links zu den Feedback-Aufgaben</h3>
+      <p class="hint">Den Link zur Aufgabe kopieren Sie nach dem Anlegen in PEER bzw. FelloFish. In Schritt 3 können Sie jeden Link einer Station zuordnen.</p>
+      <div id="fbLinks"></div>
+      <button class="small" id="addLink">+ Link hinzufügen</button>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Kurz-Check: Ist die Aufgabe formativ?</h3>
+      <ul class="tight">
+        <li>Die Kriterien sind <b>lernzielbezogen, beobachtbar und eindeutig</b> (z. B. „Das Urteil wird mit mindestens zwei fachlichen Kriterien begründet.“).</li>
+        <li>Nach dem Feedback folgt ein <b>Überarbeitungsauftrag</b>: Er greift ein Kriterium auf, verlangt eine konkrete Veränderung und führt zu einer zweiten Fassung.</li>
+      </ul>
+    </div>
+    <div class="footer-nav"><button data-goto="1">← Zurück</button><button class="primary" data-goto="3">Weiter zu Schritt 3 →</button></div>
+  </section>
+
+  <!-- SCHRITT 3 -->
+  <section class="panel hidden" data-panel="3">
+    <h2>3 · Stationen aus Pfadie einfügen</h2>
+    <p class="intro">Lassen Sie Pfadie die interaktiven Stationen generieren und kopieren Sie den HTML-Code hierher. Wenn Pfadie den Lernpfad bereits komplett zusammengefügt hat, wählen Sie „Fertiger Lernpfad aus Pfadie“.</p>
+    <div class="mode">
+      <label><input type="radio" name="mode" value="stations" checked> Einzelne Stationen zusammenstellen</label>
+      <label><input type="radio" name="mode" value="full"> Fertiger Lernpfad aus Pfadie</label>
+    </div>
+
+    <div id="modeStations">
+      <div class="copybox">
+        <p><b>Formulierungshilfe für Pfadie</b> <span class="hint">(zum Kopieren, nicht zum Prompten hier)</span></p>
+        <p id="askStations">Bitte gib jede Station als eigenen, vollständigen HTML-Baustein aus. Baue in die Feedback-Station keinen eigenen Link-Button ein, den ergänze ich selbst.</p>
+        <button class="small" data-copy="askStations">Text kopieren</button>
+      </div>
+      <div id="stations" style="margin-top:14px"></div>
+      <div class="row"><button id="addStation">+ Station hinzufügen</button></div>
+    </div>
+
+    <div id="modeFull" class="hidden">
+      <label for="fullCode">HTML-Code des fertigen Lernpfads</label>
+      <textarea id="fullCode" spellcheck="false" style="min-height:320px" placeholder="Kompletten Code aus Pfadie einfügen (von <!DOCTYPE html> bis </html>) …"></textarea>
+      <p class="hint">Feedback-Links sollten in diesem Fall bereits von Pfadie eingebaut sein.</p>
+    </div>
+    <div class="footer-nav"><button data-goto="2">← Zurück</button><button class="primary" data-goto="4">Weiter zu Schritt 4 →</button></div>
+  </section>
+
+  <!-- SCHRITT 4 -->
+  <section class="panel hidden" data-panel="4">
+    <h2>4 · Prüfen und herunterladen</h2>
+    <p class="intro">Testen Sie den Lernpfad aus Sicht der Lernenden. Wenn etwas nicht passt, passen Sie es in Pfadie an und fügen den neuen Code in Schritt 3 ein.</p>
+    <div id="problems"></div>
+    <div class="row" style="margin:10px 0"><button class="small" id="refresh">Vorschau aktualisieren</button></div>
+    <iframe class="preview" id="preview" title="Vorschau des Lernpfads"></iframe>
+
+    <div class="cols" style="margin-top:16px">
+      <div class="card checks">
+        <h3>Prüfschleife: Qualitätsmerkmale</h3>
+        <label><input type="checkbox"> Das Lernziel ist sichtbar.</label>
+        <label><input type="checkbox"> Die Reihenfolge ist klar.</label>
+        <label><input type="checkbox"> Jede Station löst eine aktive Verarbeitung aus.</label>
+        <label><input type="checkbox"> Das Lernprodukt ist erkennbar.</label>
+        <label><input type="checkbox"> Die Kriterien sind transparent.</label>
+        <label><input type="checkbox"> Das Feedback ist nutzbar.</label>
+        <label><input type="checkbox"> Es gibt eine konkrete Überarbeitung.</label>
+      </div>
+      <div class="card">
+        <h3>Herunterladen</h3>
+        <div class="actions col" style="margin-top:4px">
+          <button class="primary" id="dlScorm">SCORM-Paket für Moodle / LOGINEO.LMS (.zip)</button>
+          <button id="dlHtml">HTML-Datei (.html) – auch für TaskCards</button>
+        </div>
+        <div id="result"></div>
+        <p class="hint" style="margin-top:10px"><b>Moodle / LOGINEO.LMS:</b> Aktivität „Lernpaket“ anlegen und die .zip-Datei hochladen. Abgeschlossen gilt der Pfad, sobald die letzte Seite erreicht ist.<br><b>TaskCards:</b> Die .html-Datei als Anhang auf eine Karte laden. Lernende öffnen den Pfad ohne Login.</p>
+      </div>
+    </div>
+    <div class="footer-nav"><button data-goto="3">← Zurück</button><button class="small danger" id="reset">Alles löschen und neu beginnen</button></div>
+  </section>
+</main>
+
+<script>
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
+const PHASES = ["Orientierung","Vorwissen aktivieren","Input","Verarbeitung","Lernprodukt erstellen","Feedback erhalten","Überarbeiten","Transfer"];
+const STORE = "lernpfad-baukasten-v1";
+
+let state = {
+  title:"", audience:"", goal:"", product:"", mode:"stations", full:"",
+  links:[{tool:"PEER", label:"", url:""}],
+  stations:[{title:"", phase:"Orientierung", html:"", link:-1}]
+};
+try { const s = JSON.parse(localStorage.getItem(STORE) || "null"); if (s && s.stations) state = Object.assign(state, s); } catch(e){}
+function save(){ try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(e){} }
+
+function esc(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function slug(s){
+  return (s||"").trim().toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss")
+    .normalize("NFKD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60) || "lernpfad";
+}
+
+/* ---------- Navigation ---------- */
+function go(n){
+  document.querySelectorAll(".step").forEach(b => b.setAttribute("aria-selected", b.dataset.step == n));
+  document.querySelectorAll("[data-panel]").forEach(p => p.classList.toggle("hidden", p.dataset.panel != n));
+  if (n == 4) refreshPreview();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+document.querySelectorAll(".step").forEach(b => b.onclick = () => go(b.dataset.step));
+document.querySelectorAll("[data-goto]").forEach(b => b.onclick = () => go(b.dataset.goto));
+document.querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => {
+  const t = $(b.dataset.copy).textContent;
+  try { await navigator.clipboard.writeText(t); b.textContent = "Kopiert ✓"; } catch(e){ b.textContent = "Bitte manuell markieren"; }
+  setTimeout(() => b.textContent = "Text kopieren", 1800);
+});
+$("phaseChips").innerHTML = PHASES.map(p => `<span class="${/Feedback|Überarb/.test(p)?"fbp":""}">${p}</span>`).join("");
+
+/* ---------- Schritt 1 ---------- */
+[["lpTitle","title"],["lpAudience","audience"],["lpGoal","goal"],["lpProduct","product"]].forEach(([id,k]) => {
+  $(id).value = state[k] || "";
+  $(id).addEventListener("input", e => { state[k] = e.target.value; save(); });
+});
+
+/* ---------- Schritt 2: Links ---------- */
+function renderLinks(){
+  $("fbLinks").innerHTML = state.links.map((l,i) => `
+    <div class="linkrow" data-i="${i}">
+      <select data-k="tool" aria-label="Tool">${["PEER","FelloFish","anderes Tool"].map(t=>`<option ${l.tool===t?"selected":""}>${t}</option>`).join("")}</select>
+      <input type="text" data-k="label" value="${esc(l.label)}" placeholder="Bezeichnung, z. B. Stellungnahme – Feedback" aria-label="Bezeichnung">
+      <input type="url" data-k="url" value="${esc(l.url)}" placeholder="https://…" aria-label="Link">
+      <button class="small danger" data-del="${i}" aria-label="Link entfernen">✕</button>
+    </div>`).join("");
+  $("fbLinks").querySelectorAll(".linkrow").forEach(row => {
+    const i = +row.dataset.i;
+    row.querySelectorAll("[data-k]").forEach(inp => inp.addEventListener("input", e => { state.links[i][e.target.dataset.k] = e.target.value; save(); renderStationLinkOptions(); }));
+  });
+  $("fbLinks").querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
+    const i = +b.dataset.del; state.links.splice(i,1);
+    state.stations.forEach(s => { if (s.link === i) s.link = -1; else if (s.link > i) s.link--; });
+    save(); renderLinks(); renderStations();
+  });
+}
+$("addLink").onclick = () => { state.links.push({tool:"PEER", label:"", url:""}); save(); renderLinks(); renderStationLinkOptions(); };
+function linkName(l, i){ return (l.label || l.tool + " – Aufgabe " + (i+1)) + (l.url ? "" : " (Link fehlt)"); }
+
+/* ---------- Schritt 3: Stationen ---------- */
+function linkOptions(sel){
+  return `<option value="-1">keine</option>` + state.links.map((l,i)=>`<option value="${i}" ${sel===i?"selected":""}>${esc(linkName(l,i))}</option>`).join("");
+}
+function renderStationLinkOptions(){
+  document.querySelectorAll("select[data-k=link]").forEach(s => { const i = +s.closest(".station").dataset.i; s.innerHTML = linkOptions(state.stations[i].link); });
+}
+function renderStations(){
+  $("stations").innerHTML = state.stations.map((s,i) => `
+    <div class="station" data-i="${i}">
+      <div class="station-head">
+        <span class="num">${i+1}.</span>
+        <input type="text" data-k="title" value="${esc(s.title)}" placeholder="Titel der Station" aria-label="Titel der Station ${i+1}">
+        <select data-k="phase" aria-label="Phase">${PHASES.map(p=>`<option ${s.phase===p?"selected":""}>${p}</option>`).join("")}</select>
+        <button class="small" data-act="up" ${i===0?"disabled":""} aria-label="nach oben">↑</button>
+        <button class="small" data-act="down" ${i===state.stations.length-1?"disabled":""} aria-label="nach unten">↓</button>
+        <button class="small danger" data-act="del" aria-label="Station entfernen">✕</button>
+      </div>
+      <label>HTML-Code der Station aus Pfadie</label>
+      <textarea data-k="html" spellcheck="false" placeholder="Code der Station einfügen …">${esc(s.html)}</textarea>
+      <div class="grid2">
+        <div>
+          <label>Feedback-Aufgabe unter dieser Station <span class="hint">(aus Schritt 2)</span></label>
+          <select data-k="link">${linkOptions(s.link)}</select>
+        </div>
+        <div>
+          <label>Überarbeitungsauftrag <span class="hint">(optional, erscheint beim Feedback-Button)</span></label>
+          <input type="text" data-k="revise" value="${esc(s.revise||"")}" placeholder="z. B. Überarbeiten Sie Ihre Begründung anhand des Feedbacks.">
+        </div>
+      </div>
+    </div>`).join("");
+  $("stations").querySelectorAll(".station").forEach(el => {
+    const i = +el.dataset.i;
+    el.querySelectorAll("[data-k]").forEach(inp => {
+      const ev = inp.tagName === "SELECT" ? "change" : "input";
+      inp.addEventListener(ev, e => {
+        const k = e.target.dataset.k;
+        state.stations[i][k] = k === "link" ? +e.target.value : e.target.value;
+        if (k === "phase" && /Feedback|Überarb/.test(e.target.value) && state.stations[i].link === -1 && state.links.length === 1) {
+          state.stations[i].link = 0; renderStationLinkOptions();
+        }
+        save();
+      });
+    });
+    el.querySelectorAll("[data-act]").forEach(b => b.onclick = () => {
+      const a = b.dataset.act, st = state.stations;
+      if (a === "del"){ if (st.length > 1 || confirm("Letzte Station leeren?")) { st.splice(i,1); if (!st.length) st.push({title:"",phase:"Orientierung",html:"",link:-1}); } }
+      if (a === "up" && i > 0) [st[i-1], st[i]] = [st[i], st[i-1]];
+      if (a === "down" && i < st.length-1) [st[i+1], st[i]] = [st[i], st[i+1]];
+      save(); renderStations();
+    });
+  });
+}
+$("addStation").onclick = () => {
+  const last = state.stations[state.stations.length-1];
+  const next = PHASES[Math.min(PHASES.length-1, PHASES.indexOf(last ? last.phase : "") + 1)] || "Orientierung";
+  state.stations.push({title:"", phase:next, html:"", link:-1}); save(); renderStations();
+  const all = $("stations").querySelectorAll(".station"); all[all.length-1].querySelector("input").focus();
+};
+function setMode(m){
+  state.mode = m; save();
+  document.querySelectorAll("input[name=mode]").forEach(r => r.checked = r.value === m);
+  $("modeStations").classList.toggle("hidden", m !== "stations");
+  $("modeFull").classList.toggle("hidden", m !== "full");
+}
+document.querySelectorAll("input[name=mode]").forEach(r => r.onchange = () => setMode(r.value));
+$("fullCode").value = state.full || "";
+$("fullCode").addEventListener("input", e => { state.full = e.target.value; save(); });
+
+/* ---------- Lernpfad zusammenbauen ---------- */
+function stationDoc(html){
+  let h = (html || "").trim();
+  if (!/<html[\s>]/i.test(h)) {
+    h = `<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><style>body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55;margin:16px;color:#1d1d1f}</style></head><body>${h}</body></html>`;
+  }
+  if (!/<meta[^>]+charset/i.test(h)) h = h.replace(/<head([^>]*)>/i, '<head$1><meta charset="utf-8">');
+  // Links in Stationen in neuem Tab öffnen (PEER/FelloFish lassen sich nicht einbetten)
+  if (!/<base\s/i.test(h)) h = /<head[\s>]/i.test(h) ? h.replace(/<head([^>]*)>/i, '<head$1><base target="_blank">') : h.replace(/<html([^>]*)>/i, '<html$1><head><base target="_blank"></head>');
+  return h;
+}
+function buildPath(){
+  const data = {
+    title: state.title.trim() || "Lernpfad",
+    audience: state.audience.trim(), goal: state.goal.trim(), product: state.product.trim(),
+    stations: state.stations.filter(s => s.html.trim()).map((s,i) => {
+      const l = s.link >= 0 ? state.links[s.link] : null;
+      return { title: s.title.trim() || ("Station " + (i+1)), phase: s.phase, doc: stationDoc(s.html),
+               fb: l && l.url.trim() ? { tool: l.tool, label: l.label.trim(), url: l.url.trim(), revise: (s.revise||"").trim() } : null };
+    })
+  };
+  const json = JSON.stringify(data).replace(/</g,"\\u003c").replace(new RegExp(String.fromCharCode(0x2028),"g"),"\\u2028").replace(new RegExp(String.fromCharCode(0x2029),"g"),"\\u2029");
+  return `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(data.title)}</title>
+<style>
+:root{--bg:#f5f6f8;--panel:#fff;--text:#1d1d1f;--muted:#5f6368;--line:#dde1e6;--accent:#2f5f8a;--accent-text:#fff;--fb:#6a3d9a;--fb-soft:#f3edf9}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 40px}
+header h1{font-size:1.45rem;margin:0 0 10px}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar div{height:100%;background:var(--accent);width:0;transition:width .3s}
+.pos{font-size:.85rem;color:var(--muted);margin:6px 0 16px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.phase{display:inline-block;font-size:.78rem;font-weight:600;color:var(--accent);background:#e8eff6;border-radius:99px;padding:2px 10px;margin-bottom:6px}
+h2{font-size:1.2rem;margin:0 0 12px}
+iframe{width:100%;min-height:320px;border:0;display:block}
+.fb{margin-top:14px;border:1px solid var(--fb);background:var(--fb-soft);border-radius:10px;padding:14px}
+.fb p{margin:0 0 10px}
+.btn{font:inherit;font-weight:600;border-radius:8px;padding:10px 16px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--text);text-decoration:none;display:inline-block}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+.btn.fbb{background:var(--fb);border-color:var(--fb);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+nav{display:flex;justify-content:space-between;gap:8px;margin-top:16px}
+ol.toc{padding-left:22px} ol.toc li{margin:4px 0}
+.goal{background:#e8eff6;border-radius:10px;padding:12px 14px;margin:0 0 12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="lpT"></h1>
+    <div class="bar" aria-hidden="true"><div id="lpBar"></div></div>
+    <div class="pos"><span id="lpPos" aria-live="polite"></span><span id="lpPhaseSmall"></span></div>
+  </header>
+  <section class="card" id="lpCard"></section>
+  <nav><button class="btn" id="lpPrev">← Zurück</button><button class="btn primary" id="lpNext">Weiter →</button></nav>
+</div>
+<script>
+(function(){
+var LP = ${json};
+var n = LP.stations.length, cur = 0, KEY = "lernpfad:" + LP.title;
+try { var s = parseInt(localStorage.getItem(KEY), 10); if (s >= 0 && s <= n + 1) cur = s; } catch(e){}
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function br(s){ return esc(s).replace(/\\n/g,"<br>"); }
+var card = document.getElementById("lpCard");
+document.getElementById("lpT").textContent = LP.title;
+
+function fit(f){
+  try {
+    var d = f.contentDocument; if (!d || !d.body) return;
+    var adjust = function(){
+      var cs = d.defaultView.getComputedStyle(d.body);
+      var h = Math.ceil(d.body.getBoundingClientRect().height + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom));
+      h = Math.min(Math.max(h, 320), 8000);
+      if (Math.abs(h - f.offsetHeight) > 2) f.style.height = h + "px";
+    };
+    adjust();
+    if (window.ResizeObserver) new ResizeObserver(adjust).observe(d.body);
+    setTimeout(adjust, 400); setTimeout(adjust, 1500);
+  } catch(e){}
+}
+
+function render(){
+  var pct = n ? Math.round(Math.min(cur, n) / n * 100) : 0;
+  document.getElementById("lpBar").style.width = (cur > n ? 100 : pct) + "%";
+  var pos = document.getElementById("lpPos"), ph = document.getElementById("lpPhaseSmall");
+  var prev = document.getElementById("lpPrev"), next = document.getElementById("lpNext");
+  prev.disabled = cur === 0; next.classList.toggle("hidden", false);
+  if (cur === 0){
+    pos.textContent = "Start"; ph.textContent = n + " Stationen";
+    card.innerHTML = (LP.audience ? '<span class="phase">' + esc(LP.audience) + '</span>' : '') +
+      '<h2>Ihr Lernpfad</h2>' +
+      (LP.goal ? '<div class="goal"><b>Lernziel</b><br>' + br(LP.goal) + '</div>' : '') +
+      (LP.product ? '<p><b>Ihr Lernprodukt:</b> ' + br(LP.product) + '</p>' : '') +
+      '<p><b>So gehen Sie vor:</b> Bearbeiten Sie die Stationen der Reihe nach.</p><ol class="toc">' +
+      LP.stations.map(function(s){ return '<li>' + esc(s.title) + ' <span style="color:#5f6368">(' + esc(s.phase) + ')</span></li>'; }).join("") + '</ol>';
+    next.textContent = "Los geht’s →"; next.disabled = n === 0;
+  } else if (cur <= n){
+    var s = LP.stations[cur - 1];
+    pos.textContent = "Station " + cur + " von " + n; ph.textContent = s.phase;
+    card.innerHTML = '<span class="phase">' + esc(s.phase) + '</span><h2>' + esc(s.title) + '</h2>';
+    var f = document.createElement("iframe"); f.title = s.title;
+    f.addEventListener("load", function(){ fit(f); });
+    f.srcdoc = s.doc; card.appendChild(f);
+    if (s.fb){
+      var box = document.createElement("div"); box.className = "fb";
+      box.innerHTML = '<p><b>Feedback einholen</b>' + (s.fb.label ? ': ' + esc(s.fb.label) : '') + '<br>Laden Sie Ihr Lernprodukt hoch und lesen Sie das Feedback genau.</p>' +
+        '<a class="btn fbb" target="_blank" rel="noopener" href="' + esc(s.fb.url) + '">Zur Feedback-Aufgabe in ' + esc(s.fb.tool === "anderes Tool" ? "neuem Tab" : s.fb.tool) + ' ↗</a>' +
+        (s.fb.revise ? '<p style="margin:12px 0 0"><b>Danach:</b> ' + br(s.fb.revise) + '</p>' : '');
+      card.appendChild(box);
+    }
+    next.textContent = cur === n ? "Abschließen ✓" : "Weiter →"; next.disabled = false;
+  } else {
+    pos.textContent = "Geschafft"; ph.textContent = "";
+    card.innerHTML = '<h2>Geschafft!</h2><p>Sie haben alle Stationen bearbeitet.</p>' +
+      (LP.goal ? '<div class="goal"><b>Prüfen Sie selbst:</b> Erreichen Sie das Lernziel?<br>' + br(LP.goal) + '</div>' : '') +
+      '<p>Über „Zurück“ können Sie jede Station noch einmal öffnen.</p>';
+    next.classList.add("hidden");
+    if (window.SCORM) SCORM.complete();
+  }
+  try { localStorage.setItem(KEY, String(cur)); } catch(e){}
+}
+document.getElementById("lpPrev").onclick = function(){ if (cur > 0){ cur--; render(); window.scrollTo(0,0); } };
+document.getElementById("lpNext").onclick = function(){ if (cur <= n){ cur++; render(); window.scrollTo(0,0); } };
+var st = document.createElement("style"); st.textContent = ".hidden{visibility:hidden}"; document.head.appendChild(st);
+render();
+})();
+<\/script>
+</body>
+</html>`;
+}
+function currentOutput(){
+  if (state.mode === "full"){
+    let h = (state.full || "").trim();
+    if (!h) return "";
+    if (!/<html[\s>]/i.test(h)) h = `<!DOCTYPE html>\n<html lang="de">\n<head>\n<meta charset="utf-8">\n<title>${esc(state.title||"Lernpfad")}</title>\n</head>\n<body>\n${h}\n</body>\n</html>`;
+    if (!/^<!doctype/i.test(h)) h = "<!DOCTYPE html>\n" + h;
+    if (!/<head[\s>]/i.test(h)) h = h.replace(/<html([^>]*)>/i, "<html$1>\n<head></head>");
+    if (!/<meta[^>]+charset/i.test(h)) h = h.replace(/<head([^>]*)>/i, '<head$1>\n<meta charset="utf-8">');
+    return h;
+  }
+  return state.stations.some(s => s.html.trim()) ? buildPath() : "";
+}
+
+/* ---------- Prüfung ---------- */
+function problems(){
+  const p = [];
+  if (!state.title.trim()) p.push("Noch kein Titel (Schritt 1).");
+  if (state.mode === "full"){
+    if (!state.full.trim()) p.push("Noch kein Code des fertigen Lernpfads eingefügt (Schritt 3).");
+    return p;
+  }
+  if (!state.goal.trim()) p.push("Kein Lernziel eingetragen – es erscheint sonst nicht auf der Startseite (Schritt 1).");
+  const filled = state.stations.filter(s => s.html.trim());
+  if (!filled.length) p.push("Noch keine Station mit Code (Schritt 3).");
+  state.stations.forEach((s,i) => { if (!s.html.trim() && (s.title.trim() || state.stations.length > 1)) p.push(`Station ${i+1}${s.title?` „${esc(s.title)}“`:""} hat keinen Code und wird ausgelassen.`); });
+  const fbUsed = state.stations.some(s => s.link >= 0);
+  if (!fbUsed) p.push("Keiner Station ist eine Feedback-Aufgabe zugeordnet. Für formatives Assessment braucht der Pfad Feedback und Überarbeitung.");
+  state.stations.forEach((s,i) => { if (s.link >= 0 && !(state.links[s.link]?.url||"").trim()) p.push(`Bei Station ${i+1} fehlt der Link zur Feedback-Aufgabe (Schritt 2).`); });
+  state.links.forEach((l,i) => { if (l.url.trim() && !/^https?:\/\//i.test(l.url.trim())) p.push(`Link ${i+1} beginnt nicht mit https:// – bitte prüfen.`); });
+  if (!state.stations.some(s => s.phase === "Überarbeiten") && fbUsed && !state.stations.some(s => (s.revise||"").trim())) p.push("Nach dem Feedback fehlt ein Überarbeitungsauftrag (eigene Station „Überarbeiten“ oder Feld beim Feedback).");
+  return p;
+}
+function refreshPreview(){
+  const p = problems();
+  $("problems").innerHTML = p.length ? `<div class="msg warn"><b>Bitte prüfen</b><ul class="tight">${p.map(x=>`<li>${x}</li>`).join("")}</ul></div>` : `<div class="msg ok">Alles Wichtige ist ausgefüllt.</div>`;
+  try { Object.keys(localStorage).filter(k => k.indexOf("lernpfad:") === 0).forEach(k => localStorage.removeItem(k)); } catch(e){}
+  $("preview").srcdoc = currentOutput() || `<p style="font-family:system-ui;padding:20px;color:#5f6368">Noch kein Inhalt für die Vorschau.</p>`;
+}
+$("refresh").onclick = refreshPreview;
+
+/* ---------- SCORM ---------- */
+const SCORM_RUNTIME = `(function(){
+  var api=null,started=Date.now(),finished=false;
+  function findAPI(w){var n=0;while(w&&n<25){try{if(w.API)return w.API;}catch(e){}if(w.parent===w)break;w=w.parent;n++;}return null;}
+  api=findAPI(window); if(!api&&window.opener)api=findAPI(window.opener);
+  function set(k,v){try{return api.LMSSetValue(k,String(v));}catch(e){}}
+  function get(k){try{return api.LMSGetValue(k);}catch(e){return "";}}
+  function commit(){try{api.LMSCommit("");}catch(e){}}
+  function pad(n){return(n<10?"0":"")+n;}
+  function complete(){if(!api)return false;var st=get("cmi.core.lesson_status");if(st!=="passed"&&st!=="failed")set("cmi.core.lesson_status","completed");commit();return true;}
+  function finish(){if(!api||finished)return;finished=true;var s=Math.round((Date.now()-started)/1000),h=Math.floor(s/3600);
+    set("cmi.core.session_time",(h<10?"000":h<100?"00":h<1000?"0":"")+h+":"+pad(Math.floor(s%3600/60))+":"+pad(s%60));commit();try{api.LMSFinish("");}catch(e){}}
+  window.SCORM={complete:complete,finish:finish,get connected(){return !!api;}};
+  if(!api)return;
+  try{api.LMSInitialize("");}catch(e){}
+  var s=get("cmi.core.lesson_status"); if(!s||s==="not attempted")set("cmi.core.lesson_status","incomplete"); commit();
+  window.addEventListener("pagehide",finish); window.addEventListener("beforeunload",finish);
+})();
+`;
+function manifest(title){
+  const t = esc(title), id = "LP-" + Date.now().toString(36).toUpperCase();
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="${id}" version="1.0"
+  xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+  xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
+  <metadata><schema>ADL SCORM</schema><schemaversion>1.2</schemaversion></metadata>
+  <organizations default="ORG-1">
+    <organization identifier="ORG-1">
+      <title>${t}</title>
+      <item identifier="ITEM-1" identifierref="RES-1" isvisible="true"><title>${t}</title></item>
+    </organization>
+  </organizations>
+  <resources>
+    <resource identifier="RES-1" type="webcontent" adlcp:scormtype="sco" href="index.html">
+      <file href="index.html"/>
+      <file href="scorm-api.js"/>
+    </resource>
+  </resources>
+</manifest>
+`;
+}
+const CRC_TABLE = (()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[n]=c>>>0;}return t;})();
+function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC_TABLE[(c^b[i])&0xFF]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function makeZip(files){
+  const enc=new TextEncoder(),parts=[],central=[];let offset=0;const d=new Date();
+  const time=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1), date=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+  for(const f of files){
+    const name=enc.encode(f.name),data=f.data,crc=crc32(data),sz=data.length;
+    const h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint16(10,time,true);h.setUint16(12,date,true);
+    h.setUint32(14,crc,true);h.setUint32(18,sz,true);h.setUint32(22,sz,true);h.setUint16(26,name.length,true);h.setUint16(28,0,true);
+    parts.push(new Uint8Array(h.buffer),name,data);
+    const c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(10,0,true);c.setUint16(12,time,true);c.setUint16(14,date,true);
+    c.setUint32(16,crc,true);c.setUint32(20,sz,true);c.setUint32(24,sz,true);c.setUint16(28,name.length,true);c.setUint32(42,offset,true);
+    central.push(new Uint8Array(c.buffer),name); offset+=30+name.length+sz;
+  }
+  const cd=central.reduce((a,b)=>a+b.length,0),e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cd,true);e.setUint32(16,offset,true);
+  return new Blob([...parts,...central,new Uint8Array(e.buffer)],{type:"application/zip"});
+}
+
+/* ---------- Downloads ---------- */
+function download(blob, name){
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function out(kind, html){ $("result").innerHTML = `<div class="msg ${kind}">${html}</div>`; }
+function needOutput(){
+  const h = currentOutput();
+  if (!h){ out("warn", "Es gibt noch keinen Inhalt. Bitte in Schritt 3 Code einfügen."); return null; }
+  return h;
+}
+const fname = () => slug(state.title || "lernpfad");
+$("dlHtml").onclick = () => { const h = needOutput(); if (!h) return; download(new Blob([h],{type:"text/html;charset=utf-8"}), fname()+".html"); out("ok", `<b>${fname()}.html</b> wurde heruntergeladen. Für TaskCards als Anhang auf eine Karte laden.`); };
+$("dlScorm").onclick = () => {
+  let h = needOutput(); if (!h) return;
+  h = h.replace(/<head([^>]*)>/i, '<head$1>\n<script src="scorm-api.js"><\/script>');
+  if (state.mode === "full" && !/SCORM\s*\.\s*complete/.test(h)) {
+    // Fertiger Pfad aus Pfadie: beim Öffnen als abgeschlossen melden
+    h = h.replace(/<\/body>/i, '<script>if(window.SCORM)SCORM.complete();<\/script>\n</body>');
+  }
+  const enc = new TextEncoder();
+  const zip = makeZip([
+    {name:"imsmanifest.xml", data: enc.encode(manifest(state.title.trim() || "Lernpfad"))},
+    {name:"index.html", data: enc.encode(h)},
+    {name:"scorm-api.js", data: enc.encode(SCORM_RUNTIME)}
+  ]);
+  download(zip, fname()+"_scorm.zip");
+  out("ok", `<b>${fname()}_scorm.zip</b> wurde heruntergeladen (SCORM 1.2). In Moodle bzw. LOGINEO.LMS als „Lernpaket“ hochladen.` +
+    (state.mode === "full" ? "<br>Da der Pfad komplett aus Pfadie stammt, gilt er beim Öffnen als abgeschlossen." : ""));
+};
+
+$("reset").onclick = () => {
+  if (!confirm("Alle Eingaben in diesem Baukasten löschen?")) return;
+  try { localStorage.removeItem(STORE); } catch(e){}
+  location.reload();
+};
+
+/* ---------- Start ---------- */
+renderLinks(); renderStations(); setMode(state.mode || "stations");
+window.__lp = { buildPath, currentOutput, problems, makeZip, manifest, get state(){ return state; } };
+})();
+</script>
+</body>
+</html>
