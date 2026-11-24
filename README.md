@@ -8,3 +8,4 @@ Kleine HTML-Werkzeuge für Fortbildungen und Unterricht, veröffentlicht über G
 | HTML zu SCORM | https://teacherette-susa.github.io/tools/html-zu-scorm/ |
 | Lernpfad-Baukasten | https://teacherette-susa.github.io/tools/lernpfad/ |
 | Adventskalender | https://teacherette-susa.github.io/tools/adventskalender/ |
+| Adventskalender 2 | https://teacherette-susa.github.io/tools/adventskalender-2/ |

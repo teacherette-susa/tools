@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adventskalender 2 – Mut, Haltung & Kreativität</title>
+<style>
+  /* Keine externen Schriften oder Dienste – datenschutzfreundlich für Schulhomepages.
+     Bewusst ohne inset, aspect-ratio und flex-gap, damit auch ältere Safari-Versionen alles korrekt zeigen. */
+  :root {
+    --nacht: #0f1e3d; --nacht2: #1b2f5c; --gold: #f2c14e; --rot: #b8323c;
+    --gruen: #2f6b4f; --creme: #fff8ec; --text: #23212b; --sand: #f3ead6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+    background: var(--nacht); background: radial-gradient(ellipse at top, var(--nacht2), var(--nacht) 70%);
+    color: var(--creme); min-height: 100vh; overflow-x: hidden;
+  }
+  .sterne, .schnee { position: fixed; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; }
+  .sterne { z-index: 0; }
+  .schnee { z-index: 5; overflow: hidden; }
+  .stern { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #fff; opacity: .7; animation: funkeln 3s infinite ease-in-out; }
+  @keyframes funkeln { 0%,100% { opacity: .2; } 50% { opacity: .9; } }
+  .flocke { position: absolute; top: -30px; color: #fff; opacity: .8; animation: fallen linear infinite; }
+  @keyframes fallen { to { transform: translateY(110vh) translateX(40px) rotate(220deg); } }
+
+  .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 { font-family: Georgia, "Times New Roman", serif; font-size: 2.4rem; margin: 0 0 6px; color: var(--gold); }
+  header p { margin: 0; opacity: .85; font-size: 1.05rem; }
+  .hinweis { margin: 14px auto 0; max-width: 560px; padding: 10px 14px; border-radius: 10px; background: rgba(255,255,255,.08); font-size: .95rem; }
+  .fortschritt { margin: 10px auto 0; max-width: 320px; font-size: .9rem; }
+  .balken { height: 8px; border-radius: 4px; background: rgba(255,255,255,.15); overflow: hidden; margin-top: 5px; }
+  .balken div { height: 100%; width: 0; background: var(--gold); transition: width .6s ease; }
+
+  .girlande { text-align: center; margin-bottom: 14px; position: relative; white-space: nowrap; }
+  .girlande:before { content: ""; position: absolute; left: 5%; right: 5%; top: 2px; height: 14px; border-bottom: 2px solid var(--gruen); border-radius: 0 0 50% 50%; }
+  .lampe { display: inline-block; width: 10px; height: 14px; border-radius: 50% 50% 45% 45%; margin: 10px 7px 0; animation: lampe 1.6s infinite alternate; }
+  .lampe:nth-child(4n+1) { background: #ff5a5f; color: #ff5a5f; }
+  .lampe:nth-child(4n+2) { background: #f2c14e; color: #f2c14e; animation-delay: .4s; }
+  .lampe:nth-child(4n+3) { background: #4ecdc4; color: #4ecdc4; animation-delay: .8s; }
+  .lampe:nth-child(4n)   { background: #c77dff; color: #c77dff; animation-delay: 1.2s; }
+  @keyframes lampe { from { opacity: .45; box-shadow: none; } to { opacity: 1; box-shadow: 0 0 10px currentColor; } }
+  .deko-reihe { font-size: 1.6rem; letter-spacing: 8px; margin-top: 8px; }
+  .baeume { font-size: 2rem; letter-spacing: 4px; margin-top: 26px; text-align: center; }
+  footer { text-align: center; margin-top: 20px; font-size: .85rem; opacity: .6; }
+
+  .grid { display: grid; grid-gap: 12px; gap: 12px; margin-top: 22px; grid-template-columns: repeat(6, 1fr); }
+  @media (max-width: 760px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 420px) { .grid { grid-template-columns: repeat(3, 1fr); grid-gap: 10px; gap: 10px; } header h1 { font-size: 2rem; } }
+
+  .tuer-rahmen { perspective: 800px; position: relative; height: 0; padding-top: 110%; }
+  .tuer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; padding: 0; cursor: pointer; background: transparent; font: inherit; color: inherit; -webkit-appearance: none; appearance: none; }
+  .tuer:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 10px; }
+  .innen, .klappe { position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .innen { background: var(--creme); color: var(--rot); font-size: 1.8rem; box-shadow: inset 0 0 12px rgba(0,0,0,.25); }
+  .klappe {
+    font-family: Georgia, serif; font-weight: bold; font-size: 1.8rem; color: var(--creme);
+    transform-origin: left center; transition: transform .8s ease;
+    -webkit-backface-visibility: hidden; backface-visibility: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,.35); border: 2px dashed rgba(255,255,255,.35);
+  }
+  .farbe0 .klappe { background: var(--rot); } .farbe1 .klappe { background: var(--gruen); }
+  .farbe2 .klappe { background: #7a4b8f; }    .farbe3 .klappe { background: #2b5f8f; }
+  .tuer.offen .klappe { transform: rotateY(-105deg); }
+  .tuer.heute .klappe { border: 3px solid var(--gold); animation: leuchten 2s infinite ease-in-out; }
+  @keyframes leuchten { 0%,100% { box-shadow: 0 0 6px var(--gold); } 50% { box-shadow: 0 0 22px var(--gold); } }
+  .tuer.gesperrt .klappe { filter: saturate(.75) brightness(.9); }
+  .schloss { position: absolute; right: 6px; bottom: 4px; font-size: .9rem; opacity: .8; font-family: system-ui, sans-serif; font-weight: normal; }
+  .eck-deko { position: absolute; top: 3px; left: 6px; font-size: .9rem; font-family: system-ui, sans-serif; font-weight: normal; }
+  .wackeln { animation: wackeln .4s; }
+  @keyframes wackeln { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+  /* Karte */
+  .overlay { position: fixed; top: 0; right: 0; bottom: 0; left: 0; background: rgba(5,10,25,.75); display: none; padding: 16px; z-index: 10; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .overlay.sichtbar { display: block; }
+  .karte { background: var(--creme); color: var(--text); border-radius: 16px; max-width: 620px; width: 100%; margin: 3vh auto; padding: 26px 22px 22px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,.5); border-top: 8px solid var(--rot); animation: auf .35s ease; line-height: 1.5; }
+  @keyframes auf { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .karte .gross { font-size: 2.6rem; text-align: center; margin-bottom: 4px; }
+  .karte .tag { color: var(--rot); font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: .85rem; }
+  .karte blockquote { font-family: Georgia, serif; font-size: 1.35rem; margin: 10px 0 18px; line-height: 1.4; color: var(--nacht); }
+  .box { background: var(--sand); border-left: 5px solid var(--gruen); padding: 12px 14px; border-radius: 8px; margin-bottom: 16px; }
+  .box strong.titel { color: var(--gruen); display: block; margin-bottom: 4px; }
+  .schliessen { position: absolute; top: 10px; right: 12px; border: none; background: none; font-size: 1.8rem; cursor: pointer; color: #666; line-height: 1; padding: 4px 8px; }
+
+  .extra { border-top: 2px dashed #d9cdb3; padding-top: 14px; }
+  .extra h3 { margin: 4px 0 8px; font-family: Georgia, serif; color: var(--nacht); font-size: 1.2rem; }
+  .badge { display: inline-block; background: var(--nacht); color: var(--creme); border-radius: 20px; padding: 3px 12px; font-size: .8rem; font-weight: bold; }
+  .extra p { margin: 6px 0 10px; }
+  .extra ul, .extra ol { margin: 6px 0 12px; padding-left: 22px; }
+  .extra li { margin-bottom: 4px; }
+  .extra h4 { margin: 12px 0 4px; font-size: 1rem; color: var(--rot); }
+  details { background: #fff; border: 1px solid #e3d8c2; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; }
+  summary { cursor: pointer; font-weight: 600; color: var(--gruen); }
+  .frage { background: #fff; border: 1px solid #e3d8c2; border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
+  .frage .f { font-weight: 600; margin-bottom: 6px; }
+  .opt { display: block; width: 100%; text-align: left; margin: 5px 0; padding: 10px 12px; border-radius: 8px; border: 2px solid #d9cdb3; background: var(--creme); font: inherit; color: inherit; cursor: pointer; min-height: 44px; }
+  .opt:hover { border-color: var(--gruen); }
+  .opt.richtig { background: #dff1e6; border-color: var(--gruen); }
+  .opt.falsch { background: #f8dfe0; border-color: var(--rot); }
+  .opt.gewaehlt { border-color: var(--nacht); background: #e6ebf5; }
+  .rueck { display: none; margin-top: 6px; padding: 8px 10px; border-radius: 8px; background: var(--sand); font-size: .95rem; }
+  .rueck.sichtbar { display: block; }
+  .ergebnis { font-weight: bold; color: var(--gruen); margin-top: 6px; }
+  .knopf { display: inline-block; margin: 8px 8px 0 0; padding: 10px 16px; border-radius: 22px; border: none; background: var(--gruen); color: #fff; font: inherit; font-weight: 600; cursor: pointer; min-height: 44px; }
+  .knopf.zweit { background: var(--nacht); }
+  .schritte label { display: block; padding: 6px 0; cursor: pointer; }
+  .schritte input { margin-right: 8px; transform: scale(1.2); }
+  .schritte input:checked + span { text-decoration: line-through; opacity: .6; }
+  .bild { text-align: center; margin: 8px 0; }
+  .bild svg { max-width: 100%; height: auto; }
+  .klein { font-size: .85rem; opacity: .8; }
+  .sprachen { display: grid; grid-template-columns: 1fr 1fr; grid-gap: 6px; gap: 6px; margin: 8px 0; }
+  .sprachen div { background: #fff; border-radius: 8px; padding: 6px 10px; border: 1px solid #e3d8c2; }
+  .sprachen span { display: block; font-size: .8rem; opacity: .7; }
+
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(140px); background: var(--creme); color: var(--text); padding: 12px 18px; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,.4); transition: transform .3s ease; z-index: 30; max-width: 90vw; text-align: center; }
+  .toast.sichtbar { transform: translateX(-50%) translateY(0); }
+  .konfetti { position: fixed; z-index: 40; pointer-events: none; font-size: 22px; transition: transform 1.4s cubic-bezier(.2,.7,.3,1), opacity 1.4s ease-in; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flocke, .stern, .lampe, .tuer.heute .klappe, .karte { animation: none !important; }
+    .flocke, .konfetti { display: none; }
+  }
+  @media print {
+    body { background: #fff; color: #000; }
+    .sterne, .schnee, .wrap, .toast, .schliessen, .knopf, .konfetti { display: none !important; }
+    .overlay { position: static; display: block !important; background: none; padding: 0; overflow: visible; }
+    .karte { box-shadow: none; margin: 0; max-width: none; animation: none; }
+    details { border: none; }
+  }
+</style>
+</head>
+<body>
+<div class="sterne" id="sterne" aria-hidden="true"></div>
+<div class="schnee" id="schnee" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header>
+    <div class="girlande" aria-hidden="true">
+      <span class="lampe"></span><span class="lampe"></span><span class="lampe"></span><span class="lampe"></span>
+      <span class="lampe"></span><span class="lampe"></span><span class="lampe"></span><span class="lampe"></span>
+      <span class="lampe"></span><span class="lampe"></span><span class="lampe"></span><span class="lampe"></span>
+    </div>
+    <h1>Adventskalender</h1>
+    <p>24 Türchen für Mut, Haltung und kreative Ideen</p>
+    <div class="deko-reihe" aria-hidden="true">🕯️🕯️🕯️🕯️</div>
+    <div class="hinweis" id="hinweis"></div>
+    <div class="fortschritt" id="fortschritt">
+      <span id="fortschrittText"></span>
+      <div class="balken"><div id="fortschrittBalken"></div></div>
+    </div>
+  </header>
+
+  <div class="grid" id="grid"></div>
+  <div class="baeume" aria-hidden="true">🌲🎄⛄🎄🌲</div>
+  <footer>Jeden Tag öffnet sich ein neues Türchen – mit Spruch, Impuls und Extra: Rätsel, Quiz, Rezepte, Bastelideen und mehr.</footer>
+</div>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="karteTag">
+  <div class="karte" id="karte">
+    <button class="schliessen" id="schliessen" aria-label="Schließen">×</button>
+    <div class="gross" id="karteSymbol" aria-hidden="true"></div>
+    <div class="tag" id="karteTag"></div>
+    <blockquote id="karteSpruch"></blockquote>
+    <div class="box"><strong class="titel">Dein Impuls für heute</strong><span id="karteAnregung"></span></div>
+    <div class="extra" id="karteExtra"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+/* ===================== Einstellungen ===================== */
+// Türchen von Wochenenden und Ferientagen lassen sich immer nachträglich öffnen.
+// true = ALLE verpassten Türchen können nachträglich geöffnet werden
+var VERGANGENE_TUEREN_OEFFNEN = false;
+// Erster Ferientag im Dezember (NRW 2026: Mittwoch, 23.12.) – ab hier nachholbar
+var FERIEN_BEGINN = 23;
+// Weitere schulfreie Tage im Dezember (z. B. bewegliche Ferientage), etwa [21, 22]
+var WEITERE_FREIE_TAGE = [];
+
+/* ===================== Kleine Zeichnungen ===================== */
+var SVG_SCHNEEFLOCKE =
+ '<svg viewBox="0 0 400 110" width="400" height="110" role="img" aria-label="Faltschritte für die Schneeflocke">' +
+ '<g fill="#fff" stroke="#2b5f8f" stroke-width="2">' +
+ '<rect x="10" y="15" width="70" height="70"/>' +
+ '<polygon points="110,85 180,85 110,15"/>' +
+ '<polygon points="210,85 270,85 240,40"/>' +
+ '<polygon points="320,90 345,90 332,30"/></g>' +
+ '<g fill="none" stroke="#b8323c" stroke-width="2" stroke-dasharray="4 3">' +
+ '<line x1="10" y1="85" x2="80" y2="15"/><line x1="110" y1="85" x2="145" y2="50"/>' +
+ '<line x1="225" y1="85" x2="240" y2="40"/><line x1="255" y1="85" x2="240" y2="40"/>' +
+ '<polyline points="322,60 330,62 326,70 336,72 330,80"/></g>' +
+ '<g font-size="13" fill="#23212b" font-family="sans-serif" text-anchor="middle">' +
+ '<text x="45" y="105">1</text><text x="145" y="105">2</text><text x="240" y="105">3</text><text x="332" y="105">4</text></g></svg>';
+
+var SVG_TUETENSTERN =
+ '<svg viewBox="0 0 200 200" width="170" height="170" role="img" aria-label="Fertiger Stern aus Butterbrottüten">' +
+ '<g transform="translate(100,100)">' +
+ (function () { var s = ""; for (var i = 0; i < 8; i++) { s += '<polygon transform="rotate(' + (i * 45) + ')" points="0,0 -22,-60 0,-92 22,-60" fill="' + (i % 2 ? "#c9a46b" : "#b38b52") + '" stroke="#7a5a2e" stroke-width="2"/>' + '<circle transform="rotate(' + (i * 45) + ')" cx="0" cy="-55" r="7" fill="#fff8ec" stroke="#7a5a2e"/>'; } return s; })() +
+ '<circle r="10" fill="#7a5a2e"/></g></svg>';
+
+var SVG_LICHTGLAS =
+ '<svg viewBox="0 0 160 170" width="140" height="150" role="img" aria-label="Glas mit Transparentpapier und Teelicht">' +
+ '<rect x="40" y="18" width="80" height="14" rx="4" fill="#9aa5b1"/>' +
+ '<rect x="30" y="30" width="100" height="125" rx="18" fill="#f2c14e" opacity=".85" stroke="#7a5a2e" stroke-width="3"/>' +
+ '<polygon points="55,70 65,90 45,90" fill="#2f6b4f"/><polygon points="95,60 108,88 82,88" fill="#2f6b4f"/>' +
+ '<circle cx="80" cy="112" r="6" fill="#fff"/><path d="M80 98 C74 108 86 108 80 98 Z" fill="#b8323c"/>' +
+ '<ellipse cx="80" cy="125" rx="18" ry="6" fill="#fff8ec"/></svg>';
+
+/* ===================== Inhalte ===================== */
+// typ: raetsel | quiz | situation | challenge | rezept | basteln | kreativ | spezial
+var INHALTE = [
+ { symbol: "⭐", spruch: "Jeder große Weg beginnt mit einem kleinen Schritt, und heute ist ein guter Tag dafür.",
+   anregung: "Schreib drei Dinge auf, auf die du dich in diesem Dezember freust.",
+   extra: { typ: "raetsel", titel: "Emoji-Rätsel zum Start",
+     intro: "Welche Begriffe verstecken sich hinter den Emojis?",
+     items: [ ["❄️ + 👨", "Schneemann"], ["🎁 + 📄", "Geschenkpapier"], ["💡 + ⛓️", "Lichterkette"], ["🧠 + ⛈️", "Brainstorming"] ] } },
+
+ { symbol: "🕯️", spruch: "Deine Stimme zählt, auch wenn sie leise ist.",
+   anregung: "Überlege: Wo würdest du an unserer Schule gern mitbestimmen? Sprich heute mit jemandem darüber.",
+   extra: { typ: "situation", titel: "Deine Idee wird übergangen",
+     text: "Gruppenarbeit: Du hast einen guten Vorschlag gemacht, aber zwei laute Leute reden einfach weiter, als hättest du nichts gesagt. Was machst du?",
+     optionen: [
+       ["Ich sage nichts mehr. Bringt ja eh nichts.", "Verständlich, aber schade: Deine Idee geht verloren, und die Gruppe lernt, dass sie dich übergehen kann."],
+       ["„Moment, ich hatte gerade einen Vorschlag. Darf ich den kurz erklären?“", "Stark! Ruhig, klar und freundlich. So verschaffst du dir Gehör, ohne jemanden anzugreifen."],
+       ["Ich werde laut und sage, dass die anderen nie zuhören.", "Dein Ärger ist berechtigt, aber Vorwürfe führen oft zu Streit statt zu Zuhören. Eine Ich-Botschaft wirkt meist besser."] ] } },
+
+ { symbol: "❄️", spruch: "Fehler sind keine Sackgassen, sondern Wegweiser.",
+   anregung: "Zeichne oder beschreibe deinen „Lieblingsfehler“: Was hast du daraus gelernt?",
+   extra: { typ: "rezept", titel: "Heißer Apfel-Orangen-Punsch (alkoholfrei)", portionen: "6 Tassen",
+     zutaten: ["500 ml Apfelsaft (naturtrüb)", "500 ml Früchtetee", "250 ml Orangensaft", "1 Zimtstange", "3 Gewürznelken", "1 Sternanis", "1 Bio-Orange in Scheiben", "nach Geschmack 1–2 EL Honig"],
+     schritte: ["Früchtetee kochen und 5 Minuten ziehen lassen.", "Tee, Apfel- und Orangensaft in einen Topf geben.", "Gewürze und Orangenscheiben dazugeben.", "Langsam erhitzen, aber nicht kochen lassen, und 10 Minuten ziehen lassen.", "Gewürze herausnehmen, nach Geschmack süßen und heiß servieren."] } },
+
+ { symbol: "🎁", spruch: "Mut heißt nicht, keine Angst zu haben, sondern es trotzdem zu versuchen.",
+   anregung: "Mach heute etwas, das dich ein bisschen Überwindung kostet: Melde dich im Unterricht oder sprich jemanden Neues an.",
+   extra: { typ: "basteln", titel: "Stern aus Butterbrottüten", svg: SVG_TUETENSTERN,
+     material: ["7–8 braune Butterbrottüten", "Klebestift", "Schere", "optional: Schnur zum Aufhängen"],
+     schritte: ["Lege die erste Tüte flach hin, mit dem Boden nach oben zu dir gewandt.", "Trage Klebstoff in Form eines „T“ auf: eine Linie quer über den Boden und eine senkrecht in der Mitte nach unten.", "Lege die nächste Tüte genau deckungsgleich darauf und drücke sie an. Wiederhole das, bis alle Tüten gestapelt sind (auf die letzte kein Klebstoff).", "Schneide das offene Ende des Stapels in Form: eine Spitze, einen Bogen oder Zacken. Für Muster kannst du an den Seiten kleine Formen ausschneiden.", "Fächere den Stapel auf und klebe die erste und die letzte Tüte zusammen. Fertig ist der Stern!"] } },
+
+ { symbol: "🔔", spruch: "Wer schweigt, wenn Unrecht geschieht, überlässt anderen das letzte Wort.",
+   anregung: "Stell dir vor, jemand wird vor dir beleidigt. Überlege dir einen Satz, mit dem du einschreiten könntest, und merk ihn dir.",
+   extra: { typ: "quiz", titel: "Demokratie-Check",
+     fragen: [
+       ["Ab welchem Alter darfst du in Deutschland bei der Bundestagswahl wählen?", ["16", "18", "21"], 1, "Ab 18. Bei der Europawahl und bei Kommunalwahlen in NRW darfst du schon ab 16 wählen."],
+       ["Wie lautet Artikel 1 des Grundgesetzes?", ["Alle Menschen sind vor dem Gesetz gleich.", "Die Würde des Menschen ist unantastbar.", "Jeder hat das Recht auf freie Meinungsäußerung."], 1, "„Die Würde des Menschen ist unantastbar.“ Die anderen Sätze stehen sinngemäß in Artikel 3 und 5."],
+       ["Was bedeutet Gewaltenteilung?", ["Die Macht wird auf Gesetzgebung, Regierung/Verwaltung und Gerichte verteilt.", "Die Polizei teilt sich die Arbeit mit der Bundeswehr.", "Jedes Bundesland hat eine eigene Regierung."], 0, "Legislative, Exekutive und Judikative kontrollieren sich gegenseitig. So kann niemand alle Macht an sich reißen."] ] } },
+
+ { symbol: "🎄", spruch: "Vergleiche dich nicht mit anderen, sondern mit deinem Ich von gestern.",
+   anregung: "Schreib einen kurzen Brief an dein Ich von vor einem Jahr: Was kannst du heute, was du damals noch nicht konntest?",
+   extra: { typ: "spezial", titel: "6. Dezember: Nikolaus und die Idee des Teilens",
+     absaetze: ["Der heilige Nikolaus lebte im 4. Jahrhundert als Bischof in Myra, dem heutigen Demre in der Türkei. Über ihn gibt es viele Legenden.",
+                "Die bekannteste: Ein armer Mann konnte seine drei Töchter nicht versorgen. Nikolaus warf nachts heimlich Gold durchs Fenster, damit die Familie nicht in Not geriet. Er wollte keinen Dank, sondern einfach helfen.",
+                "Daraus entstand der Brauch, am 6. Dezember Kleinigkeiten zu verschenken."],
+     frage: "Zum Nachdenken: Wo hilfst du anderen, ohne dass es jemand mitbekommt? Und wo könnte unsere Schule solidarischer sein?" } },
+
+ { symbol: "🍪", spruch: "Eine Meinung zu haben ist gut. Anderen zuzuhören ist genauso wichtig.",
+   anregung: "Sprich mit jemandem, der zu einem Thema anders denkt als du. Deine Aufgabe: nur zuhören und nachfragen, nicht widersprechen.",
+   extra: { typ: "raetsel", titel: "Wortsalat",
+     intro: "Die Buchstaben sind durcheinandergeraten. Welche Wörter suchen wir?",
+     items: [ ["ZANORELT", "TOLERANZ"], ["KIRTEMODAE", "DEMOKRATIE"], ["RAGILECOUZIV", "ZIVILCOURAGE"], ["TÄLIDORSITA", "SOLIDARITÄT"], ["KTERPES", "RESPEKT"] ] } },
+
+ { symbol: "⛄", spruch: "Auch der hellste Stern hat mal als kleines Licht angefangen.",
+   anregung: "Bastle oder zeichne einen Stern und schreib darauf, was dich zum Leuchten bringt.",
+   extra: { typ: "challenge", titel: "Danke-Aktion",
+     text: "Viele Menschen sorgen dafür, dass Schule funktioniert, und werden selten gesehen: Hausmeister, Reinigungskräfte, Sekretariat, Cafeteria, IT.",
+     aufgabe: "Schreibt als Klasse eine Dankeskarte an eine dieser Personen oder Teams und übergebt sie diese Woche persönlich." } },
+
+ { symbol: "🌟", spruch: "„Noch nicht“ ist ehrlicher als „Ich kann das nicht“.",
+   anregung: "Such dir etwas aus, das du noch nicht kannst, und übe es heute zehn Minuten lang.",
+   extra: { typ: "rezept", titel: "Schoko-Crossies (ohne Backen)", portionen: "ca. 25 Stück",
+     zutaten: ["200 g Zartbitter- oder Vollmilchschokolade", "100 g ungezuckerte Cornflakes", "1 Prise Zimt", "optional: 1 EL Kokosöl für mehr Glanz"],
+     schritte: ["Schokolade grob hacken und über einem Wasserbad langsam schmelzen.", "Zimt (und ggf. Kokosöl) unterrühren.", "Cornflakes vorsichtig unterheben, bis alles überzogen ist.", "Mit zwei Teelöffeln kleine Häufchen auf Backpapier setzen.", "Etwa 1 Stunde kühl stellen, bis die Schokolade fest ist."] } },
+
+ { symbol: "🎀", spruch: "Gemeinsam schaffen wir mehr als jeder für sich allein.",
+   anregung: "Plant in der Klasse eine kleine gemeinsame Aktion: ein Lied, ein Plakat oder eine Überraschung für eine andere Klasse.",
+   extra: { typ: "quiz", titel: "10. Dezember: Tag der Menschenrechte",
+     intro: "Am 10. Dezember 1948 verabschiedeten die Vereinten Nationen in Paris die Allgemeine Erklärung der Menschenrechte. Teste dein Wissen:",
+     fragen: [
+       ["Wie viele Artikel hat die Allgemeine Erklärung der Menschenrechte?", ["10", "30", "100"], 1, "30 Artikel, vom Recht auf Leben über Meinungsfreiheit bis zum Recht auf Bildung."],
+       ["Wer leitete die Kommission, die die Erklärung ausgearbeitet hat?", ["Eleanor Roosevelt", "Nelson Mandela", "Mahatma Gandhi"], 0, "Eleanor Roosevelt, Menschenrechtsaktivistin und frühere First Lady der USA, hatte den Vorsitz."],
+       ["Wie beginnt Artikel 1?", ["„Alle Menschen sind frei und gleich an Würde und Rechten geboren.“", "„Jeder Mensch hat das Recht auf Arbeit.“", "„Niemand darf gefoltert werden.“"], 0, "Richtig, das ist Artikel 1. Die anderen Rechte stehen auch in der Erklärung, aber weiter hinten."] ] } },
+
+ { symbol: "🦌", spruch: "Wenn jemand ausgegrenzt wird, braucht es nur eine Person, die sagt: „Komm zu uns.“",
+   anregung: "Achte heute in der Pause darauf, wer allein ist, und lade die Person ein, dazuzukommen.",
+   extra: { typ: "situation", titel: "Das Foto in der Klassengruppe",
+     text: "In eurer Klassen-WhatsApp-Gruppe postet jemand ein peinliches Foto einer Mitschülerin. Viele schicken Lach-Emojis. Was machst du?",
+     optionen: [
+       ["Ich lache mit, ist doch nur Spaß.", "Für die Betroffene ist das oft kein Spaß. Jedes Lach-Emoji zeigt: Das ist hier okay."],
+       ["Ich schreibe in die Gruppe: „Löscht das bitte, das ist nicht fair.“ und frage die Mitschülerin privat, wie es ihr geht.", "Genau so! Du setzt ein Zeichen und zeigst der Betroffenen, dass sie nicht allein ist. Übrigens: Fotos von anderen ohne Einwilligung zu verbreiten, kann auch rechtlich verboten sein."],
+       ["Ich ignoriere es und scrolle weiter.", "Verständlich, man will keinen Ärger. Aber Schweigen wirkt oft wie Zustimmung. Schon eine private Nachricht an die Betroffene hilft."] ] } },
+
+ { symbol: "🍊", spruch: "Neugier ist der Anfang von allem Wissen.",
+   anregung: "Notiere eine Frage, auf die du schon immer eine Antwort wolltest, und finde sie heute heraus.",
+   extra: { typ: "quiz", titel: "Fakt oder Fake?",
+     intro: "Rund um Weihnachten kursieren viele Geschichten. Was stimmt?",
+     fragen: [
+       ["Der Adventskranz wurde im 19. Jahrhundert in Hamburg erfunden.", ["Fakt", "Fake"], 0, "Fakt! Der Theologe Johann Hinrich Wichern hängte 1839 in einem Hamburger Kinderheim einen Kranz mit Kerzen auf, damit die Kinder die Tage bis Weihnachten zählen konnten."],
+       ["Coca-Cola hat den Weihnachtsmann mit rotem Mantel erfunden.", ["Fakt", "Fake"], 1, "Fake! Den Weihnachtsmann in Rot gab es schon vorher. Die Werbung ab 1931 hat dieses Bild aber sehr bekannt gemacht."],
+       ["Der 24. Dezember ist in Deutschland ein gesetzlicher Feiertag.", ["Fakt", "Fake"], 1, "Fake! Gesetzliche Feiertage sind nur der 25. und 26. Dezember. Viele Geschäfte schließen am 24. aber mittags."] ],
+     nachsatz: "Tipp für den Alltag: Bevor du etwas teilst, prüf kurz die Quelle. Das gilt nicht nur an Weihnachten." } },
+
+ { symbol: "🧦", spruch: "Respekt ist keine Frage der Meinung, sondern der Haltung.",
+   anregung: "Gestalte eine Karte oder ein kleines Plakat mit dem Satzanfang: „Respekt bedeutet für mich …“",
+   extra: { typ: "quiz", titel: "Weihnachten weltweit",
+     intro: "Heute ist Luciafest in Schweden. Wie feiern andere Länder? Ordne zu:",
+     fragen: [
+       ["Wo tragen am 13. Dezember junge Menschen weiße Gewänder und einen Kerzenkranz auf dem Kopf?", ["Schweden", "Spanien", "Polen"], 0, "Beim schwedischen Luciafest bringt „Lucia“ Licht in die dunkle Jahreszeit."],
+       ["In welchem Land ist es Tradition, an Heiligabend Bücher zu verschenken und den Abend lesend zu verbringen?", ["Irland", "Island", "Italien"], 1, "In Island heißt das „Jólabókaflóð“, die Weihnachts-Bücherflut."],
+       ["Wo bringt die Hexe „Befana“ am 6. Januar Geschenke?", ["Frankreich", "Italien", "Griechenland"], 1, "In Italien fliegt die Befana auf ihrem Besen und füllt Strümpfe mit Süßem oder Kohle."],
+       ["In welchem Land essen viele Familien zu Weihnachten frittiertes Hähnchen einer Fast-Food-Kette?", ["Japan", "USA", "Brasilien"], 0, "In Japan ist das seit einer Werbekampagne in den 1970ern ein beliebter Brauch."] ] } },
+
+ { symbol: "☕", spruch: "Haltung zeigt sich nicht in großen Reden, sondern in kleinen Momenten.",
+   anregung: "Denk an eine Situation, in der jemand Haltung gezeigt hat, im Alltag, in der Geschichte oder in den Nachrichten. Erzähl jemandem davon.",
+   extra: { typ: "kreativ", titel: "Vier Zeilen Haltung",
+     text: "Schreib einen kurzen Rap, Poetry-Slam-Vers oder ein Gedicht mit vier Zeilen. Reimschema AABB.",
+     tipps: ["Starte mit: „Haltung heißt für mich …“", "Denk an eine konkrete Situation aus deinem Alltag, in der Schule, im Betrieb oder im Netz.", "Lies es laut vor, wenn du dich traust, oder schick es jemandem."],
+     beispiel: "Haltung heißt für mich, nicht wegzusehen,<br>auch wenn die anderen einfach weitergehen.<br>Ein Satz, ein Blick, ein „Hey, lass das sein!“ –<br>so wird aus vielen Großen keiner klein." } },
+
+ { symbol: "🌲", spruch: "Deine Ideen zählen, also trau dich, sie zu teilen.",
+   anregung: "Schreib deine beste Idee für unsere Schule auf und gib sie an die Schülervertretung (SV) weiter.",
+   extra: { typ: "basteln", titel: "Papier-Schneeflocke", svg: SVG_SCHNEEFLOCKE,
+     material: ["quadratisches Papier (z. B. weißes Kopierpapier zurechtgeschnitten)", "Schere", "optional: Bleistift"],
+     schritte: ["Falte das Quadrat diagonal zu einem Dreieck (Bild 1).", "Falte das Dreieck noch einmal mittig zu einem kleineren Dreieck (Bild 2).", "Falte das Dreieck in Drittel: die rechte Seite nach vorne, die linke nach hinten, sodass eine spitze Tüte entsteht (Bild 3).", "Schneide den überstehenden Rand unten gerade ab.", "Schneide Zacken, Bögen und kleine Dreiecke in die Kanten, aber nicht ganz durch (Bild 4).", "Vorsichtig auffalten und glatt streichen. Jede Schneeflocke ist einzigartig!"] } },
+
+ { symbol: "🧣", spruch: "Wer Fragen stellt, macht die Welt ein Stück gerechter.",
+   anregung: "Stell heute im Unterricht eine Frage, auch wenn du denkst, sie sei zu einfach. Wahrscheinlich fragen sich andere dasselbe.",
+   extra: { typ: "raetsel", titel: "Kopfnuss",
+     intro: "Erst nachdenken, dann aufdecken!",
+     items: [ ["Ein Weihnachtsbaum und eine Lichterkette kosten zusammen 110 €. Der Baum kostet 100 € mehr als die Lichterkette. Was kostet die Lichterkette?", "5 €. Der Baum kostet dann 105 €, zusammen 110 €. (Die spontane Antwort „10 €“ ist falsch.)"],
+              ["Fünf Freunde wünschen sich gegenseitig frohe Feiertage, jede Person jeder anderen genau einmal per Handschlag. Wie viele Handschläge sind das?", "10 Handschläge (5 × 4 : 2)."] ] } },
+
+ { symbol: "✨", spruch: "Für sich selbst einzustehen ist kein Egoismus, sondern Selbstachtung.",
+   anregung: "Schreib drei Sätze auf, die mit „Ich habe das Recht, …“ beginnen.",
+   extra: { typ: "quiz", titel: "Kenne deine Rechte in der Ausbildung",
+     fragen: [
+       ["Wie lange darf die Probezeit in einer Berufsausbildung höchstens dauern?", ["1 Monat", "4 Monate", "6 Monate"], 1, "Laut Berufsbildungsgesetz mindestens einen und höchstens vier Monate."],
+       ["Darfst du dein Berichtsheft (Ausbildungsnachweis) während der Arbeitszeit führen?", ["Ja, der Betrieb muss dir dafür Gelegenheit geben.", "Nein, das ist Privatsache.", "Nur, wenn gerade nichts zu tun ist."], 0, "Ja. Der Betrieb muss dir ermöglichen, den Ausbildungsnachweis am Arbeitsplatz zu führen."],
+       ["Wer vertritt im Betrieb die Interessen von Jugendlichen und Azubis?", ["Die Handwerkskammer", "Die Jugend- und Auszubildendenvertretung (JAV)", "Das Arbeitsamt"], 1, "Die JAV, die es in vielen Betrieben gibt. Außerdem helfen Betriebsrat, Kammern und Gewerkschaften."] ] } },
+
+ { symbol: "🎶", spruch: "Hinfallen ist erlaubt. Aufstehen ist die eigentliche Kunst.",
+   anregung: "Erinnere dich an etwas, das du geschafft hast, obwohl es schwer war. Schreib es auf und heb den Zettel gut auf.",
+   extra: { typ: "rezept", titel: "Lebkuchen-Energy-Balls (ohne Backen)", portionen: "ca. 20 Stück",
+     zutaten: ["200 g entsteinte Datteln", "100 g zarte Haferflocken", "50 g gemahlene Mandeln", "2 EL Kakaopulver", "1 TL Lebkuchengewürz (oder Zimt)", "1–2 EL Wasser", "Kokosraspeln zum Wälzen"],
+     schritte: ["Datteln 10 Minuten in warmem Wasser einweichen, dann abtropfen lassen.", "Alle Zutaten außer den Kokosraspeln im Mixer oder mit dem Pürierstab zu einer klebrigen Masse verarbeiten.", "Mit feuchten Händen walnussgroße Kugeln formen.", "In Kokosraspeln wälzen.", "Mindestens 30 Minuten kühlen. Im Kühlschrank halten sie etwa eine Woche."],
+     hinweis: "Enthält Nüsse. Für eine nussfreie Variante die Mandeln durch Haferflocken ersetzen." } },
+
+ { symbol: "🏮", spruch: "Demokratie lebt davon, dass wir mitmachen, und das fängt in der Klasse an.",
+   anregung: "Du bist einen Tag lang Bürgermeister*in: Was würdest du in deiner Stadt verändern? Notiere drei Ideen.",
+   extra: { typ: "situation", titel: "Der „Witz“ im Betrieb",
+     text: "Pause im Praktikum oder Betrieb: Ein Kollege erzählt einen rassistischen Witz. Ein paar lachen, du bist die oder der Jüngste. Was tust du?",
+     optionen: [
+       ["Ich lache gequält mit, ich will ja dazugehören.", "Ein Gefühl, das viele kennen. Aber Mitlachen bestärkt solche Sprüche. Du musst keine Rede halten, ein neutrales Gesicht ist schon ein Signal."],
+       ["Ich sage ruhig: „Ich finde das nicht witzig.“", "Mutig und wirksam! Kurz, sachlich, ohne Angriff. Oft denken andere dasselbe und trauen sich erst danach."],
+       ["Ich sage im Moment nichts, spreche aber später mit meiner Ausbilderin, der JAV oder dem Betriebsrat.", "Auch das ist Haltung. Diskriminierung am Arbeitsplatz ist nicht in Ordnung, und es gibt Ansprechpersonen, die dich unterstützen."] ] } },
+
+ { symbol: "🍫", spruch: "Sei die Freundlichkeit, die du dir von anderen wünschst.",
+   anregung: "Mach heute drei Menschen ein ehrliches Kompliment.",
+   extra: { typ: "challenge", titel: "Kompliment-Kette",
+     text: "Jede Person in der Klasse zieht einen Namen (oder ihr geht nach der Sitzordnung vor).",
+     aufgabe: "Schreibt für diese Person ein ehrliches, konkretes Kompliment auf einen Zettel, z. B. „Mir gefällt, wie du in Diskussionen ruhig bleibst.“ Am Ende des Tages werden alle Zettel verteilt. Schafft ihr es, dass niemand leer ausgeht?" } },
+
+ { symbol: "🪵", spruch: "Man kann unterschiedlicher Meinung sein und trotzdem fair miteinander umgehen.",
+   anregung: "Diskutiert eine Frage, zum Beispiel „Sollte es an Schulen mehr Mitbestimmung geben?“, mit einer Regel: Jede Person darf ausreden.",
+   extra: { typ: "kreativ", titel: "Comic in drei Bildern",
+     text: "Zeichne einen Mini-Comic über einen Konflikt, der fair gelöst wird. Strichmännchen reichen völlig!",
+     tipps: ["Bild 1: Zwei Personen sind unterschiedlicher Meinung.", "Bild 2: Sie hören einander zu (Sprechblasen!).", "Bild 3: Sie finden einen Kompromiss oder akzeptieren den Unterschied.", "Bonus: Hängt die Comics im Klassenraum auf."] } },
+
+ { symbol: "💫", spruch: "Du bist stärker, als du denkst, und mutiger, als du glaubst.",
+   anregung: "Schreib ein Mut-Elfchen: ein Gedicht mit 11 Wörtern in 5 Zeilen (1 – 2 – 3 – 4 – 1 Wörter).",
+   extra: { typ: "raetsel", titel: "Scherzfragen für die Pause",
+     items: [ ["Was wird nasser, je mehr es trocknet?", "Ein Handtuch."], ["Welcher Monat hat 28 Tage?", "Alle!"], ["Was gehört dir, wird aber von anderen viel öfter benutzt als von dir?", "Dein Name."], ["Was hat Zähne, kann aber nicht beißen?", "Ein Kamm (oder eine Säge, ein Reißverschluss …)."] ] } },
+
+ { symbol: "👼", spruch: "Ein Licht, das man teilt, wird nicht kleiner, sondern heller.",
+   anregung: "Schenke heute jemandem ein „Licht“: eine Kerze, einen Gruß oder ein paar Worte, die gut tun.",
+   extra: { typ: "basteln", titel: "Windlicht aus einem Schraubglas", svg: SVG_LICHTGLAS,
+     material: ["leeres, sauberes Schraubglas", "Transparent- oder Butterbrotpapier (gern bunt)", "Serviettenkleber oder Tapetenkleister und Pinsel", "Schere", "Teelicht (in der Schule bitte LED-Teelicht)"],
+     schritte: ["Papier in kleine Stücke reißen oder Formen ausschneiden (Sterne, Tannen, Buchstaben).", "Das Glas außen dünn mit Kleber bestreichen.", "Papierstücke auflegen, leicht überlappend, und noch einmal mit Kleber überstreichen.", "Gut trocknen lassen (ca. 1–2 Stunden).", "Teelicht hineinstellen und das Licht verschenken!"],
+     hinweis: "Echte Kerzen nie unbeaufsichtigt brennen lassen." } },
+
+ { symbol: "🎄", spruch: "Frieden beginnt dort, wo wir einander zuhören. Frohe Weihnachten!",
+   anregung: "Wünsch heute Menschen frohe Weihnachten, mit denen du sonst selten sprichst, und nimm dir Zeit für ein echtes Gespräch.",
+   extra: { typ: "spezial", titel: "Schöne Feiertage in vielen Sprachen",
+     absaetze: ["An unserer Schule kommen Menschen mit vielen Sprachen, Kulturen und Religionen zusammen. Nicht alle feiern Weihnachten, aber gute Wünsche verstehen alle."],
+     sprachen: [["Englisch", "Happy holidays!"], ["Französisch", "Joyeuses fêtes !"], ["Spanisch", "¡Felices fiestas!"], ["Italienisch", "Buone feste!"], ["Polnisch", "Wesołych Świąt!"], ["Türkisch", "İyi tatiller!"], ["Ukrainisch", "Гарних свят!"], ["Arabisch", "عطلة سعيدة!"]],
+     frage: "Welche Sprachen sprecht ihr in eurer Klasse? Ergänzt die Liste und wünscht euch gegenseitig schöne Ferien. Danke, dass ihr diesen Advent mit uns geteilt habt! 🌟" } }
+];
+
+var TYPEN = {
+  raetsel: ["🧩", "Rätsel"], quiz: ["📝", "Quiz"], situation: ["🤔", "Was würdest du tun?"],
+  challenge: ["🏆", "Klassen-Challenge"], rezept: ["🍪", "Rezept"], basteln: ["✂️", "Bastelanleitung"],
+  kreativ: ["🎨", "Kreativ-Impuls"], spezial: ["📅", "Besonderer Tag"]
+};
+
+/* Reihenfolge der Türchen im Raster (gemischt) */
+var REIHENFOLGE = [7,15,2,20,11,24,4,18,9,13,1,22,16,6,19,3,12,23,10,5,21,14,8,17];
+var ECK_DEKO = ["🎀","❄️","","🌿","","⭐"];
+
+/* ===================== Datum ===================== */
+function heute() {
+  // Testmodus: Seite mit ?datum=2026-12-05 aufrufen
+  var m = /[?&]datum=(\d{4})-(\d{2})-(\d{2})/.exec(location.search);
+  if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+  return new Date();
+}
+var jetzt = heute(), monat = jetzt.getMonth(), tagHeute = jetzt.getDate(), jahr = jetzt.getFullYear();
+var phase;
+if (monat === 11 && tagHeute <= 24) phase = "dezember";
+else if ((monat === 11 && tagHeute > 24) || monat === 0) phase = "nachher";
+else phase = "vorher";
+var kalenderJahr = monat === 0 ? jahr - 1 : jahr;
+
+/* ===================== Speicher ===================== */
+var SCHLUESSEL = "adventskalender-" + kalenderJahr;
+function laden() { try { return JSON.parse(localStorage.getItem(SCHLUESSEL)) || []; } catch (e) { return []; } }
+function speichern(l) { try { localStorage.setItem(SCHLUESSEL, JSON.stringify(l)); } catch (e) {} }
+var geoeffnet = laden();
+
+function istWochenende(tag) { var wt = new Date(kalenderJahr, 11, tag).getDay(); return wt === 0 || wt === 6; }
+function istSchulfrei(tag) { return istWochenende(tag) || tag >= FERIEN_BEGINN || WEITERE_FREIE_TAGE.indexOf(tag) > -1; }
+function darfOeffnen(tag) {
+  if (phase === "nachher") return true;
+  if (phase === "vorher") return false;
+  if (tag === tagHeute) return true;
+  if (tag < tagHeute) return VERGANGENE_TUEREN_OEFFNEN || istSchulfrei(tag) || geoeffnet.indexOf(tag) > -1;
+  return false;
+}
+
+/* ===================== Kopfbereich ===================== */
+var hinweis = document.getElementById("hinweis");
+if (phase === "vorher") hinweis.textContent = "Noch ist es nicht so weit: Am 1. Dezember öffnet sich das erste Türchen.";
+else if (phase === "nachher") hinweis.textContent = "Frohe Feiertage! Jetzt kannst du alle Türchen öffnen und nachlesen.";
+else hinweis.textContent = "Heute ist der " + tagHeute + ". Dezember: Dein Türchen leuchtet golden.";
+
+function fortschritt() {
+  var n = geoeffnet.length;
+  document.getElementById("fortschrittText").textContent = "Du hast " + n + " von 24 Türchen geöffnet";
+  document.getElementById("fortschrittBalken").style.width = (n / 24 * 100) + "%";
+}
+fortschritt();
+
+/* ===================== Raster ===================== */
+var grid = document.getElementById("grid");
+REIHENFOLGE.forEach(function (tag, i) {
+  var rahmen = document.createElement("div");
+  rahmen.className = "tuer-rahmen farbe" + (i % 4);
+  var btn = document.createElement("button");
+  btn.className = "tuer"; btn.setAttribute("aria-label", "Türchen " + tag);
+  btn.setAttribute("data-tag", tag);
+  var innen = document.createElement("div"); innen.className = "innen"; innen.textContent = INHALTE[tag - 1].symbol;
+  var klappe = document.createElement("div"); klappe.className = "klappe"; klappe.textContent = tag;
+  var eck = ECK_DEKO[i % ECK_DEKO.length];
+  if (eck) { var d = document.createElement("span"); d.className = "eck-deko"; d.textContent = eck; d.setAttribute("aria-hidden", "true"); klappe.appendChild(d); }
+  if (phase === "dezember" && tag === tagHeute) btn.className += " heute";
+  if (!darfOeffnen(tag)) { btn.className += " gesperrt"; var s = document.createElement("span"); s.className = "schloss"; s.textContent = "🔒"; klappe.appendChild(s); }
+  if (geoeffnet.indexOf(tag) > -1 && darfOeffnen(tag)) btn.className += " offen";
+  btn.appendChild(innen); btn.appendChild(klappe);
+  btn.addEventListener("click", function () { klick(btn, tag); });
+  rahmen.appendChild(btn); grid.appendChild(rahmen);
+});
+
+function klick(btn, tag) {
+  if (!darfOeffnen(tag)) {
+    btn.classList.remove("wackeln"); void btn.offsetWidth; btn.classList.add("wackeln");
+    if (phase === "vorher") toast("Geduld! Der Adventskalender startet am 1. Dezember.");
+    else if (tag > tagHeute) toast("Geduld! Dieses Türchen öffnet sich am " + tag + ". Dezember.");
+    else toast("Dieses Türchen war am " + tag + ". Dezember dran. Nachholen kann man nur Türchen von Wochenenden und Ferientagen.");
+    return;
+  }
+  var schonOffen = btn.classList.contains("offen");
+  btn.classList.add("offen");
+  if (geoeffnet.indexOf(tag) === -1) { geoeffnet.push(tag); speichern(geoeffnet); fortschritt(); }
+  setTimeout(function () {
+    zeigeKarte(tag);
+    if (!schonOffen) konfetti(btn);
+  }, schonOffen ? 0 : 650);
+}
+
+/* ===================== Extras darstellen ===================== */
+function liste(arr, tag) { return "<" + tag + ">" + arr.map(function (x) { return "<li>" + x + "</li>"; }).join("") + "</" + tag + ">"; }
+
+function renderExtra(e) {
+  var t = TYPEN[e.typ];
+  var h = '<span class="badge">' + t[0] + " " + t[1] + "</span><h3>" + e.titel + "</h3>";
+  if (e.intro) h += "<p>" + e.intro + "</p>";
+  if (e.typ === "raetsel") {
+    h += e.items.map(function (it) { return "<details><summary>" + it[0] + "</summary><p>" + it[1] + "</p></details>"; }).join("");
+    h += '<p class="klein">Tippe auf ein Rätsel, um die Lösung zu sehen.</p>';
+  }
+  if (e.typ === "quiz") {
+    h += e.fragen.map(function (f, qi) {
+      return '<div class="frage" data-q="' + qi + '"><div class="f">' + (qi + 1) + ". " + f[0] + "</div>" +
+        f[1].map(function (o, oi) { return '<button class="opt" data-aktion="quiz" data-q="' + qi + '" data-o="' + oi + '">' + o + "</button>"; }).join("") +
+        '<div class="rueck"></div></div>';
+    }).join("");
+    h += '<div class="ergebnis" id="quizErgebnis"></div>';
+    if (e.nachsatz) h += "<p><em>" + e.nachsatz + "</em></p>";
+  }
+  if (e.typ === "situation") {
+    h += "<p>" + e.text + "</p>";
+    h += e.optionen.map(function (o, oi) { return '<button class="opt" data-aktion="situation" data-o="' + oi + '">' + o[0] + "</button>"; }).join("");
+    h += '<div class="rueck" id="situationRueck"></div><p class="klein">Es gibt nicht nur eine richtige Antwort. Probier ruhig mehrere aus.</p>';
+  }
+  if (e.typ === "challenge") {
+    h += "<p>" + e.text + "</p><p><strong>Eure Aufgabe:</strong> " + e.aufgabe + "</p>";
+    h += '<button class="knopf" data-aktion="geschafft">Geschafft! 🎉</button>';
+  }
+  if (e.typ === "rezept") {
+    h += '<p class="klein">Für ' + e.portionen + "</p><h4>Zutaten</h4>" + liste(e.zutaten, "ul") + "<h4>Zubereitung</h4>";
+    h += '<div class="schritte">' + e.schritte.map(function (s, i) { return '<label><input type="checkbox"><span>' + (i + 1) + ". " + s + "</span></label>"; }).join("") + "</div>";
+    if (e.hinweis) h += '<p class="klein">⚠️ ' + e.hinweis + "</p>";
+    h += '<button class="knopf zweit" data-aktion="drucken">🖨️ Rezept drucken</button>';
+  }
+  if (e.typ === "basteln") {
+    if (e.svg) h += '<div class="bild">' + e.svg + "</div>";
+    h += "<h4>Material</h4>" + liste(e.material, "ul") + "<h4>So geht’s</h4>" + liste(e.schritte, "ol");
+    if (e.hinweis) h += '<p class="klein">⚠️ ' + e.hinweis + "</p>";
+    h += '<button class="knopf zweit" data-aktion="drucken">🖨️ Anleitung drucken</button>';
+  }
+  if (e.typ === "kreativ") {
+    h += "<p>" + e.text + "</p>" + liste(e.tipps, "ul");
+    if (e.beispiel) h += "<details><summary>Beispiel anzeigen</summary><p><em>" + e.beispiel + "</em></p></details>";
+  }
+  if (e.typ === "spezial") {
+    h += e.absaetze.map(function (p) { return "<p>" + p + "</p>"; }).join("");
+    if (e.sprachen) h += '<div class="sprachen">' + e.sprachen.map(function (s) { return "<div><span>" + s[0] + "</span>" + s[1] + "</div>"; }).join("") + "</div>";
+    if (e.frage) h += '<div class="box"><strong class="titel">Zum Weiterdenken</strong>' + e.frage + "</div>";
+  }
+  return h;
+}
+
+/* ===================== Karte ===================== */
+var overlay = document.getElementById("overlay"), extraBox = document.getElementById("karteExtra");
+var aktuellerTag = null, letzterFokus = null;
+
+function zeigeKarte(tag) {
+  var d = INHALTE[tag - 1];
+  aktuellerTag = tag;
+  document.getElementById("karteSymbol").textContent = d.symbol;
+  document.getElementById("karteTag").textContent = tag + ". Dezember";
+  document.getElementById("karteSpruch").textContent = d.spruch;
+  document.getElementById("karteAnregung").textContent = d.anregung;
+  extraBox.innerHTML = renderExtra(d.extra);
+  letzterFokus = document.activeElement;
+  overlay.classList.add("sichtbar"); overlay.scrollTop = 0;
+  document.body.style.overflow = "hidden";
+  document.getElementById("schliessen").focus();
+}
+function schliessen() {
+  overlay.classList.remove("sichtbar");
+  document.body.style.overflow = "";
+  if (letzterFokus) letzterFokus.focus();
+}
+document.getElementById("schliessen").addEventListener("click", schliessen);
+overlay.addEventListener("click", function (e) { if (e.target === overlay) schliessen(); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") schliessen(); });
+
+extraBox.addEventListener("click", function (ev) {
+  var el = ev.target;
+  while (el && el !== extraBox && !el.getAttribute("data-aktion")) el = el.parentNode;
+  if (!el || el === extraBox) return;
+  var aktion = el.getAttribute("data-aktion"), e = INHALTE[aktuellerTag - 1].extra;
+
+  if (aktion === "quiz") {
+    var qi = +el.getAttribute("data-q"), oi = +el.getAttribute("data-o");
+    var box = el.parentNode;
+    if (box.getAttribute("data-fertig")) return;
+    box.setAttribute("data-fertig", oi === e.fragen[qi][2] ? "r" : "f");
+    var knoepfe = box.querySelectorAll(".opt");
+    for (var i = 0; i < knoepfe.length; i++) {
+      if (i === e.fragen[qi][2]) knoepfe[i].classList.add("richtig");
+      else if (i === oi) knoepfe[i].classList.add("falsch");
+    }
+    var r = box.querySelector(".rueck");
+    r.textContent = (oi === e.fragen[qi][2] ? "✅ Richtig! " : "❌ Nicht ganz. ") + e.fragen[qi][3];
+    r.classList.add("sichtbar");
+    var alle = extraBox.querySelectorAll(".frage"), fertig = 0, richtig = 0;
+    for (var j = 0; j < alle.length; j++) { var f = alle[j].getAttribute("data-fertig"); if (f) { fertig++; if (f === "r") richtig++; } }
+    if (fertig === alle.length) {
+      document.getElementById("quizErgebnis").textContent = richtig + " von " + alle.length + " richtig" + (richtig === alle.length ? " – perfekt! 🌟" : ". Gut gemacht!");
+      if (richtig === alle.length) konfetti(null);
+    }
+  }
+  if (aktion === "situation") {
+    var o = +el.getAttribute("data-o");
+    var opts = extraBox.querySelectorAll(".opt");
+    for (var k = 0; k < opts.length; k++) opts[k].classList.remove("gewaehlt");
+    el.classList.add("gewaehlt");
+    var rb = document.getElementById("situationRueck");
+    rb.textContent = e.optionen[o][1]; rb.classList.add("sichtbar");
+  }
+  if (aktion === "geschafft") { konfetti(null); toast("Großartig! Ihr seid ein starkes Team. 🌟"); }
+  if (aktion === "drucken") { try { window.print(); } catch (err) { toast("Drucken ist hier leider nicht möglich."); } }
+});
+
+/* ===================== Effekte ===================== */
+var toastTimer;
+function toast(text) {
+  var t = document.getElementById("toast");
+  t.textContent = text; t.classList.add("sichtbar");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.classList.remove("sichtbar"); }, 2800);
+}
+
+function konfetti(quelle) {
+  var x = window.innerWidth / 2, y = window.innerHeight / 2;
+  if (quelle) { var r = quelle.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top + r.height / 2; }
+  var zeichen = ["⭐", "✨", "🌟", "❄️", "💛"];
+  for (var i = 0; i < 26; i++) {
+    (function (i) {
+      var s = document.createElement("span");
+      s.className = "konfetti"; s.textContent = zeichen[i % zeichen.length];
+      s.style.left = x + "px"; s.style.top = y + "px";
+      s.style.transform = "translate(-50%,-50%) scale(.4)";
+      document.body.appendChild(s);
+      var winkel = Math.random() * Math.PI * 2, weite = 80 + Math.random() * 160;
+      requestAnimationFrame(function () { requestAnimationFrame(function () {
+        s.style.transform = "translate(-50%,-50%) translate(" + (Math.cos(winkel) * weite) + "px," + (Math.sin(winkel) * weite + 60) + "px) rotate(" + (Math.random() * 360) + "deg) scale(1)";
+        s.style.opacity = "0";
+      }); });
+      setTimeout(function () { if (s.parentNode) s.parentNode.removeChild(s); }, 1600);
+    })(i);
+  }
+}
+
+/* Schneefall */
+var schnee = document.getElementById("schnee"), FLOCKEN = ["❄", "❅", "❆", "•"];
+for (var i = 0; i < 28; i++) {
+  var f = document.createElement("span");
+  f.className = "flocke"; f.textContent = FLOCKEN[i % FLOCKEN.length];
+  f.style.left = Math.random() * 100 + "%";
+  f.style.fontSize = (8 + Math.random() * 14) + "px";
+  f.style.animationDuration = (9 + Math.random() * 10) + "s";
+  f.style.animationDelay = (-Math.random() * 18) + "s";
+  f.style.opacity = (.4 + Math.random() * .5).toFixed(2);
+  schnee.appendChild(f);
+}
+/* Sternenhimmel */
+var sterne = document.getElementById("sterne");
+for (var j = 0; j < 70; j++) {
+  var st = document.createElement("div");
+  st.className = "stern";
+  st.style.left = Math.random() * 100 + "%"; st.style.top = Math.random() * 100 + "%";
+  st.style.animationDelay = (Math.random() * 3) + "s";
+  var g = Math.random() < .2 ? 3 : 2; st.style.width = st.style.height = g + "px";
+  sterne.appendChild(st);
+}
+})();
+</script>
+</body>
+</html>
