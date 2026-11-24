@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adventskalender – Mut, Haltung & Kreativität</title>
+<style>
+  /* Keine externen Schriften oder Dienste – datenschutzfreundlich für Schulhomepages */
+  :root {
+    --nacht: #0f1e3d;
+    --nacht2: #1b2f5c;
+    --gold: #f2c14e;
+    --rot: #b8323c;
+    --gruen: #2f6b4f;
+    --creme: #fff8ec;
+    --text: #23212b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+    background: radial-gradient(ellipse at top, var(--nacht2), var(--nacht) 70%);
+    color: var(--creme);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .sterne { position: fixed; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; z-index: 0; }
+  .stern {
+    position: absolute; width: 2px; height: 2px; border-radius: 50%;
+    background: #fff; opacity: .7; animation: funkeln 3s infinite ease-in-out;
+  }
+  @keyframes funkeln { 0%,100% { opacity: .2; } 50% { opacity: .9; } }
+
+  .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+  header { text-align: center; margin-bottom: 20px; }
+  header h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.8rem, 5vw, 3rem); margin: 0 0 6px;
+    color: var(--gold); letter-spacing: .5px;
+  }
+  header p { margin: 0; opacity: .85; font-size: clamp(.95rem, 2.5vw, 1.1rem); }
+  .hinweis {
+    margin: 14px auto 0; max-width: 560px; padding: 10px 14px; border-radius: 10px;
+    background: rgba(255,255,255,.08); font-size: .95rem;
+  }
+
+  .grid {
+    display: grid; gap: 12px; margin-top: 22px;
+    grid-template-columns: repeat(6, 1fr);
+  }
+  @media (max-width: 760px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (max-width: 420px) { .grid { grid-template-columns: repeat(3, 1fr); gap: 10px; } }
+
+  /* Höhe über padding-top statt aspect-ratio: funktioniert auch in älteren Browsern/Vorschauen */
+  .tuer-rahmen { perspective: 800px; position: relative; height: 0; padding-top: 110%; }
+  .tuer {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; padding: 0;
+    -webkit-appearance: none; appearance: none;
+    cursor: pointer; background: transparent; font: inherit; color: inherit;
+  }
+  .tuer:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 10px; }
+  .innen {
+    position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 10px;
+    background: var(--creme); color: var(--rot);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; box-shadow: inset 0 0 12px rgba(0,0,0,.25);
+  }
+  .klappe {
+    position: absolute; top: 0; right: 0; bottom: 0; left: 0; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Georgia, serif; font-weight: bold;
+    font-size: clamp(1.4rem, 4vw, 2rem); color: var(--creme);
+    transform-origin: left center; transition: transform .8s ease;
+    -webkit-backface-visibility: hidden; backface-visibility: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,.35);
+    border: 2px dashed rgba(255,255,255,.35);
+  }
+  .farbe0 .klappe { background: var(--rot); }
+  .farbe1 .klappe { background: var(--gruen); }
+  .farbe2 .klappe { background: #7a4b8f; }
+  .farbe3 .klappe { background: #2b5f8f; }
+  .tuer.offen .klappe { transform: rotateY(-105deg); }
+  .tuer.heute .klappe {
+    border: 3px solid var(--gold);
+    animation: leuchten 2s infinite ease-in-out;
+  }
+  @keyframes leuchten {
+    0%,100% { box-shadow: 0 0 6px var(--gold); }
+    50% { box-shadow: 0 0 22px var(--gold); }
+  }
+  .tuer.gesperrt .klappe { filter: saturate(.75) brightness(.9); }
+  .schloss {
+    position: absolute; right: 6px; bottom: 4px; font-size: .9rem; opacity: .8;
+    font-family: system-ui, sans-serif; font-weight: normal;
+  }
+  .wackeln { animation: wackeln .4s; }
+  @keyframes wackeln {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  /* Popup */
+  .overlay {
+    position: fixed; top: 0; right: 0; bottom: 0; left: 0; background: rgba(5,10,25,.7);
+    display: none; align-items: center; justify-content: center; padding: 16px; z-index: 10;
+  }
+  .overlay.sichtbar { display: flex; }
+  .karte {
+    background: var(--creme); color: var(--text); border-radius: 16px;
+    max-width: 520px; width: 100%; padding: 28px 24px 22px; position: relative;
+    box-shadow: 0 10px 40px rgba(0,0,0,.5); border-top: 8px solid var(--rot);
+    animation: auf .35s ease;
+    max-height: 90vh; overflow-y: auto;
+  }
+  @keyframes auf { from { transform: scale(.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .karte .tag { color: var(--rot); font-weight: bold; letter-spacing: 1px; text-transform: uppercase; font-size: .85rem; }
+  .karte blockquote {
+    font-family: Georgia, serif; font-size: clamp(1.2rem, 3.5vw, 1.5rem);
+    margin: 12px 0 20px; line-height: 1.4; color: var(--nacht);
+  }
+  .anregung {
+    background: #f3ead6; border-left: 5px solid var(--gruen);
+    padding: 12px 14px; border-radius: 8px; line-height: 1.45;
+  }
+  .anregung strong { color: var(--gruen); display: block; margin-bottom: 4px; }
+  .schliessen {
+    position: absolute; top: 10px; right: 12px; border: none; background: none;
+    font-size: 1.6rem; cursor: pointer; color: #666; line-height: 1;
+  }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120px);
+    background: var(--creme); color: var(--text); padding: 12px 18px; border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.4); transition: transform .3s ease; z-index: 20;
+    max-width: 90vw; text-align: center;
+  }
+  .toast.sichtbar { transform: translateX(-50%) translateY(0); }
+  footer { text-align: center; margin-top: 28px; font-size: .85rem; opacity: .6; }
+
+  /* Weihnachtliche Deko */
+  .girlande { display: flex; justify-content: center; gap: clamp(10px, 3vw, 22px); margin-bottom: 14px; position: relative; }
+  .girlande::before {
+    content: ""; position: absolute; left: 5%; right: 5%; top: 2px; height: 14px;
+    border-bottom: 2px solid #2f6b4f; border-radius: 0 0 50% 50%;
+  }
+  .lampe {
+    width: 10px; height: 14px; border-radius: 50% 50% 45% 45%; margin-top: 10px;
+    animation: lampe 1.6s infinite alternate; position: relative;
+  }
+  .lampe:nth-child(4n+1) { background: #ff5a5f; color: #ff5a5f; }
+  .lampe:nth-child(4n+2) { background: #f2c14e; color: #f2c14e; animation-delay: .4s; }
+  .lampe:nth-child(4n+3) { background: #4ecdc4; color: #4ecdc4; animation-delay: .8s; }
+  .lampe:nth-child(4n)   { background: #c77dff; color: #c77dff; animation-delay: 1.2s; }
+  @keyframes lampe { from { opacity: .45; box-shadow: none; } to { opacity: 1; box-shadow: 0 0 10px currentColor; } }
+  .deko-reihe { font-size: clamp(1.3rem, 4vw, 1.8rem); letter-spacing: 8px; margin-top: 8px; }
+  .baeume { font-size: clamp(1.6rem, 5vw, 2.4rem); letter-spacing: 4px; margin-top: 26px; text-align: center; opacity: .95; }
+  .eck-deko { position: absolute; top: 3px; left: 6px; font-size: .9rem; font-family: system-ui, sans-serif; }
+  .karte .gross { font-size: 2.6rem; text-align: center; margin-bottom: 4px; }
+  .schnee { position: fixed; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; z-index: 5; overflow: hidden; }
+  .flocke {
+    position: absolute; top: -30px; color: #fff; opacity: .8;
+    animation: fallen linear infinite;
+  }
+  @keyframes fallen {
+    to { transform: translateY(110vh) translateX(40px) rotate(220deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flocke, .stern, .lampe, .tuer.heute .klappe { animation: none !important; }
+    .flocke { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="sterne" id="sterne" aria-hidden="true"></div>
+<div class="schnee" id="schnee" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header>
+    <div class="girlande" aria-hidden="true">
+      <span class="lampe"></span><span class="lampe"></span><span class="lampe"></span><span class="lampe"></span>
+      <span class="lampe"></span><span class="lampe"></span><span class="lampe"></span><span class="lampe"></span>
+      <span class="lampe"></span><span class="lampe"></span><span class="lampe"></span><span class="lampe"></span>
+    </div>
+    <h1>Adventskalender</h1>
+    <p>24 Türchen für Mut, Haltung und kreative Ideen</p>
+    <div class="deko-reihe" aria-hidden="true">🕯️🕯️🕯️🕯️</div>
+    <div class="hinweis" id="hinweis"></div>
+  </header>
+
+  <div class="grid" id="grid"></div>
+  <div class="baeume" aria-hidden="true">🌲🎄⛄🎄🌲</div>
+  <footer>Jeden Tag öffnet sich ein neues Türchen.</footer>
+</div>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="karteTag">
+  <div class="karte">
+    <button class="schliessen" id="schliessen" aria-label="Schließen">×</button>
+    <div class="gross" id="karteSymbol" aria-hidden="true"></div>
+    <div class="tag" id="karteTag"></div>
+    <blockquote id="karteSpruch"></blockquote>
+    <div class="anregung"><strong>Deine Anregung für heute</strong><span id="karteAnregung"></span></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== Einstellungen ===== */
+// Türchen von Wochenenden und Ferientagen lassen sich immer nachträglich öffnen.
+// true = ALLE verpassten Türchen können nachträglich geöffnet werden
+const VERGANGENE_TUEREN_OEFFNEN = false;
+// Erster Ferientag im Dezember (NRW 2026: Mittwoch, 23.12.) – ab hier nachholbar
+const FERIEN_BEGINN = 23;
+// Weitere schulfreie Tage im Dezember (z. B. bewegliche Ferientage), etwa [21, 22]
+const WEITERE_FREIE_TAGE = [];
+
+/* ===== Inhalte ===== */
+const INHALTE = [
+  ["Jeder große Weg beginnt mit einem kleinen Schritt, und heute ist ein guter Tag dafür.",
+   "Schreib drei Dinge auf, auf die du dich in diesem Dezember freust."],
+  ["Deine Stimme zählt, auch wenn sie leise ist.",
+   "Überlege: Wo würdest du an unserer Schule gern mitbestimmen? Sprich heute mit jemandem darüber."],
+  ["Fehler sind keine Sackgassen, sondern Wegweiser.",
+   "Zeichne oder beschreibe deinen „Lieblingsfehler“: Was hast du daraus gelernt?"],
+  ["Mut heißt nicht, keine Angst zu haben, sondern es trotzdem zu versuchen.",
+   "Mach heute etwas, das dich ein bisschen Überwindung kostet: Melde dich im Unterricht oder sprich jemanden Neues an."],
+  ["Wer schweigt, wenn Unrecht geschieht, überlässt anderen das letzte Wort.",
+   "Stell dir vor, jemand wird vor dir beleidigt. Überlege dir einen Satz, mit dem du einschreiten könntest, und merk ihn dir."],
+  ["Vergleiche dich nicht mit anderen, sondern mit deinem Ich von gestern.",
+   "Schreib einen kurzen Brief an dein Ich von vor einem Jahr: Was kannst du heute, was du damals noch nicht konntest?"],
+  ["Eine Meinung zu haben ist gut. Anderen zuzuhören ist genauso wichtig.",
+   "Sprich mit jemandem, der zu einem Thema anders denkt als du. Deine Aufgabe: nur zuhören und nachfragen, nicht widersprechen."],
+  ["Auch der hellste Stern hat mal als kleines Licht angefangen.",
+   "Bastle oder zeichne einen Stern und schreib darauf, was dich zum Leuchten bringt."],
+  ["„Noch nicht“ ist ehrlicher als „Ich kann das nicht“.",
+   "Such dir etwas aus, das du noch nicht kannst, und übe es heute zehn Minuten lang."],
+  ["Gemeinsam schaffen wir mehr als jeder für sich allein.",
+   "Plant in der Klasse eine kleine gemeinsame Aktion: ein Lied, ein Plakat oder eine Überraschung für eine andere Klasse."],
+  ["Wenn jemand ausgegrenzt wird, braucht es nur eine Person, die sagt: „Komm zu uns.“",
+   "Achte heute in der Pause darauf, wer allein ist, und lade die Person ein, dazuzukommen."],
+  ["Neugier ist der Anfang von allem Wissen.",
+   "Notiere eine Frage, auf die du schon immer eine Antwort wolltest, und finde sie heute heraus."],
+  ["Respekt ist keine Frage der Meinung, sondern der Haltung.",
+   "Gestalte eine Karte oder ein kleines Plakat mit dem Satzanfang: „Respekt bedeutet für mich …“"],
+  ["Haltung zeigt sich nicht in großen Reden, sondern in kleinen Momenten.",
+   "Denk an eine Situation, in der jemand Haltung gezeigt hat, im Alltag, in der Geschichte oder in den Nachrichten. Erzähl jemandem davon."],
+  ["Deine Ideen zählen, also trau dich, sie zu teilen.",
+   "Schreib deine beste Idee für unsere Schule auf und gib sie an die Schülervertretung (SV) weiter."],
+  ["Wer Fragen stellt, macht die Welt ein Stück gerechter.",
+   "Stell heute im Unterricht eine Frage, auch wenn du denkst, sie sei zu einfach. Wahrscheinlich fragen sich andere dasselbe."],
+  ["Für sich selbst einzustehen ist kein Egoismus, sondern Selbstachtung.",
+   "Schreib drei Sätze auf, die mit „Ich habe das Recht, …“ beginnen."],
+  ["Hinfallen ist erlaubt. Aufstehen ist die eigentliche Kunst.",
+   "Erinnere dich an etwas, das du geschafft hast, obwohl es schwer war. Schreib es auf und heb den Zettel gut auf."],
+  ["Demokratie lebt davon, dass wir mitmachen, und das fängt in der Klasse an.",
+   "Du bist einen Tag lang Bürgermeister*in: Was würdest du in deiner Stadt verändern? Notiere drei Ideen."],
+  ["Sei die Freundlichkeit, die du dir von anderen wünschst.",
+   "Mach heute drei Menschen ein ehrliches Kompliment."],
+  ["Man kann unterschiedlicher Meinung sein und trotzdem fair miteinander umgehen.",
+   "Diskutiert eine Frage, zum Beispiel „Sollte es an Schulen mehr Mitbestimmung geben?“, mit einer Regel: Jede Person darf ausreden."],
+  ["Du bist stärker, als du denkst, und mutiger, als du glaubst.",
+   "Schreib ein Mut-Elfchen: ein Gedicht mit 11 Wörtern in 5 Zeilen (1 – 2 – 3 – 4 – 1 Wörter)."],
+  ["Ein Licht, das man teilt, wird nicht kleiner, sondern heller.",
+   "Schenke heute jemandem ein „Licht“: eine Kerze, einen Gruß oder ein paar Worte, die gut tun."],
+  ["Frieden beginnt dort, wo wir einander zuhören. Frohe Weihnachten! 🎄",
+   "Wünsch heute Menschen frohe Weihnachten, mit denen du sonst selten sprichst, und nimm dir Zeit für ein echtes Gespräch."]
+];
+
+/* Reihenfolge der Türchen im Raster (gemischt) */
+const REIHENFOLGE = [7,15,2,20,11,24,4,18,9,13,1,22,16,6,19,3,12,23,10,5,21,14,8,17];
+// Ein Symbol pro Tag (hinter dem Türchen und auf der Karte)
+const SYMBOLE = ["⭐","🕯️","❄️","🎁","🔔","🎄","🍪","⛄","🌟","🎀","🦌","🍊",
+                 "🧦","☕","🌲","🧣","✨","🎶","🏮","🍫","🪵","💫","👼","🎄"];
+// Kleine Verzierungen oben links auf manchen Türchen
+const ECK_DEKO = ["🎀","❄️","","🌿","","⭐"];
+
+/* ===== Datum ===== */
+function heute() {
+  // Testmodus: Seite mit ?datum=2026-12-05 aufrufen
+  const p = new URLSearchParams(location.search).get("datum");
+  if (p && /^\d{4}-\d{2}-\d{2}$/.test(p)) {
+    const [j, m, t] = p.split("-").map(Number);
+    return new Date(j, m - 1, t);
+  }
+  return new Date();
+}
+const jetzt = heute();
+const monat = jetzt.getMonth();   // 11 = Dezember
+const tagHeute = jetzt.getDate();
+const jahr = jetzt.getFullYear();
+
+// Status: "vorher" (vor Dezember), "dezember", "nachher" (25.–31.12. und Januar)
+let phase;
+if (monat === 11 && tagHeute <= 24) phase = "dezember";
+else if ((monat === 11 && tagHeute > 24) || monat === 0) phase = "nachher";
+else phase = "vorher";
+
+/* ===== Speicher (geöffnete Türchen merken) ===== */
+const SCHLUESSEL = "adventskalender-" + (monat === 0 ? jahr - 1 : jahr);
+function geladen() {
+  try { return JSON.parse(localStorage.getItem(SCHLUESSEL)) || []; } catch (e) { return []; }
+}
+function speichern(liste) {
+  try { localStorage.setItem(SCHLUESSEL, JSON.stringify(liste)); } catch (e) {}
+}
+let geoeffnet = geladen();
+
+function darfOeffnen(tag) {
+  if (phase === "nachher") return true;
+  if (phase === "vorher") return false;
+  if (tag === tagHeute) return true;
+  if (tag < tagHeute) return VERGANGENE_TUEREN_OEFFNEN || istSchulfrei(tag) || geoeffnet.includes(tag);
+  return false;
+}
+// Samstag oder Sonntag im Dezember des aktuellen Jahres?
+function istWochenende(tag) {
+  const wt = new Date(jahr, 11, tag).getDay();
+  return wt === 0 || wt === 6;
+}
+function istSchulfrei(tag) {
+  return istWochenende(tag) || tag >= FERIEN_BEGINN || WEITERE_FREIE_TAGE.includes(tag);
+}
+
+/* ===== Hinweistext ===== */
+const hinweis = document.getElementById("hinweis");
+if (phase === "vorher") {
+  hinweis.textContent = "Noch ist es nicht so weit: Am 1. Dezember öffnet sich das erste Türchen.";
+} else if (phase === "nachher") {
+  hinweis.textContent = "Frohe Weihnachten! Jetzt kannst du alle Türchen öffnen und nachlesen.";
+} else {
+  hinweis.textContent = "Heute ist der " + tagHeute + ". Dezember: Dein Türchen leuchtet golden.";
+}
+
+/* ===== Raster aufbauen ===== */
+const grid = document.getElementById("grid");
+REIHENFOLGE.forEach((tag, i) => {
+  const rahmen = document.createElement("div");
+  rahmen.className = "tuer-rahmen farbe" + (i % 4);
+
+  const btn = document.createElement("button");
+  btn.className = "tuer";
+  btn.dataset.tag = tag;
+  btn.setAttribute("aria-label", "Türchen " + tag);
+
+  const innen = document.createElement("div");
+  innen.className = "innen";
+  innen.textContent = SYMBOLE[tag - 1];
+
+  const klappe = document.createElement("div");
+  klappe.className = "klappe";
+  klappe.textContent = tag;
+  const eck = ECK_DEKO[i % ECK_DEKO.length];
+  if (eck) {
+    const d = document.createElement("span");
+    d.className = "eck-deko"; d.textContent = eck; d.setAttribute("aria-hidden", "true");
+    klappe.appendChild(d);
+  }
+
+  if (phase === "dezember" && tag === tagHeute) btn.classList.add("heute");
+  if (!darfOeffnen(tag)) {
+    btn.classList.add("gesperrt");
+    const s = document.createElement("span");
+    s.className = "schloss"; s.textContent = "🔒";
+    klappe.appendChild(s);
+  }
+  if (geoeffnet.includes(tag) && darfOeffnen(tag)) btn.classList.add("offen");
+
+  btn.append(innen, klappe);
+  btn.addEventListener("click", () => klick(btn, tag));
+  rahmen.appendChild(btn);
+  grid.appendChild(rahmen);
+});
+
+/* ===== Interaktion ===== */
+function klick(btn, tag) {
+  if (!darfOeffnen(tag)) {
+    btn.classList.remove("wackeln"); void btn.offsetWidth; btn.classList.add("wackeln");
+    if (phase === "vorher") zeigeToast("Geduld! Der Adventskalender startet am 1. Dezember.");
+    else if (tag > tagHeute) zeigeToast("Geduld! Dieses Türchen öffnet sich am " + tag + ". Dezember.");
+    else zeigeToast("Dieses Türchen war am " + tag + ". Dezember dran. Nachholen kann man nur Türchen von Wochenenden und Ferientagen.");
+    return;
+  }
+  const schonOffen = btn.classList.contains("offen");
+  btn.classList.add("offen");
+  if (!geoeffnet.includes(tag)) { geoeffnet.push(tag); speichern(geoeffnet); }
+  setTimeout(() => zeigeKarte(tag), schonOffen ? 0 : 650);
+}
+
+const overlay = document.getElementById("overlay");
+let letzterFokus = null;
+function zeigeKarte(tag) {
+  const [spruch, anregung] = INHALTE[tag - 1];
+  document.getElementById("karteSymbol").textContent = SYMBOLE[tag - 1];
+  document.getElementById("karteTag").textContent = tag + ". Dezember";
+  document.getElementById("karteSpruch").textContent = spruch;
+  document.getElementById("karteAnregung").textContent = anregung;
+  letzterFokus = document.activeElement;
+  overlay.classList.add("sichtbar");
+  document.getElementById("schliessen").focus();
+}
+function schliessen() {
+  overlay.classList.remove("sichtbar");
+  if (letzterFokus) letzterFokus.focus();
+}
+document.getElementById("schliessen").addEventListener("click", schliessen);
+overlay.addEventListener("click", e => { if (e.target === overlay) schliessen(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") schliessen(); });
+
+let toastTimer;
+function zeigeToast(text) {
+  const t = document.getElementById("toast");
+  t.textContent = text; t.classList.add("sichtbar");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("sichtbar"), 2600);
+}
+
+/* ===== Schneefall ===== */
+const schnee = document.getElementById("schnee");
+const FLOCKEN = ["❄","❅","❆","•"];
+for (let i = 0; i < 28; i++) {
+  const f = document.createElement("span");
+  f.className = "flocke";
+  f.textContent = FLOCKEN[i % FLOCKEN.length];
+  f.style.left = Math.random() * 100 + "%";
+  f.style.fontSize = (8 + Math.random() * 14) + "px";
+  f.style.animationDuration = (9 + Math.random() * 10) + "s";
+  f.style.animationDelay = (-Math.random() * 18) + "s";
+  f.style.opacity = (.4 + Math.random() * .5).toFixed(2);
+  schnee.appendChild(f);
+}
+
+/* ===== Sternenhimmel ===== */
+const sterne = document.getElementById("sterne");
+for (let i = 0; i < 70; i++) {
+  const s = document.createElement("div");
+  s.className = "stern";
+  s.style.left = Math.random() * 100 + "%";
+  s.style.top = Math.random() * 100 + "%";
+  s.style.animationDelay = (Math.random() * 3) + "s";
+  const g = Math.random() < .2 ? 3 : 2;
+  s.style.width = s.style.height = g + "px";
+  sterne.appendChild(s);
+}
+</script>
+</body>
+</html>
