@@ -413,7 +413,7 @@ else phase = "vorher";
 var kalenderJahr = monat === 0 ? jahr - 1 : jahr;
 
 /* ===================== Speicher ===================== */
-var SCHLUESSEL = "adventskalender-" + kalenderJahr;
+var SCHLUESSEL = "adventskalender2-" + kalenderJahr;
 function laden() { try { return JSON.parse(localStorage.getItem(SCHLUESSEL)) || []; } catch (e) { return []; } }
 function speichern(l) { try { localStorage.setItem(SCHLUESSEL, JSON.stringify(l)); } catch (e) {} }
 var geoeffnet = laden();
