@@ -289,9 +289,8 @@ function dialog(title,bodyHtml,buttons){return new Promise(function(res){var d=$
 
 /* ---------- Zustand ---------- */
 var S={code:null,name:'',mode:'local',items:{},meta:{},view:'start',online:{},
- sb:null,ch:null,pending:{items:{},meta:{}},flushT:null,syncState:'lokal',me:lsGet('scrum-me')||uid(),
+ sb:null,ch:null,pending:{items:{},meta:{}},flushT:null,syncState:'lokal',me:(function(){try{var x=sessionStorage.getItem('scrum-me');if(!x){x=uid();sessionStorage.setItem('scrum-me',x)}return x}catch(e){return uid()}})(),
  poker:{target:'',round:1,votes:{},revealed:false,mine:null}};
-lsSet('scrum-me',S.me);
 function M(k,d){var m=S.meta[k];return m&&m.v!==undefined?m.v:d}
 function items(t){return Object.keys(S.items).map(function(k){return S.items[k]}).filter(function(x){return x&&!x.del&&(!t||x.t===t)})}
 function item(id){var x=S.items[id];return x&&!x.del?x:null}
