@@ -111,6 +111,12 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:1
 .voter{min-width:92px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;background:#fff}
 .voter .v{font-size:22px;font-weight:800;margin-top:2px}
 .voter.done{border-color:var(--accent-2);background:#f0fdfa}
+.lrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-left:5px solid var(--c,#cbd5e1);border-radius:10px;background:#fff}
+.lrow a.lt{font-weight:700;color:inherit;text-decoration:underline;text-underline-offset:2px;word-break:break-word}
+.lrow .grow{flex:1 1 160px}
+.voter.off{border-style:dashed;color:var(--muted,#64748b);cursor:pointer;font:inherit}
+.voter.off:hover{border-color:var(--accent-2)}
+.voter .st{font-size:11px;margin-top:2px}
 /* Stand-up */
 .timer{font-variant-numeric:tabular-nums;font-size:54px;font-weight:800;letter-spacing:-.02em;line-height:1}
 .bar{height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden}
@@ -170,6 +176,7 @@ dialog .df{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;borde
  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><path d="M7 16l4-5 3 3 5-7"/></symbol>
  <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-3.6 10.8c.7.6 1.1 1.4 1.1 2.2h5c0-.8.4-1.6 1.1-2.2A6 6 0 0012 3z"/></symbol>
  <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 16h5"/></symbol>
+ <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></symbol>
  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></symbol>
  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
@@ -274,8 +281,10 @@ var VIEWS=[
  ['standup','Stand-up','i-clock','Kurzes Daily mit Timebox: gestern, heute, Hindernisse'],
  ['review','Review','i-check','Ergebnisse zeigen, gegen Kriterien prüfen, Feedback geben'],
  ['retro','Retro','i-loop','Zurückblicken und Vereinbarungen für den nächsten Sprint treffen'],
- ['progress','Fortschritt','i-chart','Burn-up-Diagramm und Wochenpunkte']
+ ['progress','Fortschritt','i-chart','Burn-up-Diagramm und Wochenpunkte'],
+ ['material','Material','i-link','Links zu Ordnern, Entwürfen und Lernprodukten sammeln']
 ];
+var LINK_KINDS=['Recherche','Entwurf','Lernprodukt','Feedback','Sonstiges'];
 var REVIEW_FORMATS=['Präsentation (5–7 Min.)','Demo / Prototyp-Durchlauf','Galeriegang / Markt der Möglichkeiten','Quiz mit Begründungen','Leistungscheck / Kurztest','Erklärvideo / Screencast','Poster / Infografik mit Fragerunde','FAQ / How-to aus Nutzersicht','Peer-Teaching (5-Minuten-Lektion)','Mini-Pitch'];
 var RUBRIC=[['goal','Lernziel erreicht'],['evidence','Belege / Evidenz'],['correct','Fachliche Richtigkeit'],['present','Darstellung / Struktur'],['team','Team-Zusammenarbeit']];
 var INVEST=[['I','Unabhängig','lässt sich ohne andere Stories umsetzen'],['N','Verhandelbar','Details dürfen sich noch ändern'],['V','Wertvoll','bringt erkennbaren Nutzen'],['E','Schätzbar','wir können den Aufwand einschätzen'],['S','Klein','passt in einen Sprint'],['T','Testbar','Akzeptanzkriterien sind überprüfbar']];
@@ -370,7 +379,7 @@ function leave(){try{if(S.ch)S.sb.removeChannel(S.ch)}catch(e){}S.ch=null;flush(
 function renderTabs(){var t=$('#tabs');if(!t.children.length)t.innerHTML=VIEWS.map(function(v){return '<button class="tab" data-v="'+v[0]+'">'+ico(v[2])+v[1]+'</button>'}).join('');$$('.tab',t).forEach(function(x){var on=x.dataset.v===S.view;x.classList.toggle('on',on);if(on)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});var n=M('teamName','')||'Scrum-Werkstatt';if($('#hTeam').textContent!==n)$('#hTeam').textContent=n}
 function go(v){S.view=v;try{history.replaceState(null,'','#'+v)}catch(e){}renderTabs();renderView();window.scrollTo(0,0)}
 $('#tabs').addEventListener('click',function(e){var b=e.target.closest('.tab');if(b)go(b.dataset.v)});
-function cycleHtml(){return VIEWS.filter(function(v){return v[0]!=='start'&&v[0]!=='basics'}).map(function(v,i){return '<button class="step" data-go="'+v[0]+'"><b><span class="n">'+(i+1)+'</span>'+v[1]+'</b><span>'+v[3]+'</span></button>'}).join('')}
+function cycleHtml(){return VIEWS.filter(function(v){return v[0]!=='start'&&v[0]!=='basics'&&v[0]!=='material'}).map(function(v,i){return '<button class="step" data-go="'+v[0]+'"><b><span class="n">'+(i+1)+'</span>'+v[1]+'</b><span>'+v[3]+'</span></button>'}).join('')}
 
 /* Fokus und Eingaben beim Neuzeichnen erhalten */
 var rrT=null;
@@ -397,7 +406,8 @@ R.start=function(){var ts=tasks(),done=ts.filter(function(t){return t.col==='don
  return head('Hallo '+esc(S.name)+'!','Hier seht ihr den Stand eures Sprints auf einen Blick.',extBtn('scrummy','Scrummy fragen','i-bot'))+
  '<div class="kpis"><div class="kpi"><div class="l">Sprint-Woche</div><div class="v">'+M('week',1)+' / '+M('weeks',6)+'</div></div><div class="kpi"><div class="l">User Stories</div><div class="v">'+stories().length+'</div></div><div class="kpi"><div class="l">Punkte erledigt</div><div class="v">'+sumPts(done)+' / '+sumPts(ts)+'</div></div><div class="kpi"><div class="l">Offene Hindernisse</div><div class="v" style="color:'+(bl.length?'var(--bad)':'inherit')+'">'+bl.length+'</div></div></div>'+
  '<div class="grid2" style="margin-top:18px"><section class="card"><h3>Sprint-Ziel</h3><p class="lead">Was soll am Ende dieses Sprints fertig sein? Ein Satz genügt.</p><textarea data-k="goal" id="goal" placeholder="z. B. Wir haben ein getestetes Plakat-Konzept für die Werbekampagne.">'+esc(goal)+'</textarea>'+
- '<div class="row" style="margin-top:10px"><label class="small muted">Sprint Nr. <input type="number" min="1" id="sprintNo" data-k="sprintNo" value="'+M('sprintNo',1)+'" style="width:80px"></label><label class="small muted">Start <input type="date" id="startDate" data-k="startDate" value="'+esc(M('startDate',''))+'" style="width:160px"></label></div></section>'+
+ '<div class="row" style="margin-top:10px"><label class="small muted">Sprint Nr. <input type="number" min="1" id="sprintNo" data-k="sprintNo" value="'+M('sprintNo',1)+'" style="width:80px"></label><label class="small muted">Start <input type="date" id="startDate" data-k="startDate" value="'+esc(M('startDate',''))+'" style="width:160px"></label></div>'+
+ '<div class="row" style="margin-top:12px">'+(folderHtml()||'<span class="small muted">Noch kein Projektordner. <a href="#material" data-go="material">Im Reiter Material eintragen</a></span>')+'</div></section>'+
  '<section class="card"><h3>Weiterführende Tools</h3><p class="lead">Für Ideenfindung, KI-Begleitung und Reflexion.</p><div class="stack">'+
  '<div class="row">'+extBtn('kreativ','Kreativitätstechniken','i-bulb')+'<span class="small muted grow">Ideen finden, inklusive 6-Hüte-Methode</span></div>'+
  '<div class="row">'+extBtn('scrummy','Scrummy','i-bot')+'<span class="small muted grow">KI-Assistent in AIS.chat: Pakete, DoD, Kodex</span></div>'+
@@ -457,6 +467,48 @@ A.stories=function(){var prev=function(){var f=readStoryForm();$('#usPreview').i
 function storyActions(){$$('[data-edit]').forEach(function(b){b.onclick=function(){editStory=b.dataset.edit;draft=null;go('stories')}});
  $$('[data-del]').forEach(function(b){b.onclick=function(){var s=item(b.dataset.del);dialog('User Story löschen?','<p>„'+esc(s&&s.title)+'“ und die zugehörigen Aufgaben auf dem Board werden gelöscht.</p>',[['no','Abbrechen'],['yes','Löschen',true]]).then(function(v){if(v!=='yes')return;tasks().forEach(function(t){if(t.story===b.dataset.del)put(t.id,{del:true},true)});del(b.dataset.del)})}})}
 
+
+/* ========== MATERIAL (Links) ========== */
+function safeUrl(u){u=String(u||'').trim();if(!u)return null;if(!/^[a-z][a-z0-9+.-]*:/i.test(u))u='https://'+u;try{var x=new URL(u);if(x.protocol!=='https:')return null;if(!x.hostname||x.hostname.indexOf('.')<0)return null;return x.href}catch(e){return null}}
+function svcOf(u){var h='';try{h=new URL(u).hostname.toLowerCase()}catch(e){return 'Link'}
+ var m=[[/(^|\.)(1drv\.ms|onedrive\.live\.com|sharepoint\.com|onedrive\.com)$/,'OneDrive'],[/(^|\.)(docs|drive|sheets|slides)\.google\.com$/,'Google'],[/(^|\.)dropbox\.com$|(^|\.)db\.tt$/,'Dropbox'],[/nextcloud|owncloud/,'Nextcloud'],[/logineo/,'LOGINEO'],[/moodle/,'Moodle'],[/(^|\.)canva\.com$/,'Canva'],[/(^|\.)padlet\.com$/,'Padlet'],[/(^|\.)figma\.com$/,'Figma'],[/(^|\.)miro\.com$/,'Miro'],[/(^|\.)taskcards\.(de|app)$/,'TaskCards']];
+ for(var i=0;i<m.length;i++)if(m[i][0].test(h))return m[i][1];return h.replace(/^www\./,'')}
+function links(){return items('link').sort(function(a,b){return (a.order||0)-(b.order||0)})}
+function linksFor(storyId){var tk={};tasks().forEach(function(t){if(t.story===storyId)tk[t.id]=1});return links().filter(function(l){return l.story===storyId||(l.task&&tk[l.task])})}
+function linkRow(l,actions){var s=item(l.story)||(item(l.task)&&item(item(l.task).story));var t=item(l.task);
+ return '<div class="lrow" style="--c:'+esc(s?s.color:'#cbd5e1')+'"><span class="chip">'+ico('i-link')+esc(svcOf(l.url))+'</span><span class="grow"><a class="lt" href="'+esc(l.url)+'" target="_blank" rel="noopener noreferrer">'+esc(l.title||l.url)+'</a>'+(t?'<span class="small muted"> · Aufgabe: '+esc(t.title)+'</span>':'')+(l.who?'<span class="small muted"> · '+esc(l.who)+'</span>':'')+'</span><span class="chip grey">'+esc(l.kind||'Sonstiges')+'</span>'+
+ (actions?'<button class="btn s danger" data-ldel="'+l.id+'" aria-label="Link entfernen">'+ico('i-trash')+'</button>':'')+'</div>'}
+function bindLinkDel(){$$('[data-ldel]').forEach(function(b){b.onclick=function(){del(b.dataset.ldel);toast('Link entfernt – die Datei selbst bleibt erhalten')}})}
+function folderHtml(){var f=M('folder',null);return f&&f.url?'<a class="btn" href="'+esc(f.url)+'" target="_blank" rel="noopener noreferrer">'+ico('i-link')+esc(f.title||'Projektordner')+' ('+esc(svcOf(f.url))+')'+ico('i-ext')+'</a>':''}
+R.material=function(){var f=M('folder',null)||{};var ls=links();var st=stories();
+ var groups=[{s:null,l:ls.filter(function(l){return !item(l.story)&&!(item(l.task)&&item(item(l.task).story))})}].concat(st.map(function(s){return {s:s,l:ls.filter(function(l){return l.story===s.id||(!item(l.story)&&item(l.task)&&item(l.task).story===s.id)})}}));
+ return head('Material','Sammelt hier Links zu euren Dateien, egal wo sie liegen: OneDrive, Nextcloud, Google Docs, Dropbox, Moodle, LOGINEO NRW, Canva … Die Dateien bleiben bei euch, die Werkstatt speichert nur den Link.',folderHtml())+
+ '<div class="grid2"><section class="card"><h3>Projektordner</h3><p class="lead">Ein gemeinsamer Ordner für das ganze Projekt. Er erscheint auch auf der Startseite.</p>'+
+ '<label class="f" for="fUrl">Link zum Ordner</label><input type="url" id="fUrl" data-keep="fUrl" placeholder="https://…" value="'+esc(f.url||'')+'">'+
+ '<label class="f" for="fTitle">Bezeichnung</label><input type="text" id="fTitle" data-keep="fTitle" maxlength="60" placeholder="z. B. Teamordner Kaffeebohne" value="'+esc(f.title||'')+'">'+
+ '<div class="row" style="margin-top:10px"><button class="btn p" id="fSave">'+ico('i-check')+'Speichern</button>'+(f.url?'<button class="btn danger" id="fDel">'+ico('i-trash')+'Entfernen</button>':'')+'</div>'+
+ '<details style="margin-top:14px"><summary class="small" style="cursor:pointer;font-weight:600">Freigaben richtig einstellen</summary><ul class="small muted"><li>Prüft, ob alle im Team den Link öffnen können, am besten mit einem zweiten Gerät.</li><li>Gebt nur so viel frei wie nötig: Lesen reicht für Review und Feedback.</li><li>Keine Links „für alle mit Link bearbeitbar“, wenn Namen, Fotos oder andere personenbezogene Daten in der Datei stehen.</li><li>Nutzt möglichst den Speicher eurer Schule.</li></ul></details></section>'+
+ '<section class="card"><h3>Link hinzufügen</h3>'+
+ '<label class="f" for="lUrl">Link</label><input type="url" id="lUrl" data-keep="lUrl" placeholder="https://…">'+
+ '<label class="f" for="lTitle">Titel</label><input type="text" id="lTitle" data-keep="lTitle" maxlength="80" placeholder="z. B. Moodboard Café">'+
+ '<div class="grid2" style="gap:12px"><div><label class="f" for="lKind">Art</label><select id="lKind" data-keep="lKind">'+LINK_KINDS.map(function(k){return '<option>'+k+'</option>'}).join('')+'</select></div>'+
+ '<div><label class="f" for="lWho">Von</label><select id="lWho" data-keep="lWho">'+memberOpts('')+'</select></div></div>'+
+ '<label class="f" for="lStory">Gehört zu User Story</label><select id="lStory" data-keep="lStory">'+storyOpts('',true)+'</select>'+
+ '<label class="f" for="lTask">oder zu Aufgabe</label><select id="lTask" data-keep="lTask"><option value="">– keine bestimmte Aufgabe –</option>'+tasks().map(function(t){var s=item(t.story);return '<option value="'+t.id+'">'+esc((s?s.title+': ':'')+t.title)+'</option>'}).join('')+'</select>'+
+ '<div class="row" style="margin-top:12px"><button class="btn p" id="lAdd">'+ico('i-plus')+'Link speichern</button></div></section></div>'+
+ '<section class="card" style="margin-top:18px"><h3>Alle Links ('+ls.length+')</h3>'+
+ (ls.length?groups.filter(function(g){return g.l.length}).map(function(g){return '<h4 style="margin:14px 0 8px">'+(g.s?esc(g.s.title):'Allgemein')+'</h4><div class="stack">'+g.l.map(function(l){return linkRow(l,true)}).join('')+'</div>'}).join(''):'<div class="empty">Noch keine Links. Tragt oben den ersten ein.</div>')+'</section>'};
+A.material=function(){
+ $('#fSave').onclick=function(){var u=$('#fUrl').value.trim();if(!u){toast('Bitte einen Link eintragen');return}var x=safeUrl(u);if(!x){toast('Bitte einen gültigen https-Link eintragen');return}setMeta('folder',{url:x,title:$('#fTitle').value.trim()});$('#fUrl').value=x;toast('Projektordner gespeichert')};
+ var fd=$('#fDel');if(fd)fd.onclick=function(){setMeta('folder',null);$('#fUrl').value='';$('#fTitle').value='';toast('Projektordner entfernt')};
+ $('#lTask').onchange=function(){var t=item(this.value);if(t&&t.story)$('#lStory').value=t.story};
+ $('#lAdd').onclick=function(){var x=safeUrl($('#lUrl').value);if(!x){toast('Bitte einen gültigen https-Link eintragen');$('#lUrl').focus();return}
+  var ti=$('#lTitle').value.trim()||svcOf(x);var tk=$('#lTask').value;var st=$('#lStory').value;if(tk&&item(tk))st=item(tk).story||st;
+  var mx=links().reduce(function(m,l){return Math.max(m,l.order||0)},0);
+  put(uid(),{t:'link',url:x,title:ti,kind:$('#lKind').value,who:$('#lWho').value,story:st,task:tk,order:mx+1},true);
+  $('#lUrl').value='';$('#lTitle').value='';rerender();toast('Link gespeichert');var e=$('#lUrl');if(e)e.focus()};
+ bindLinkDel()};
+
 /* ========== BACKLOG ========== */
 var bFilter='alle';
 R.backlog=function(){var list=stories();var f=list.filter(function(s){return bFilter==='alle'||(s.status||'backlog')===bFilter});var sp=list.filter(function(s){return s.status==='sprint'});
@@ -480,9 +532,14 @@ A.backlog=function(){$('#toStories').onclick=function(){editStory=null;draft=nul
 
 /* ========== SCHÄTZEN (Poker) ========== */
 function pokerTargets(){var o=[];stories().forEach(function(s){if(s.status!=='done')o.push(['s:'+s.id,'Story: '+(s.title||'(ohne Titel)')])});tasks().forEach(function(t){if(t.col!=='done')o.push(['t:'+t.id,'Aufgabe: '+(t.title||'(ohne Titel)')])});return o}
+function pokerPeople(){var on=S.online,keys=Object.keys(on),used={},out=[];
+ if(!keys.length){on={};on[S.me]=S.name;keys=[S.me]}
+ var low=function(x){return String(x||'').trim().toLowerCase()};
+ members().forEach(function(m){var k=keys.filter(function(k){return !used[k]&&low(on[k])===low(m)})[0];if(k){used[k]=1;out.push({id:k,name:on[k],online:true})}else out.push({id:'m:'+m,name:m,online:false})});
+ keys.forEach(function(k){if(!used[k])out.push({id:k,name:on[k],online:true})});return out}
 function targetItem(v){if(!v)return null;return item(v.slice(2))}
 R.poker=function(){var P=S.poker;var tg=targetItem(P.target);var votes=P.votes;var ids=Object.keys(votes);
- var people=Object.keys(S.online).length?Object.keys(S.online).map(function(k){return {id:k,name:S.online[k]}}):[{id:S.me,name:S.name}];
+ var people=pokerPeople();
  var vals=ids.map(function(k){return votes[k].v}).filter(function(v){return typeof v==='number'}).sort(function(a,b){return a-b});
  var med=vals.length?(vals.length%2?vals[(vals.length-1)/2]:(vals[vals.length/2-1]+vals[vals.length/2])/2):null;
  var sugg=med==null?null:POINTS.reduce(function(b,p){return Math.abs(p-med)<Math.abs(b-med)?p:b},POINTS[0]);
@@ -493,13 +550,16 @@ R.poker=function(){var P=S.poker;var tg=targetItem(P.target);var votes=P.votes;v
  '<h3 style="margin-top:18px">Deine Karte <span class="small muted">(Runde '+P.round+')</span></h3><div class="deck" id="deck">'+POINTS.map(function(p){return '<button class="pcard'+(P.mine===p?' on':'')+'" data-p="'+p+'">'+p+'</button>'}).concat(['<button class="pcard'+(P.mine==='?'?' on':'')+'" data-p="?" title="Ich kann es noch nicht einschätzen">?</button>']).join('')+'</div>'+
  '<p class="small muted" style="margin-top:10px">Faustregel: 1 = in einer Viertelstunde erledigt · 8 = etwa eine Doppelstunde · 40 und mehr = besser in kleinere Aufgaben teilen.</p></section>'+
  '<section class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Teilnehmende</h3><div class="row"><button class="btn p" id="pReveal"'+(P.revealed||!ids.length?' disabled':'')+'>Aufdecken</button><button class="btn" id="pNew">Neue Runde</button></div></div>'+
- '<div class="voters" style="margin-top:12px">'+people.map(function(p){var v=votes[p.id];return '<div class="voter'+(v?' done':'')+'"><div class="small">'+esc(p.name)+'</div><div class="v">'+(v?(P.revealed?esc(v.v):'✓'):'–')+'</div></div>'}).join('')+'</div>'+
+ '<div class="voters" style="margin-top:12px">'+people.map(function(p){var v=votes[p.id];var inner='<div class="small">'+esc(p.name)+'</div><div class="v">'+(v?(P.revealed?esc(v.v):'✓'):'–')+'</div>'+(p.online?'':'<div class="st">'+(v?'eingetragen':'nicht online · tippen')+'</div>');return p.online?'<div class="voter'+(v?' done':'')+'">'+inner+'</div>':'<button type="button" class="voter off'+(v?' done':'')+'" data-proxy="'+esc(p.name)+'" title="Karte stellvertretend verdeckt eintragen"'+(P.revealed?' disabled':'')+'>'+inner+'</button>'}).join('')+'</div>'+
+ (people.some(function(p){return !p.online})?'<p class="small muted" style="margin-top:8px">Gestrichelt = nicht online. Sitzt ihr an einem Gerät zusammen, tippt auf einen Namen und lasst die Person ihre Karte verdeckt wählen.</p>':'')+
  (P.revealed&&vals.length?'<div class="card" style="margin-top:16px;background:#f8fafc;box-shadow:none"><div class="row"><span class="chip">Median '+med+'</span><span class="chip grey">Spanne '+vals[0]+'–'+vals[vals.length-1]+'</span>'+(spread>=5?'<span class="chip warn">Weit auseinander – kurz besprechen und neu schätzen</span>':'<span class="chip ok">Ziemlich einig</span>')+'</div>'+
  (tg?'<div class="row" style="margin-top:12px"><span class="small">Wert übernehmen:</span>'+POINTS.map(function(p){return '<button class="btn s'+(p===sugg?' p':'')+'" data-take="'+p+'">'+p+'</button>'}).join('')+'</div>':'')+'</div>':'')+
  (tg&&tg.pts?'<p class="small muted" style="margin-top:12px">Aktuell gespeichert: <b>'+tg.pts+' Punkte</b></p>':'')+'</section></div>'};
 A.poker=function(){var P=S.poker;
  $('#pTarget').onchange=function(){P.target=this.value;P.votes={};P.revealed=false;P.mine=null;broadcast('poker',{a:'target',target:P.target,round:P.round});renderView()};
  $('#deck').onclick=function(e){var b=e.target.closest('[data-p]');if(!b||P.revealed)return;var v=b.dataset.p==='?'?'?':parseInt(b.dataset.p,10);P.mine=v;P.votes[S.me]={name:S.name,v:v};broadcast('poker',{a:'vote',from:S.me,name:S.name,v:v,round:P.round});renderView()};
+ $$('[data-proxy]').forEach(function(b){b.onclick=function(){if(P.revealed)return;var name=b.dataset.proxy;
+  dialog('Karte für '+name,'<p>Bitte nur '+esc(name)+' auf den Bildschirm schauen lassen und eine Karte wählen. Der Wert bleibt bis zum Aufdecken verdeckt.</p>',POINTS.map(function(p){return [String(p),String(p)]}).concat([['?','?'],['','Abbrechen']])).then(function(r){if(!r)return;var v=r==='?'?'?':parseInt(r,10);var id='m:'+name;P.votes[id]={name:name,v:v};broadcast('poker',{a:'vote',from:id,name:name,v:v,round:P.round});renderView();toast('Karte für '+name+' eingetragen')})}});
  $('#pReveal').onclick=function(){P.revealed=true;broadcast('poker',{a:'reveal',round:P.round});renderView()};
  $('#pNew').onclick=function(){P.round++;P.votes={};P.revealed=false;P.mine=null;broadcast('poker',{a:'new',round:P.round,target:P.target});renderView()};
  $$('[data-take]').forEach(function(b){b.onclick=function(){var tg=targetItem(P.target);if(!tg)return;put(tg.id,{pts:parseInt(b.dataset.take,10)});toast(b.dataset.take+' Punkte gespeichert')}})};
@@ -526,7 +586,7 @@ R.board=function(){var ts=tasks().filter(function(t){return !boardFilter||t.stor
  '<div class="stack" style="--gap:8px">'+(bl.length?bl.sort(function(a,b){return (a.solved?1:0)-(b.solved?1:0)||(b.u||0)-(a.u||0)}).map(function(b){var t=item(b.task);return '<div class="bl'+(b.solved?' solved':'')+'"><input type="checkbox" data-solve="'+b.id+'"'+(b.solved?' checked':'')+' aria-label="Gelöst" style="margin-top:4px;accent-color:var(--accent)"><div class="grow"><div class="tx">'+esc(b.text)+'</div><div class="small muted">'+esc(b.by||'')+(t?' · betrifft „'+esc(t.title)+'“':'')+'</div></div><button class="btn s danger" data-bldel="'+b.id+'" aria-label="Löschen">'+ico('i-trash')+'</button></div>'}).join(''):'<div class="small muted">Keine Hindernisse eingetragen.</div>')+'</div></section>'};
 function taskHtml(t){var s=item(t.story);var blk=items('blocker').some(function(b){return !b.solved&&b.task===t.id});var ci=COLS.findIndex(function(c){return c[0]===(t.col||'todo')});
  return '<div class="task'+(blk?' blocked':'')+'" draggable="true" data-id="'+t.id+'" style="--c:'+esc(s?s.color:'#cbd5e1')+'"><div class="t">'+esc(t.title)+'</div>'+(s?'<div class="s">'+esc(s.title)+'</div>':'')+
- '<div class="b"><span class="pts" title="Punkte">'+(t.pts||'?')+'</span>'+(t.who?'<span class="chip grey">'+esc(t.who)+'</span>':'')+(blk?'<span class="chip bad">'+ico('i-alert')+'blockiert</span>':'')+(t.col==='done'&&t.week?'<span class="chip ok">Woche '+t.week+'</span>':'')+
+ '<div class="b"><span class="pts" title="Punkte">'+(t.pts||'?')+'</span>'+(t.who?'<span class="chip grey">'+esc(t.who)+'</span>':'')+(function(){var n=links().filter(function(l){return l.task===t.id}).length;return n?'<span class="chip grey" title="'+n+' Link(s) im Reiter Material">'+ico('i-link')+n+'</span>':''})()+(blk?'<span class="chip bad">'+ico('i-alert')+'blockiert</span>':'')+(t.col==='done'&&t.week?'<span class="chip ok">Woche '+t.week+'</span>':'')+
  '<span class="mv"><button class="btn s ghost" data-mv="-1" data-id="'+t.id+'" aria-label="Nach links"'+(ci===0?' disabled':'')+'>'+ico('i-left')+'</button><button class="btn s ghost" data-tedit="'+t.id+'" aria-label="Bearbeiten">'+ico('i-edit')+'</button><button class="btn s ghost" data-mv="1" data-id="'+t.id+'" aria-label="Nach rechts"'+(ci===2?' disabled':'')+'>'+ico('i-right')+'</button></span></div></div>'}
 function moveTask(id,col){var t=item(id);if(!t||t.col===col)return;var p={col:col};if(col==='done')p.week=parseInt(M('week',1),10)||1;else p.week=null;var mx=tasks().filter(function(x){return x.col===col}).reduce(function(m,x){return Math.max(m,x.order||0)},0);p.order=mx+1;put(id,p);if(col==='done')toast('Erledigt – DoD geprüft?')}
 A.board=function(){$$('[data-go]').forEach(function(b){b.onclick=function(e){e.preventDefault();go(b.dataset.go)}});
@@ -608,6 +668,7 @@ R.review=function(){var list=stories().filter(function(s){return s.status!=='bac
  return head('Sprint Review','Zeigt, was ihr geschafft habt, als „Story of Learning“. Prüft jede User Story gegen ihre Akzeptanzkriterien und die Definition of Done und gebt kurzes Feedback.')+
  (list.length?'<div class="grid2"><section class="card"><label class="f" for="rStory" style="margin-top:0">User Story</label><select id="rStory">'+list.map(function(x){return '<option value="'+x.id+'"'+(x.id===revStory?' selected':'')+'>'+esc(x.title)+'</option>'}).join('')+'</select>'+
  (s?'<div style="margin-top:12px">'+storyCard(s,false)+'</div>':'')+
+ (s?'<label class="f">Material zu dieser Story</label>'+(function(){var l=linksFor(s.id);return l.length?'<div class="stack">'+l.map(function(x){return linkRow(x,false)}).join('')+'</div>':'<p class="small muted">Noch keine Links. Im Reiter <a href="#material" data-go="material">Material</a> könnt ihr Entwürfe und Lernprodukte verlinken.</p>'})():'')+
  '<label class="f" for="rFormat">Präsentationsform</label><select id="rFormat">'+REVIEW_FORMATS.map(function(f){return '<option'+(f===rv.format?' selected':'')+'>'+f+'</option>'}).join('')+'</select>'+
  '<label class="f">Akzeptanzkriterien erfüllt?</label><div class="stack">'+(ac.length?ac.map(function(a,i){return '<label class="check"><input type="checkbox" data-acc="'+i+'"'+((rv.acc||{})[i]?' checked':'')+'><span>'+esc(a)+'</span></label>'}).join(''):'<p class="small muted">Für diese Story sind keine Akzeptanzkriterien hinterlegt.</p>')+'</div>'+
  '<label class="f">Definition of Done erfüllt?</label><div class="stack">'+(dod.length?dod.map(function(a,i){return '<label class="check"><input type="checkbox" data-dod="'+i+'"'+((rv.dod||{})[i]?' checked':'')+'><span>'+esc(a)+'</span></label>'}).join(''):'<p class="small muted">Noch keine Definition of Done. Legt sie im Reiter „Team & Kodex“ fest.</p>')+'</div></section>'+
