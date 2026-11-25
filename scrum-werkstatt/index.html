@@ -138,6 +138,11 @@ table.t th{color:var(--muted);font-size:12.5px;font-weight:700;text-transform:up
 .kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
 .kpi .l{font-size:12.5px;color:var(--muted);font-weight:600}.kpi .v{font-size:28px;font-weight:800;letter-spacing:-.02em}
 canvas{width:100%;display:block}
+/* Grundlagen */
+.glossar{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.gterm{border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:#fff}
+details.card>summary{list-style:none}details.card>summary::-webkit-details-marker{display:none}details.card>summary::before{content:"+ ";color:var(--accent)}details.card[open]>summary::before{content:"– "}
+html{scroll-behavior:smooth}
 /* Toast */
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:50;max-width:90vw}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -152,6 +157,7 @@ dialog .df{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;borde
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2z"/><path d="M4 21V5M8 7h7"/></symbol>
  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></symbol>
  <symbol id="i-team" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.6c2.6.1 4.6 1.8 5.4 4.9"/></symbol>
  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></symbol>
@@ -189,12 +195,16 @@ dialog .df{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;borde
   <p>Vom Product Backlog über User Stories, Schätzen und Board bis zu Stand-up, Review und Retrospektive: Euer Team arbeitet in einem gemeinsamen Raum, alle sehen Änderungen in Echtzeit.</p>
   <p class="muted small">Teilt den Raumcode mit eurem Team. Bitte nur Vornamen oder Pseudonyme verwenden.</p>
   <div class="links">
+   <a class="btn p" href="#landingBasics"><svg class="i"><use href="#i-book"/></svg>Scrum verstehen</a>
+   <a class="btn p" href="#gateAnchor"><svg class="i"><use href="#i-right"/></svg>Raum betreten</a>
    <a class="btn" href="https://teacherette-susa.github.io/tools/kreativitaetstechniken/" target="_blank" rel="noopener"><svg class="i"><use href="#i-bulb"/></svg>Kreativitätstechniken</a>
    <a class="btn" href="https://teacherette-susa.github.io/tools/retrospektiven/" target="_blank" rel="noopener"><svg class="i"><use href="#i-loop"/></svg>Retrospektiven</a>
    <a class="btn" href="https://app.ais-chat.schule/assistants/f43232a9-f081-4a0d-8ef3-687f7a99b7eb" target="_blank" rel="noopener"><svg class="i"><use href="#i-bot"/></svg>Scrummy (AIS.chat)</a>
   </div>
  </header>
 
+ <div style="margin-top:22px"><div class="viewhead"><div><h2>Scrum verstehen</h2><p>Was ist Scrum, wer macht was und wie hängen die Bausteine zusammen? Ein Überblick mit Erklärgrafiken und allen Begriffen zum Nachschlagen.</p></div></div><div id="landingBasics"></div></div>
+ <div id="gateAnchor"></div>
  <div class="gate">
   <section class="card">
    <h2>Raum beitreten</h2>
@@ -255,6 +265,7 @@ var PRIOS=['Muss','Soll','Kann','Später'];
 var COLS=[['todo','Zu erledigen'],['doing','In Arbeit'],['done','Erledigt']];
 var VIEWS=[
  ['start','Start','i-home','Überblick über Sprint, Fortschritt und nächste Schritte'],
+ ['basics','Scrum verstehen','i-book','Was ist Scrum? Rollen, Artefakte, Ereignisse und alle Begriffe'],
  ['team','Team & Kodex','i-team','Rollen, Teamkodex und Definition of Done festlegen'],
  ['stories','User Stories','i-story','Anforderungen als „Als … möchte ich … damit …“ formulieren'],
  ['backlog','Backlog','i-list','Stories sammeln, priorisieren und für den Sprint auswählen'],
@@ -359,7 +370,7 @@ function leave(){try{if(S.ch)S.sb.removeChannel(S.ch)}catch(e){}S.ch=null;flush(
 function renderTabs(){var t=$('#tabs');if(!t.children.length)t.innerHTML=VIEWS.map(function(v){return '<button class="tab" data-v="'+v[0]+'">'+ico(v[2])+v[1]+'</button>'}).join('');$$('.tab',t).forEach(function(x){var on=x.dataset.v===S.view;x.classList.toggle('on',on);if(on)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});var n=M('teamName','')||'Scrum-Werkstatt';if($('#hTeam').textContent!==n)$('#hTeam').textContent=n}
 function go(v){S.view=v;try{history.replaceState(null,'','#'+v)}catch(e){}renderTabs();renderView();window.scrollTo(0,0)}
 $('#tabs').addEventListener('click',function(e){var b=e.target.closest('.tab');if(b)go(b.dataset.v)});
-function cycleHtml(){return VIEWS.slice(1).map(function(v,i){return '<button class="step" data-go="'+v[0]+'"><b><span class="n">'+(i+1)+'</span>'+v[1]+'</b><span>'+v[3]+'</span></button>'}).join('')}
+function cycleHtml(){return VIEWS.filter(function(v){return v[0]!=='start'&&v[0]!=='basics'}).map(function(v,i){return '<button class="step" data-go="'+v[0]+'"><b><span class="n">'+(i+1)+'</span>'+v[1]+'</b><span>'+v[3]+'</span></button>'}).join('')}
 
 /* Fokus und Eingaben beim Neuzeichnen erhalten */
 var rrT=null;
@@ -400,7 +411,7 @@ function bindMeta(sel,key,num){var e=$(sel);if(!e)return;var t=null;var h=functi
 R.team=function(){var mem=members(),dod=M('dod',[])||[];
  return head('Team & Kodex','Wer übernimmt welche Rolle, wie arbeitet ihr zusammen und wann gilt etwas als fertig?',extBtn('scrummy','Kodex mit Scrummy entwickeln','i-bot'))+
  '<div class="grid2"><section class="card"><h3>Team</h3><label class="f" for="teamName">Team- oder Projektname</label><input type="text" id="teamName" data-k="teamName" value="'+esc(M('teamName',''))+'">'+
- '<div class="grid2" style="gap:12px"><div><label class="f" for="po">Product Owner</label><input type="text" id="po" data-k="po" placeholder="meist die Lehrkraft" value="'+esc(M('po',''))+'"></div><div><label class="f" for="sm">Scrum Master / Team Captain</label><input type="text" id="sm" data-k="sm" value="'+esc(M('sm',''))+'"></div></div>'+
+ '<div class="grid2" style="gap:12px"><div><label class="f" for="po">Product Owner</label><input type="text" id="po" data-k="po" placeholder="im Unterricht die Lehrkraft" value="'+esc(M('po',''))+'"></div><div><label class="f" for="sm">Scrum Captain (wechselt pro Sprint)</label><input type="text" id="sm" data-k="sm" value="'+esc(M('sm',''))+'"></div></div>'+
  '<label class="f">Teammitglieder</label><div class="aclist" id="memList">'+mem.map(function(m,i){return '<div class="acrow"><input type="text" data-k="mem'+i+'" data-i="'+i+'" value="'+esc(m)+'"><button class="btn s danger" data-delmem="'+i+'" aria-label="Entfernen">'+ico('i-trash')+'</button></div>'}).join('')+'</div>'+
  '<div class="row" style="margin-top:8px"><input class="grow" type="text" id="newMem" data-keep="newMem" placeholder="Name hinzufügen" maxlength="30"><button class="btn" id="addMem">'+ico('i-plus')+'Hinzufügen</button></div></section>'+
  '<section class="card"><h3>Definition of Done</h3><p class="lead">Diese Kriterien gelten für jede User Story. Im Review hakt ihr sie ab.</p><div class="aclist" id="dodList">'+dod.map(function(d,i){return '<div class="acrow"><input type="text" data-k="dod'+i+'" data-i="'+i+'" value="'+esc(d)+'"><button class="btn s danger" data-deldod="'+i+'" aria-label="Entfernen">'+ico('i-trash')+'</button></div>'}).join('')+'</div>'+
@@ -637,29 +648,145 @@ A.retro=function(){var add=function(){var t=$('#aText').value.trim();if(!t)retur
 
 /* ========== FORTSCHRITT ========== */
 function weekData(){var W=Math.max(1,parseInt(M('weeks',6),10)||6);var ts=tasks();var total=sumPts(ts);var per=[];for(var i=1;i<=W;i++)per.push(sumPts(ts.filter(function(t){return t.col==='done'&&(parseInt(t.week,10)||1)===i})));var cum=[],r=0;per.forEach(function(p){r+=p;cum.push(r)});return {W:W,total:total,per:per,cum:cum}}
-R.progress=function(){var d=weekData();var cw=Math.min(d.W,parseInt(M('week',1),10)||1);var doneP=d.cum[d.W-1]||0;var ideal=d.total?Math.round(d.total/d.W*cw):0;
- return head('Fortschritt','Das Burn-up-Diagramm zeigt, wie viele Punkte ihr Woche für Woche erledigt habt, im Vergleich zum geplanten Umfang. Erledigte Aufgaben zählen für die Woche, in der sie nach „Erledigt“ gezogen wurden.','<button class="btn" id="pPrint">Drucken</button>')+
+R.progress=function(){var d=weekData();var cw=Math.min(d.W,parseInt(M('week',1),10)||1);var doneP=d.cum[d.W-1]||0;var Wb=Math.max(1,d.W-(parseInt(M('buffer',0),10)||0));var ideal=d.total?Math.round(d.total*Math.min(1,cw/Wb)):0;var mode=M('chartMode','up');
+ return head('Fortschritt','Burn-up zeigt, wie viele Punkte schon erledigt sind; Burn-down zeigt, wie viele noch offen sind. Die Ideallinie gibt Orientierung, ein Zeitpuffer fängt Ausfälle auf. Erledigte Aufgaben zählen für die Woche, in der sie nach „Erledigt“ gezogen wurden.','<button class="btn" id="pPrint">Drucken</button>')+
  '<div class="kpis"><div class="kpi"><div class="l">Geplant</div><div class="v">'+d.total+' P</div></div><div class="kpi"><div class="l">Erledigt</div><div class="v">'+doneP+' P</div></div><div class="kpi"><div class="l">Soll bis Woche '+cw+'</div><div class="v">'+ideal+' P</div></div><div class="kpi"><div class="l">Stand</div><div class="v" style="color:'+(doneP>=ideal?'var(--ok)':'var(--warn)')+'">'+(doneP>=ideal?'im Plan':'Rückstand')+'</div></div></div>'+
- '<section class="card" style="margin-top:18px"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Burn-up</h3><div class="row"><label class="small muted">Wochen im Sprint <input type="number" min="1" max="20" id="pWeeks" data-k="pWeeks" value="'+d.W+'" style="width:70px"></label><label class="small muted">Aktuelle Woche <input type="number" min="1" id="pWeek" data-k="pWeek" value="'+cw+'" style="width:70px"></label><button class="btn s" id="pNext">Nächste Woche</button></div></div><canvas id="chart" height="320" style="margin-top:12px" role="img" aria-label="Burn-up-Diagramm"></canvas>'+
- '<div class="row small" style="margin-top:8px"><span class="row" style="gap:6px"><span class="dot" style="background:#0f766e"></span>erledigt (kumuliert)</span><span class="row" style="gap:6px"><span class="dot" style="background:#94a3b8"></span>geplanter Umfang</span><span class="row" style="gap:6px"><span class="dot" style="background:#f59e0b"></span>gleichmäßiges Tempo</span></div></section>'+
+ '<section class="card" style="margin-top:18px"><div class="row" style="justify-content:space-between"><div class="row"><div class="seg" id="pMode"><button type="button" data-m="up" class="'+(mode==='up'?'on':'')+'">Burn-up</button><button type="button" data-m="down" class="'+(mode==='down'?'on':'')+'">Burn-down</button></div><label class="small muted">Zeitpuffer <select id="pBuf" style="width:auto">'+[0,1,2].map(function(b){return '<option value="'+b+'"'+(b===(parseInt(M('buffer',0),10)||0)?' selected':'')+'>'+(b?b+' Woche'+(b>1?'n':''):'keiner')+'</option>'}).join('')+'</select></label></div><div class="row"><label class="small muted">Wochen im Sprint <input type="number" min="1" max="20" id="pWeeks" data-k="pWeeks" value="'+d.W+'" style="width:70px"></label><label class="small muted">Aktuelle Woche <input type="number" min="1" id="pWeek" data-k="pWeek" value="'+cw+'" style="width:70px"></label><button class="btn s" id="pNext">Nächste Woche</button></div></div><canvas id="chart" height="320" style="margin-top:12px" role="img" aria-label="Burn-up-Diagramm"></canvas>'+
+ '<div class="row small" style="margin-top:8px"><span class="row" style="gap:6px"><span class="dot" style="background:#0f766e"></span>'+(mode==='down'?'noch offen':'erledigt (kumuliert)')+'</span>'+(mode==='up'?'<span class="row" style="gap:6px"><span class="dot" style="background:#94a3b8"></span>geplanter Umfang</span>':'')+'<span class="row" style="gap:6px"><span class="dot" style="background:#f59e0b"></span>Ideallinie'+(Wb<d.W?' (mit Zeitpuffer)':'')+'</span></div></section>'+
  '<section class="card" style="margin-top:18px"><h3>Punkte pro Woche</h3><div class="tablewrap"><table class="t"><thead><tr><th>Woche</th>'+d.per.map(function(_,i){return '<th>'+(i+1)+'</th>'}).join('')+'</tr></thead><tbody><tr><td>erledigt</td>'+d.per.map(function(p){return '<td>'+p+'</td>'}).join('')+'</tr><tr><td>kumuliert</td>'+d.cum.map(function(p){return '<td><b>'+p+'</b></td>'}).join('')+'</tr></tbody></table></div></section>'};
-A.progress=function(){['#pWeeks','#pWeek'].forEach(function(q){$(q).onchange=function(){var v=Math.max(1,parseInt(this.value,10)||1);setMeta(q==='#pWeeks'?'weeks':'week',v)}});$('#pNext').onclick=function(){var w=parseInt(M('week',1),10)||1;if(w<(parseInt(M('weeks',6),10)||6))setMeta('week',w+1);else toast('Letzte Woche des Sprints erreicht')};$('#pPrint').onclick=function(){window.print()};drawChart()};
-function drawChart(){var c=$('#chart');if(!c)return;var d=weekData();var dpr=window.devicePixelRatio||1;var W=c.clientWidth||800,H=320;c.width=W*dpr;c.height=H*dpr;c.style.height=H+'px';var g=c.getContext('2d');g.scale(dpr,dpr);
+A.progress=function(){['#pWeeks','#pWeek'].forEach(function(q){$(q).onchange=function(){var v=Math.max(1,parseInt(this.value,10)||1);setMeta(q==='#pWeeks'?'weeks':'week',v)}});$('#pNext').onclick=function(){var w=parseInt(M('week',1),10)||1;if(w<(parseInt(M('weeks',6),10)||6))setMeta('week',w+1);else toast('Letzte Woche des Sprints erreicht')};$('#pPrint').onclick=function(){window.print()};$('#pMode').onclick=function(e){var b=e.target.closest('[data-m]');if(b)setMeta('chartMode',b.dataset.m)};$('#pBuf').onchange=function(){setMeta('buffer',parseInt(this.value,10)||0)};drawChart()};
+function drawChart(){var c=$('#chart');if(!c)return;var d=weekData();var mode=M('chartMode','up');var Wb=Math.max(1,d.W-(parseInt(M('buffer',0),10)||0));var dpr=window.devicePixelRatio||1;var W=c.clientWidth||800,H=320;c.width=W*dpr;c.height=H*dpr;c.style.height=H+'px';var g=c.getContext('2d');g.scale(dpr,dpr);
  var L=44,Rr=16,T=16,B=36,w=W-L-Rr,h=H-T-B;var ymax=Math.max(10,d.total,d.cum[d.W-1]||0);var step=Math.pow(10,Math.floor(Math.log10(ymax)));if(ymax/step<4)step/=2;ymax=Math.ceil(ymax/step)*step;
- var X=function(i){return L+(d.W<=1?w/2:i/(d.W)*w)},Y=function(v){return T+h-(v/ymax)*h};
+ var X=function(i){return L+i/d.W*w},Y=function(v){return T+h-(v/ymax)*h};
  g.font='12px Inter,system-ui,sans-serif';g.fillStyle='#64748b';g.strokeStyle='#e2e8f0';g.lineWidth=1;
  for(var v=0;v<=ymax+0.001;v+=step){g.beginPath();g.moveTo(L,Y(v));g.lineTo(L+w,Y(v));g.stroke();g.textAlign='right';g.fillText(String(Math.round(v)),L-8,Y(v)+4)}
  g.textAlign='center';for(var i=0;i<=d.W;i++){g.fillText(i===0?'Start':'W'+i,X(i),H-12)}
- g.setLineDash([6,5]);g.strokeStyle='#94a3b8';g.lineWidth=2;g.beginPath();g.moveTo(X(0),Y(d.total));g.lineTo(X(d.W),Y(d.total));g.stroke();
- g.strokeStyle='#f59e0b';g.beginPath();g.moveTo(X(0),Y(0));g.lineTo(X(d.W),Y(d.total));g.stroke();g.setLineDash([]);
- var cw=Math.min(d.W,parseInt(M('week',1),10)||1);g.strokeStyle='#0f766e';g.lineWidth=3;g.beginPath();g.moveTo(X(0),Y(0));for(i=1;i<=cw;i++)g.lineTo(X(i),Y(d.cum[i-1]));g.stroke();
- g.fillStyle='#0f766e';for(i=1;i<=cw;i++){g.beginPath();g.arc(X(i),Y(d.cum[i-1]),4,0,7);g.fill()}}
+ if(Wb<d.W){g.fillStyle='rgba(245,158,11,.08)';g.fillRect(X(Wb),T,X(d.W)-X(Wb),h);g.fillStyle='#b45309';g.textAlign='center';g.fillText('Zeitpuffer',(X(Wb)+X(d.W))/2,T+14)}
+ g.setLineDash([6,5]);g.lineWidth=2;
+ if(mode==='up'){g.strokeStyle='#94a3b8';g.beginPath();g.moveTo(X(0),Y(d.total));g.lineTo(X(d.W),Y(d.total));g.stroke();g.strokeStyle='#f59e0b';g.beginPath();g.moveTo(X(0),Y(0));g.lineTo(X(Wb),Y(d.total));if(Wb<d.W)g.lineTo(X(d.W),Y(d.total));g.stroke()}
+ else{g.strokeStyle='#f59e0b';g.beginPath();g.moveTo(X(0),Y(d.total));g.lineTo(X(Wb),Y(0));if(Wb<d.W)g.lineTo(X(d.W),Y(0));g.stroke()}
+ g.setLineDash([]);
+ var cw=Math.min(d.W,parseInt(M('week',1),10)||1);var val=function(k){return mode==='up'?(k?d.cum[k-1]:0):(d.total-(k?d.cum[k-1]:0))};
+ g.strokeStyle='#0f766e';g.lineWidth=3;g.beginPath();g.moveTo(X(0),Y(val(0)));for(i=1;i<=cw;i++)g.lineTo(X(i),Y(val(i)));g.stroke();
+ g.fillStyle='#0f766e';for(i=0;i<=cw;i++){g.beginPath();g.arc(X(i),Y(val(i)),4,0,7);g.fill()}}
 window.addEventListener('resize',function(){if(S.view==='progress')drawChart()});
+
+/* ========== SCRUM VERSTEHEN ========== */
+var GLOSSAR=[
+ ['Scrum','Grundlagen','Ein schlankes Rahmenwerk aus Rollen, Artefakten und Ereignissen, mit dem Teams komplexe Aufgaben Schritt für Schritt lösen. Entstanden in den 1990er-Jahren in der Softwareentwicklung (Ken Schwaber, Jeff Sutherland).',''],
+ ['Agilität','Grundlagen','Beweglichkeit: auf Veränderungen reagieren, sie selbst gestalten und Gewohntes hinterfragen.',''],
+ ['Empirie','Grundlagen','Entscheidungen beruhen auf dem, was man beobachtet und erfährt, nicht auf langen Vorhersagen. Deshalb arbeitet Scrum in kurzen Zyklen.',''],
+ ['Transparenz · Inspektion · Anpassung','Grundlagen','Die drei Säulen: Alles Wichtige ist für alle sichtbar, wird regelmäßig überprüft und bei Bedarf verändert.',''],
+ ['Scrum-Werte','Grundlagen','Fokus, Selbstverpflichtung, Mut, Offenheit und Respekt. Vertrauen hält sie zusammen.','team'],
+ ['Warum','Grundlagen','Der Sinn der Aufgabe. Möglichst nah an der Lebenswelt der Lernenden und nicht an der Note. Am Anfang jedes Projekts steht das Warum.','start'],
+ ['Lehrkraft','Rollen','Im Unterricht vereint sie Product Owner und Scrum Master: Sie formuliert Aufgabenstellung, Warum und Kriterien, begleitet die Teams als Coach und bewertet. Mit wachsender Erfahrung der Klasse gibt sie mehr Verantwortung ab.','team'],
+ ['Product Owner','Rollen','Verantwortet Ziel und Product Backlog und entscheidet, was zuerst kommt. Im Unterricht meist die Lehrkraft.','team'],
+ ['Scrum Master','Rollen','Methodischer Coach: moderiert die Ereignisse und hilft, Hindernisse zu beseitigen. Im Unterricht übernimmt die Lehrkraft diese Aufgabe, unterstützt vom Scrum Captain.','team'],
+ ['Scrum Captain','Rollen','Ein Teammitglied mit Zusatzaufgabe: behält Überblick und Zeitplan, erinnert an den Teamkodex und holt bei Bedarf die Lehrkraft. Die Rolle wechselt nach jedem Sprint.','team'],
+ ['Team','Rollen','Vier bis fünf Lernende, die sich selbst organisieren und die Aufgaben untereinander verteilen. Zu groß: nicht alle kommen zu Wort. Zu klein: Ausfälle wiegen schwer.','team'],
+ ['Aufgabenstellung','Artefakte','Der Arbeitsauftrag mit Warum, Arbeitspaketen und Kriterien: klar, aber nicht trivial.','backlog'],
+ ['Arbeitspaket','Artefakte','Ein Teil der Aufgabenstellung, der ins Scrumboard übertragen wird. In der Werkstatt formuliert ihr Arbeitspakete als User Stories.','stories'],
+ ['Kriterien / Akzeptanzkriterien','Artefakte','Bedingungen, unter denen ein Arbeitspaket als erledigt gilt. Sie geben Orientierung und sind, vorher bekannt gemacht, auch Grundlage der Bewertung.','stories'],
+ ['User Story','Artefakte','Eine Anforderung aus Sicht der Nutzenden: „Als … möchte ich …, damit …“. Ergänzt durch Akzeptanzkriterien.','stories'],
+ ['Product Backlog','Artefakte','Die geordnete Liste aller Anforderungen. Oben steht das Wichtigste und ist schon konkret, weiter unten darf es noch offen sein.','backlog'],
+ ['Sprintziel & Sprint Backlog','Artefakte','Das Ziel des aktuellen Sprints und die dafür ausgewählten Stories mit ihren konkreten Aufgaben.','backlog'],
+ ['Definition of Done','Artefakte','Eine gemeinsame Liste, die für jedes Ergebnis gilt, z. B. „von einer zweiten Person geprüft“ oder „Quellen angegeben“.','team'],
+ ['Teamkodex','Artefakte','Regeln, die sich das Team selbst gibt: zur Organisation und zum Umgang miteinander. Wird in der Retrospektive angepasst.','team'],
+ ['Scrumboard','Artefakte','Das zentrale Arbeitswerkzeug: Planungsbereich (Arbeitspakete, Kriterien, Teamkodex) und Durchführungsbereich (Aufgaben, In Arbeit, Erledigt), dazu Hindernisse und Fortschrittsdiagramm.','board'],
+ ['Hindernis','Artefakte','Alles, was das Team aufhält. Wird sichtbar gemacht und im Stand-up angesprochen.','board'],
+ ['Lernprodukt / Inkrement','Artefakte','Das überprüfbare Ergebnis eines Sprints, etwa Video, Präsentation, Plakat oder Bericht. In der Schule kann es auch ein sichtbares Teilziel sein.','review'],
+ ['Schätzung','Artefakte','Jede Aufgabe bekommt einen Punktwert für Umfang und Schwierigkeit. Die Summe macht den Fortschritt messbar. Beim Scrum Poker schätzen alle verdeckt und decken gemeinsam auf.','poker'],
+ ['Fortschrittsdiagramm','Artefakte','Zeigt, wie viele Punkte schon erledigt sind (Burn-up) oder noch offen sind (Burn-down), im Vergleich zur Ideallinie.','progress'],
+ ['Ideallinie','Artefakte','Orientierung im Fortschrittsdiagramm: So sähe ein gleichmäßiger Verlauf aus.','progress'],
+ ['Zeitpuffer','Artefakte','Bewusst eingeplante Reserve: Die Ideallinie endet vor dem letzten Arbeitstermin, damit Ausfälle aufgefangen werden.','progress'],
+ ['Sprint','Ereignisse','Ein fester Zeitraum, in dem ein Lernprodukt entsteht. Im Unterricht legt die Lehrkraft die Länge passend zur Aufgabe fest; in der Schulentwicklung meist ein bis vier Wochen.','start'],
+ ['Sprintplanung','Ereignisse','Das Team leitet aus Arbeitspaketen und Kriterien konkrete Aufgaben ab und schätzt ihren Aufwand.','backlog'],
+ ['Stand-up','Ereignisse','Kurzes Treffen zu Beginn jeder Stunde (etwa zehn Minuten): Was habe ich erledigt? Was nehme ich mir vor? Was hält mich auf? Danach werden Board und Diagramm aktualisiert.','standup'],
+ ['Sprint Review','Ereignisse','Am Ende des Sprints zeigt das Team sein Lernprodukt und bekommt Feedback. Zwischen-Reviews sind möglich.','review'],
+ ['Sprint-Retrospektive','Ereignisse','Das Team schaut auf seine Zusammenarbeit: Was behalten wir, was ändern wir? Ergebnisse fließen in den Teamkodex.','retro'],
+ ['Stacey-Matrix','Grundlagen','Ordnet Aufgaben nach „Wie klar ist das Ziel?“ und „Wie klar ist der Weg?“. Scrum lohnt sich besonders bei komplexen Aufgaben.','']
+];
+var gFilter='',gCat='Alle';
+function viewName(k){var v=VIEWS.find(function(x){return x[0]===k});return v?v[1]:''}
+function svgCycle(){return '<svg viewBox="0 52 860 278" role="img" aria-labelledby="cycT" style="width:100%;height:auto;display:block"><title id="cycT">Ablauf eines Scrum-Projekts im Unterricht</title>'+
+ '<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0f766e"/></marker><marker id="arg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#94a3b8"/></marker></defs>'+
+ '<g font-family="Inter,system-ui,sans-serif">'+
+ // Projektstart
+ '<rect x="10" y="120" width="130" height="86" rx="16" fill="#fff" stroke="#e2e8f0" stroke-width="2"/><text x="75" y="152" text-anchor="middle" font-size="14" font-weight="700" fill="#0f172a">Projektstart</text><text x="75" y="172" text-anchor="middle" font-size="12" fill="#64748b">Warum klären,</text><text x="75" y="188" text-anchor="middle" font-size="12" fill="#64748b">Teams bilden</text>'+
+ '<path d="M142 163H178" stroke="#0f766e" stroke-width="2.5" marker-end="url(#ar)"/>'+
+ // Sprintplanung
+ '<rect x="182" y="120" width="140" height="86" rx="16" fill="#ccfbf1" stroke="#14b8a6" stroke-width="2"/><text x="252" y="152" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Sprintplanung</text><text x="252" y="172" text-anchor="middle" font-size="12" fill="#115e59">Aufgaben ableiten,</text><text x="252" y="188" text-anchor="middle" font-size="12" fill="#115e59">schätzen</text>'+
+ '<path d="M324 163H360" stroke="#0f766e" stroke-width="2.5" marker-end="url(#ar)"/>'+
+ // Sprint Kreis
+ '<circle cx="470" cy="163" r="104" fill="#f0fdfa" stroke="#14b8a6" stroke-width="2.5" stroke-dasharray="6 6"/>'+
+ '<text x="470" y="88" text-anchor="middle" font-size="15" font-weight="800" fill="#0f766e">Sprint</text>'+
+ '<circle cx="470" cy="170" r="44" fill="#fff" stroke="#0f766e" stroke-width="2"/><text x="470" y="166" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f172a">Stand-up</text><text x="470" y="183" text-anchor="middle" font-size="11" fill="#64748b">jede Stunde</text>'+
+ '<path d="M512 150 A50 50 0 0 1 512 190" fill="none" stroke="#0f766e" stroke-width="2" marker-end="url(#ar)" transform="translate(16 0)"/>'+
+ '<text x="470" y="232" text-anchor="middle" font-size="11.5" fill="#64748b">arbeiten,</text><text x="470" y="247" text-anchor="middle" font-size="11.5" fill="#64748b">Board aktualisieren</text>'+
+ '<path d="M576 163H612" stroke="#0f766e" stroke-width="2.5" marker-end="url(#ar)"/>'+
+ // Review
+ '<rect x="616" y="70" width="140" height="80" rx="16" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/><text x="686" y="102" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Sprint Review</text><text x="686" y="122" text-anchor="middle" font-size="12" fill="#92400e">Lernprodukt zeigen,</text><text x="686" y="138" text-anchor="middle" font-size="12" fill="#92400e">Feedback</text>'+
+ '<path d="M686 152V182" stroke="#0f766e" stroke-width="2.5" marker-end="url(#ar)"/>'+
+ // Retro
+ '<rect x="616" y="186" width="140" height="80" rx="16" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/><text x="686" y="218" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">Retrospektive</text><text x="686" y="238" text-anchor="middle" font-size="12" fill="#5b21b6">Zusammenarbeit</text><text x="686" y="254" text-anchor="middle" font-size="12" fill="#5b21b6">reflektieren</text>'+
+ // Lernprodukt
+ '<path d="M758 110H790" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#ar)"/><rect x="792" y="88" width="62" height="44" rx="10" fill="#fff" stroke="#f59e0b" stroke-width="2"/><text x="823" y="108" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">Lern-</text><text x="823" y="122" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">produkt</text>'+
+ // zurück
+ '<path d="M686 268 C686 320 252 320 252 210" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arg)"/><text x="470" y="315" text-anchor="middle" font-size="12" fill="#64748b">nächster Sprint: Teamkodex anpassen, neu planen</text>'+
+ '</g></svg>'}
+function svgBoard(){var y=34;return '<svg viewBox="0 0 520 250" role="img" aria-labelledby="sbT" style="width:100%;height:auto;display:block"><title id="sbT">Aufbau eines Scrumboards</title><g font-family="Inter,system-ui,sans-serif">'+
+ '<rect x="2" y="2" width="516" height="246" rx="14" fill="#fff" stroke="#e2e8f0" stroke-width="2"/>'+
+ '<text x="16" y="24" font-size="12" font-weight="800" fill="#0f766e">PLANUNG</text><text x="196" y="24" font-size="12" font-weight="800" fill="#0f766e">DURCHFÜHRUNG</text>'+
+ '<line x1="182" y1="12" x2="182" y2="238" stroke="#e2e8f0" stroke-width="2"/>'+
+ [['Arbeitspakete','#fde68a'],['Kriterien','#bbf7d0'],['Teamkodex','#e9d5ff']].map(function(r,i){return '<rect x="14" y="'+(y+i*66)+'" width="156" height="56" rx="10" fill="#f8fafc" stroke="#e2e8f0"/><text x="24" y="'+(y+i*66+20)+'" font-size="12" font-weight="700" fill="#0f172a">'+r[0]+'</text><rect x="24" y="'+(y+i*66+28)+'" width="40" height="18" rx="4" fill="'+r[1]+'"/><rect x="70" y="'+(y+i*66+28)+'" width="40" height="18" rx="4" fill="'+r[1]+'"/>'}).join('')+
+ [['Aufgaben',0],['In Arbeit',1],['Erledigt',2]].map(function(c){var x=196+c[1]*104;return '<rect x="'+x+'" y="34" width="96" height="124" rx="10" fill="#eef2f7"/><text x="'+(x+10)+'" y="52" font-size="12" font-weight="700" fill="#0f172a">'+c[0]+'</text>'+[0,1,2].slice(0,3-c[1]).map(function(k){return '<rect x="'+(x+8)+'" y="'+(62+k*30)+'" width="80" height="24" rx="5" fill="#fff" stroke="#e2e8f0"/><rect x="'+(x+8)+'" y="'+(62+k*30)+'" width="5" height="24" rx="2" fill="'+['#fde68a','#bbf7d0','#bfdbfe'][k]+'"/>'}).join('')}).join('')+
+ '<rect x="196" y="166" width="148" height="72" rx="10" fill="#fff7f7" stroke="#fecaca"/><text x="206" y="186" font-size="12" font-weight="700" fill="#b91c1c">Hindernisse</text><rect x="206" y="196" width="120" height="14" rx="4" fill="#fee2e2"/><rect x="206" y="216" width="90" height="14" rx="4" fill="#fee2e2"/>'+
+ '<rect x="352" y="166" width="152" height="72" rx="10" fill="#f8fafc" stroke="#e2e8f0"/><text x="362" y="186" font-size="12" font-weight="700" fill="#0f172a">Fortschritt</text><polyline points="364,228 404,214 444,206 490,192" fill="none" stroke="#0f766e" stroke-width="2.5"/><line x1="364" y1="228" x2="490" y2="196" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 4"/>'+
+ '</g></svg>'}
+function svgTimeline(){var seg=[['Start',1,'#e2e8f0','#0f172a','Aufgabe, Warum, Teams'],['Planung',1,'#ccfbf1','#115e59','Board anlegen, schätzen'],['Arbeitsphase mit Stand-ups',6,'#14b8a6','#fff','jede Stunde: Stand-up, arbeiten, Board aktualisieren'],['Review',1,'#fde68a','#92400e','Lernprodukt präsentieren'],['Retro',1,'#ddd6fe','#5b21b6','Zusammenarbeit reflektieren']];
+ return '<div role="img" aria-label="Beispielplanung über zehn Doppelstunden" style="display:flex;gap:4px">'+seg.map(function(x){return '<div style="flex:'+x[1]+' 1 0;min-width:0;text-align:center"><div title="'+x[4]+'" style="background:'+x[2]+';color:'+x[3]+';border-radius:10px;padding:10px 4px;font-size:12px;font-weight:700;line-height:1.2;min-height:46px;display:grid;place-items:center;'+(x[1]===6?'background-image:repeating-linear-gradient(90deg,transparent 0 calc(100%/6 - 2px),rgba(255,255,255,.55) calc(100%/6 - 2px) calc(100%/6))':'')+'">'+x[0]+'</div><div class="small muted" style="margin-top:4px;font-size:11.5px">'+(x[1]===6?'DS 3–8':'DS '+(seg.indexOf(x)<2?seg.indexOf(x)+1:seg.indexOf(x)+6))+'</div></div>'}).join('')+'</div><p class="small muted" style="margin:8px 0 0">DS = Doppelstunde. Zeitpuffer: Die Ideallinie plant nur mit fünf der sechs Arbeitsstunden.</p>'}
+function svgStacey(){return '<svg viewBox="0 0 330 250" role="img" aria-labelledby="stT" style="width:100%;max-width:380px;height:auto;display:block;margin:auto"><title id="stT">Vereinfachte Stacey-Matrix</title><g font-family="Inter,system-ui,sans-serif">'+
+ '<path d="M50 210 V12 M50 210 H320" stroke="#94a3b8" stroke-width="2"/>'+
+ '<path d="M50 210 Q50 160 100 160 Q140 160 140 210 Z" fill="#e0f2fe"/><text x="92" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="#0369a1">einfach</text>'+
+ '<path d="M50 160 Q50 100 120 100 Q200 100 200 210 L140 210 Q140 160 100 160 Q50 160 50 160Z" fill="#fef3c7"/><text x="150" y="152" text-anchor="middle" font-size="12" font-weight="700" fill="#b45309">kompliziert</text>'+
+ '<path d="M50 100 Q50 40 160 40 Q270 40 270 210 L200 210 Q200 100 120 100 Q50 100 50 100Z" fill="#ccfbf1"/><text x="215" y="80" text-anchor="middle" font-size="13" font-weight="800" fill="#0f766e">komplex</text><text x="215" y="96" text-anchor="middle" font-size="11" fill="#0f766e">hier passt Scrum</text>'+
+ '<text x="300" y="30" text-anchor="end" font-size="12" font-weight="700" fill="#b91c1c">chaotisch</text>'+
+ '<text x="185" y="236" text-anchor="middle" font-size="11.5" fill="#64748b">Weg zur Lösung: klar → unklar</text>'+
+ '<text x="22" y="111" text-anchor="middle" font-size="11.5" fill="#64748b" transform="rotate(-90 22 111)">Ziel: klar → unklar</text>'+
+ '</g></svg>'}
+function basicsHtml(inApp){var link=function(k){return k&&inApp?' <a href="#" data-go="'+k+'" class="small">→ '+viewName(k)+'</a>':''};
+ var cats=['Alle','Grundlagen','Rollen','Artefakte','Ereignisse'];
+ var gl=GLOSSAR.filter(function(g){return (gCat==='Alle'||g[1]===gCat)&&(!gFilter||(g[0]+' '+g[2]).toLowerCase().indexOf(gFilter.toLowerCase())>=0)});
+ return '<div class="stack basics">'+
+ '<section class="card"><h2>Scrum in drei Sätzen</h2><p style="max-width:860px;margin:6px 0 0">Scrum ist ein Rahmen, mit dem Teams komplexe Aufgaben in kurzen Arbeitsphasen lösen, den <b>Sprints</b>. Statt alles vorab festzulegen, plant das Team einen Sprint, arbeitet, zeigt das Ergebnis und verbessert danach seine Zusammenarbeit. Im Unterricht übernehmen die Lernenden dabei viel Verantwortung für ihr eigenes Lernen. Die Lehrkraft gibt den Rahmen vor und begleitet als Coach.</p>'+
+ '<div style="margin-top:16px;overflow-x:auto"><div style="min-width:620px">'+svgCycle()+'</div></div></section>'+
+ '<div class="grid3">'+
+ [['Lehrkraft','Gibt Aufgabenstellung, Warum und Kriterien vor, begleitet als Coach und bewertet. Im Unterricht übernimmt sie die Rollen von Product Owner und Scrum Master.','#0f766e','M12 3l8 4-8 4-8-4z M6 9v4c0 2 3 3 6 3s6-1 6-3V9'],['Scrum Captain','Ein Teammitglied, das den Überblick und die Zeit im Blick hat, an den Teamkodex erinnert und bei Bedarf Hilfe holt. Wechselt nach jedem Sprint.','#b45309','M4 21V4 M4 4h12l-2 4 2 4H4'],['Team','Vier bis fünf Lernende organisieren sich selbst, verteilen die Aufgaben und erarbeiten gemeinsam das Lernprodukt.','#5b21b6','M9 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7z M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5 M17.5 11a2.5 2.5 0 100-5 M16 14.6c2.6.1 4.6 1.8 5.4 4.9']].map(function(r){return '<section class="card"><div class="row" style="gap:10px"><span style="width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:'+r[2]+'1a;color:'+r[2]+'"><svg class="i" viewBox="0 0 24 24" style="width:22px;height:22px"><path d="'+r[3]+'"/></svg></span><h3 style="margin:0">'+r[0]+'</h3></div><p class="small" style="margin:10px 0 0">'+r[1]+'</p></section>'}).join('')+'</div>'+
+ '<div class="grid2"><section class="card"><h3>Die Artefakte: was sichtbar gemacht wird</h3><p class="lead">Das Scrumboard ist das wichtigste Werkzeug des Teams. Links wird geplant, rechts gearbeitet.</p><div style="overflow-x:auto"><div style="min-width:420px">'+svgBoard()+'</div></div>'+
+ '<ul class="small" style="padding-left:18px;margin:12px 0 0;line-height:1.7"><li><b>Aufgabenstellung</b> mit Warum, Arbeitspaketen und Kriterien'+link('stories')+'</li><li><b>Scrumboard</b> mit Aufgaben, Hindernissen und Fortschritt'+link('board')+'</li><li><b>Lernprodukt</b>: das überprüfbare Ergebnis des Sprints'+link('review')+'</li></ul></section>'+
+ '<section class="card"><h3>Die Ereignisse: wann was passiert</h3><p class="lead">Beispiel: ein Projekt über zehn Doppelstunden.</p>'+svgTimeline()+
+ '<ul class="small" style="padding-left:18px;margin:12px 0 0;line-height:1.7"><li><b>Sprintplanung:</b> Aufgaben ableiten und schätzen'+link('poker')+'</li><li><b>Stand-up</b> zu Beginn jeder Stunde, etwa zehn Minuten'+link('standup')+'</li><li><b>Sprint Review:</b> Lernprodukt präsentieren, Feedback erhalten'+link('review')+'</li><li><b>Retrospektive:</b> Zusammenarbeit reflektieren, Teamkodex anpassen'+link('retro')+'</li></ul></section></div>'+
+ '<div class="grid2"><section class="card"><h3>Worauf Scrum baut</h3><p class="lead">Drei Säulen tragen jeden Sprint:</p><div class="grid3" style="gap:10px">'+
+ [['Transparenz','Alle sehen, woran gearbeitet wird und wo es hakt.'],['Inspektion','Fortschritt und Zusammenarbeit werden regelmäßig überprüft.'],['Anpassung','Was nicht passt, wird verändert, im nächsten Sprint oder sofort.']].map(function(p){return '<div style="border-top:4px solid var(--accent);background:#f8fafc;border-radius:10px;padding:10px"><b class="small">'+p[0]+'</b><div class="small muted" style="margin-top:4px">'+p[1]+'</div></div>'}).join('')+'</div>'+
+ '<p class="lead" style="margin:14px 0 8px">Fünf Werte, verbunden durch Vertrauen:</p><div class="row" style="gap:6px">'+['Fokus','Selbstverpflichtung','Mut','Offenheit','Respekt'].map(function(w){return '<span class="chip">'+w+'</span>'}).join('')+'<span class="chip grey">Vertrauen</span></div></section>'+
+ '<section class="card"><h3>Wann passt Scrum?</h3><p class="lead">Scrum lohnt sich vor allem bei komplexen Aufgaben, bei denen mehr unbekannt als bekannt ist. Für einfache Aufgaben ist es eher Mehraufwand.</p>'+svgStacey()+'</section></div>'+
+ '<section class="card" id="glossar"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Begriffe von A bis Z</h3><input type="text" id="gSearch" data-keep="gSearch" placeholder="Begriff suchen …" style="max-width:260px" value="'+esc(gFilter)+'"></div>'+
+ '<div class="seg" id="gCats" style="margin:12px 0">'+cats.map(function(c){return '<button type="button" data-cat="'+c+'" class="'+(c===gCat?'on':'')+'">'+c+'</button>'}).join('')+'</div>'+
+ '<div class="glossar">'+(gl.length?gl.sort(function(a,b){return a[0].localeCompare(b[0],'de')}).map(function(g){return '<div class="gterm"><div class="row" style="justify-content:space-between;gap:6px"><b>'+esc(g[0])+'</b><span class="chip grey">'+g[1]+'</span></div><p class="small" style="margin:6px 0 0">'+esc(g[2])+link(g[3])+'</p></div>'}).join(''):'<p class="small muted">Kein Begriff gefunden.</p>')+'</div></section>'+
+ '<details class="card"><summary style="cursor:pointer;font-weight:700">Tipps für Lehrkräfte</summary><ul class="small" style="padding-left:18px;line-height:1.8;margin:10px 0 0"><li>Das Warum vor dem Start klären, möglichst nah an der Lebenswelt der Lernenden.</li><li>Kriterien und Bewertung vor dem Sprint offenlegen.</li><li>Im ersten Sprint und mit jüngeren Klassen mehr vorgeben, später Verantwortung abgeben.</li><li>Teams aus vier bis fünf Personen bilden und mit einer kurzen Teambildung starten.</li><li>Einen Zeitpuffer einplanen: Die Ideallinie endet vor dem letzten Arbeitstermin.</li><li>Die Rolle des Scrum Captains nach jedem Sprint wechseln.</li><li>Für Teams, die früher fertig sind, Zusatzaufgaben bereithalten.</li></ul></details>'+
+ '<p class="small muted">Orientiert an den Materialien der Hopp Foundation: <a href="https://www.hopp-foundation.de/site/assets/files/37219513/scrum-im_unterricht_poster.pdf" target="_blank" rel="noopener">Poster „Scrum im Unterricht“</a> und <a href="https://www.hopp-foundation.de/site/assets/files/37218002/scrum_in_der_schule_handbuch_agile_grundlagen.pdf" target="_blank" rel="noopener">Handbuch „Agile Grundlagen“</a> (Chloe Günther, Laura Ricke, 2024).</p>'+
+ '</div>'}
+function bindBasics(root){$$('[data-go]',root).forEach(function(b){b.onclick=function(e){e.preventDefault();go(b.dataset.go)}});
+ var s=$('#gSearch',root);if(s){s.addEventListener('input',function(){gFilter=s.value;var pos=s.selectionStart;rebasics(root);var n=$('#gSearch',root);n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}})}
+ var c=$('#gCats',root);if(c)c.onclick=function(e){var b=e.target.closest('[data-cat]');if(!b)return;gCat=b.dataset.cat;rebasics(root)}}
+function rebasics(root){var g=$('#glossar',root);if(!g)return;var tmp=document.createElement('div');tmp.innerHTML=basicsHtml(root.id!=='landingBasics');var ng=$('#glossar',tmp);g.replaceWith(ng);bindBasics(root)}
+R.basics=function(){return head('Scrum verstehen','Was ist Scrum, wer macht was und wie hängen die Bausteine zusammen? Mit Erklärgrafiken und allen Begriffen zum Nachschlagen.')+basicsHtml(true)};
+A.basics=function(){bindBasics($('#view'))};
 
 /* ---------- Export / Import ---------- */
 function exportMd(){var L=[];L.push('# '+(M('teamName','')||'Scrum-Werkstatt')+' – Raum '+S.code,'','Stand: '+new Date().toLocaleString('de-DE'),'');
  if(M('goal',''))L.push('**Sprint-Ziel:** '+M('goal',''),'');
- L.push('## Team','','- Product Owner: '+(M('po','')||'–'),'- Scrum Master: '+(M('sm','')||'–'),'- Mitglieder: '+(members().join(', ')||'–'),'');
+ L.push('## Team','','- Product Owner: '+(M('po','')||'–'),'- Scrum Captain: '+(M('sm','')||'–'),'- Mitglieder: '+(members().join(', ')||'–'),'');
  if(M('kodex',''))L.push('## Teamkodex','',M('kodex',''),'');
  var dod=M('dod',[])||[];if(dod.length)L.push('## Definition of Done','',dod.map(function(x){return '- '+x}).join('\n'),'');
  L.push('## Product Backlog','');stories().forEach(function(s,i){L.push((i+1)+'. **'+s.title+'** ('+(s.prio||'')+(s.pts?', '+s.pts+' P':'')+', '+({backlog:'Backlog',sprint:'im Sprint',done:'fertig'}[s.status||'backlog'])+')','   Als '+(s.role||'…')+' möchte ich '+(s.want||'…')+', damit '+(s.benefit||'…')+'.');(s.ac||[]).forEach(function(a){L.push('   - [ ] '+a)})});L.push('');
@@ -676,6 +803,7 @@ $('#hShare').onclick=function(){var u;try{u=new URL(location.href);u.hash='';u.s
 $('#hLeave').onclick=leave;
 
 /* ---------- Start ---------- */
+$('#landingBasics').innerHTML=basicsHtml(false);bindBasics($('#landingBasics'));
 $('#cycleLanding').innerHTML=cycleHtml();$$('#cycleLanding .step').forEach(function(b){b.disabled=true;b.style.cursor='default'});
 $('#gName').value=lsGet('scrum-name')||'';
 var qp=null;try{qp=new URL(location.href).searchParams.get('raum')}catch(e){}
