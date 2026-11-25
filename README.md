@@ -9,3 +9,4 @@ Kleine HTML-Werkzeuge für Fortbildungen und Unterricht, veröffentlicht über G
 | Lernpfad-Baukasten | https://teacherette-susa.github.io/tools/lernpfad/ |
 | Adventskalender | https://teacherette-susa.github.io/tools/adventskalender/ |
 | Adventskalender 2 | https://teacherette-susa.github.io/tools/adventskalender-2/ |
+| AIS.chat Modelle | https://teacherette-susa.github.io/tools/ais-chat-modelle/ |

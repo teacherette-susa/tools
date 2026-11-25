@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AIS.chat Modelle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* VOICE: sachlich-kollegial wie die Prüfungswerkstatt, Werkzeug für Lehrkräfte
+   IDEA: Werkstatt-Reiter – Einsatzzweck wählen, Empfehlung lesen, Modelle vergleichen
+   PICTURE: die Rangliste der Modelle mit Qualitäts- und Budgetbalken ist das Bild
+   COLOUR/TYPE: Palette und Schrift der Prüfungswerkstatt (Public Sans, Olivgrün, Blau)
+   LAYOUT: Kopf mit Einstellungsleiste, darunter fünf Reiter */
+:root{
+  --bg:#f6f8f4; --surface:#ffffff; --surface-2:#eef2e6; --line:#d8ded3;
+  --ink:#1f2b31; --muted:#56636a; --accent:#5f7d0f; --accent-ink:#ffffff; --accent-soft:#e6eecf;
+  --blue:#2f6fad; --blue-soft:#e3edf8; --warn:#a9560f; --warn-soft:#f7e8da;
+  --hoch:#16736e; --mittel:#8a6a12; --gering:#8a5a5a;
+  --oa:#16736e; --an:#a9560f; --go:#2f6fad; --me:#6a4c93;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px; color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141a1c; --surface:#1c2427; --surface-2:#232e25; --line:#33403f;
+  --ink:#e8eee9; --muted:#a3b0ac; --accent:#a9c94a; --accent-ink:#152000; --accent-soft:#2c3a1a;
+  --blue:#7fb2e6; --blue-soft:#1d2d3d; --warn:#e8a065; --warn-soft:#3a2a1c;
+  --hoch:#5fc4bc; --mittel:#e0bf5a; --gering:#d8a0a0;
+  --oa:#5fc4bc; --an:#e8a065; --go:#7fb2e6; --me:#b9a0de; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a1c; --surface:#1c2427; --surface-2:#232e25; --line:#33403f;
+  --ink:#e8eee9; --muted:#a3b0ac; --accent:#a9c94a; --accent-ink:#152000; --accent-soft:#2c3a1a;
+  --blue:#7fb2e6; --blue-soft:#1d2d3d; --warn:#e8a065; --warn-soft:#3a2a1c;
+  --hoch:#5fc4bc; --mittel:#e0bf5a; --gering:#d8a0a0;
+  --oa:#5fc4bc; --an:#e8a065; --go:#7fb2e6; --me:#b9a0de; color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;margin:0;overflow-x:clip;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.2}
+a{color:var(--blue)}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+[hidden]{display:none!important}
+header.top{background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .wrap{padding-block:20px 0;display:grid;gap:12px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(26px,3.4vw,36px);font-weight:800;letter-spacing:-.01em}
+.lead{color:var(--muted);max-width:76ch;margin:0}
+.howto{border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.howto summary{cursor:pointer;padding:10px 14px;font-weight:700;font-size:14px}
+.howto-body{padding:0 14px 14px;display:grid;gap:10px;font-size:14px}
+.howto-body ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.settings{display:grid;gap:10px;background:var(--surface-2);border-radius:var(--r);padding:14px 16px}
+.srow{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.slabel{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);min-width:96px}
+.check{display:inline-flex;gap:8px;align-items:center;font-weight:600;font-size:14px;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;min-height:36px}
+.check input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+.check.off{opacity:.55}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface);flex-wrap:wrap}
+.seg button{border:0;background:none;padding:7px 14px;cursor:pointer;font-weight:600;font-size:14px;min-height:36px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.mini{font-size:12px;color:var(--muted)}
+nav.steps{display:flex;gap:2px;overflow-x:auto;margin-top:2px}
+nav.steps button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px 12px;cursor:pointer;display:flex;gap:8px;align-items:center;white-space:nowrap;color:var(--muted);font-weight:600}
+nav.steps button .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--surface-2);color:var(--ink);font-size:12px;font-weight:700}
+nav.steps button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.steps button[aria-selected="true"] .n{background:var(--accent);color:var(--accent-ink)}
+main .wrap{padding-block:22px 64px}
+.two{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);gap:20px;align-items:start}
+@media (max-width:880px){.two{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px}
+.panel h2{font-size:20px;font-weight:800}
+.panel h3{font-size:16px;font-weight:700}
+.hint{font-size:14px;color:var(--muted);margin:0}
+.search{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:var(--bg);font-size:16px}
+.glabel{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin:8px 0 2px}
+.scen{display:grid;gap:6px}
+.scen button{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 12px;cursor:pointer}
+.scen button .ic{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;background:var(--surface-2);color:var(--accent)}
+.scen button .ic svg{width:18px;height:18px}
+.scen button strong{display:block;font-size:14.5px}
+.scen button small{display:block;color:var(--muted);font-size:13px;line-height:1.35}
+.scen button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);background:var(--surface)}
+.scen button.new strong::after{content:"neu";margin-left:6px;font-size:11px;font-weight:800;padding:1px 6px;border-radius:999px;background:var(--accent-soft);color:var(--accent);vertical-align:2px}
+.rhead{display:grid;gap:6px}
+.rhead h2{font-size:22px}
+.ex{display:flex;flex-wrap:wrap;gap:6px}
+.ex span{font-size:13px;background:var(--surface-2);border-radius:999px;padding:3px 10px}
+.tip{background:var(--blue-soft);border-radius:8px;padding:10px 12px;font-size:14px}
+.tip b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--blue);margin-bottom:2px}
+.rank{display:grid;gap:10px}
+.mc{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:grid;gap:8px;background:var(--bg)}
+.mc.top{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);background:var(--surface)}
+.mc .row1{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pos{font-family:var(--f-mono);font-size:13px;color:var(--muted);width:22px}
+.mc h3{font-size:16.5px;font-weight:700}
+.prov{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:4px;color:#fff}
+.prov.OpenAI{background:var(--oa)}.prov.Anthropic{background:var(--an)}.prov.Google{background:var(--go)}.prov.Meta{background:var(--me)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .prov{color:#10181a}}
+:root[data-theme="dark"] .prov{color:#10181a}
+.badge{font-size:12px;font-weight:700;padding:1px 9px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.badge.b1{color:var(--accent)}.badge.b2{color:var(--blue)}.badge.b3{color:var(--mittel)}.badge.b4{color:var(--gering)}
+.badge.fill{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.badge.spar{color:var(--hoch)}
+.bars{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;font-size:12.5px;color:var(--muted)}
+.bar{height:8px;border-radius:4px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px;background:var(--accent)}
+.bar.b i{background:var(--hoch)}
+.bars .v{font-family:var(--f-mono);font-size:12px;white-space:nowrap}
+.mc p{margin:0;font-size:14px}
+details.weak summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--muted);padding:6px 0}
+details.weak .rank{margin-top:8px}
+.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}
+.scroll{overflow-x:auto}
+table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:13px;min-width:860px}
+.mx th,.mx td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:center}
+.mx th{font-size:12px;vertical-align:bottom;background:var(--surface)}
+.mx th:first-child,.mx td:first-child{text-align:left;position:sticky;left:0;background:var(--surface);z-index:1;min-width:190px}
+.mx td.c{font-family:var(--f-mono);font-weight:500}
+.mx td.c.best{outline:2px solid var(--accent);outline-offset:-3px;border-radius:6px;font-weight:800}
+.mx tr.grp td{background:var(--surface-2);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.mx td.dim,.mx th.dim{opacity:.35}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);align-items:center}
+.sw{display:inline-block;width:16px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(340px,100%),1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px;align-content:start}
+.card.off{opacity:.6}
+.card .ais{font-size:13px;color:var(--muted);font-style:italic}
+dl.facts{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:0;font-size:13.5px}
+dl.facts dt{color:var(--muted)}dl.facts dd{margin:0;font-weight:600}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.pc{grid-template-columns:1fr}}
+.pc ul{margin:0;padding-left:18px;font-size:13.5px;display:grid;gap:3px}
+.pc h4{margin:0 0 3px;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+.pc .plus h4{color:var(--hoch)}.pc .minus h4{color:var(--gering)}
+.when{background:var(--surface-2);border-radius:8px;padding:9px 12px;font-size:14px}
+.when b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);margin-bottom:2px}
+.budrow{display:grid;grid-template-columns:150px minmax(0,1fr) 64px;gap:10px;align-items:center;font-size:14px}
+@media (max-width:520px){.budrow{grid-template-columns:110px minmax(0,1fr) 54px;font-size:13px}}
+.budrow .bar{height:14px}
+.budrow .v{text-align:right;font-family:var(--f-mono);font-size:13px}
+ol.steps{margin:0;padding:0;list-style:none;display:grid;gap:12px;counter-reset:s}
+ol.steps li{display:grid;grid-template-columns:32px 1fr;gap:12px;counter-increment:s}
+ol.steps li::before{content:counter(s);width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:800;font-size:13px}
+ol.steps b{display:block}
+ol.steps p{margin:2px 0 0;font-size:14px}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin:2px 4px 0 0}
+pre.prompt{white-space:pre-wrap;font-size:13px;font-family:var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;margin:0;max-height:360px;overflow:auto}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:14px;min-height:40px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.bar-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.status{font-size:13px;color:var(--muted)}
+.warnbox{background:var(--warn-soft);border-radius:8px;padding:10px 12px;font-size:14px}
+.warnbox b{color:var(--warn)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:16px;align-items:start}
+table.diff{width:100%;border-collapse:collapse;font-size:14px}
+table.diff th,table.diff td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+table.diff th{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+ul.src{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+footer.foot{font-size:13px;color:var(--muted);margin-top:28px;display:grid;gap:4px}
+@media (max-width:600px){table.diff{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;color:var(--muted);font-size:12px}}
+@media (prefers-reduced-motion:no-preference){.mc{animation:in .25s ease both}@keyframes in{from{opacity:0;transform:translateY(4px)}}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">AIS.chat · Sprachmodelle nach Einsatzzweck · Stand 25.11.2026</div>
+    <h1>AIS.chat Modelle</h1>
+    <p class="lead">Welches Sprachmodell in AIS.chat passt zu Ihrer Aufgabe? Wählen Sie einen Einsatzzweck – vom Arbeitsblatt bis zum Vibe-Coding – und erhalten Sie eine begründete Rangfolge, die Qualität und Ihr monatliches Tokenbudget gegeneinander abwägt.</p>
+    <details class="howto">
+      <summary>So arbeiten Sie mit dem Tool</summary>
+      <div class="howto-body">
+        <ol>
+          <li><b>Einstellen:</b> Unter „Meine Modelle“ abwählen, was in Ihrem Bundesland fehlt. Unter „Priorität“ festlegen, ob Qualität oder Budget wichtiger ist.</li>
+          <li><b>Einsatzzweck:</b> Aufgabe links wählen – rechts erscheinen Erste Wahl, Alternativen, ein Spartipp und Modelle, von denen abzuraten ist.</li>
+          <li><b>Vergleichsmatrix:</b> alle Modelle und Zwecke auf einen Blick.</li>
+          <li><b>Steckbriefe:</b> Fakten, Stärken, Schwächen und Budgetverbrauch je Modell.</li>
+          <li><b>Vibe-Coding:</b> Schritt-für-Schritt-Anleitung und Prompt-Vorlage für eigene Lern-Apps.</li>
+        </ol>
+        <p class="hint">Die Einschätzungen beruhen auf Herstellerangaben, unabhängigen Benchmarks und den AIS.chat-Release-Notes (Details im Reiter „Methodik &amp; Quellen“). Sie ersetzen nicht das eigene Ausprobieren.</p>
+      </div>
+    </details>
+    <div class="settings" aria-label="Einstellungen">
+      <div class="srow"><span class="slabel">Meine Modelle</span><span id="mtoggles" class="srow"></span></div>
+      <div class="srow"><span class="slabel">Priorität</span>
+        <span class="seg" id="prio" role="group" aria-label="Priorität">
+          <button data-p="q" aria-pressed="false">Beste Qualität</button>
+          <button data-p="b" aria-pressed="true">Ausgewogen</button>
+          <button data-p="s" aria-pressed="false">Budget schonen</button>
+        </span>
+        <span class="mini" id="prio-note"></span>
+      </div>
+    </div>
+    <nav class="steps" role="tablist" aria-label="Bereiche">
+      <button role="tab" data-v="auswahl" aria-selected="true"><span class="n">1</span>Einsatzzweck</button>
+      <button role="tab" data-v="matrix" aria-selected="false"><span class="n">2</span>Vergleichsmatrix</button>
+      <button role="tab" data-v="modelle" aria-selected="false"><span class="n">3</span>Steckbriefe</button>
+      <button role="tab" data-v="vibe-coding" aria-selected="false"><span class="n">4</span>Vibe-Coding</button>
+      <button role="tab" data-v="quellen" aria-selected="false"><span class="n">5</span>Methodik &amp; Quellen</button>
+    </nav>
+  </div>
+</header>
+
+<main><div class="wrap">
+
+<section id="v-auswahl" role="tabpanel">
+  <div class="two">
+    <div class="panel">
+      <input class="search" id="q" type="search" placeholder="Suchen, z. B. Quiz, Elternbrief, Simulation" aria-label="Einsatzzweck suchen">
+      <div id="scenlist"></div>
+    </div>
+    <div class="panel" id="result" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="v-matrix" role="tabpanel" hidden>
+  <div class="panel">
+    <h2>Eignung je Einsatzzweck</h2>
+    <p class="hint">Qualitätseinschätzung von 0 bis 5. Umrandet ist das Modell, das bei der oben gewählten Priorität vorne liegt. Klick auf eine Zeile öffnet die ausführliche Empfehlung.</p>
+    <div class="legend"><span><span class="sw" style="background:color-mix(in srgb,var(--accent) 80%,transparent)"></span>sehr gut</span><span><span class="sw" style="background:color-mix(in srgb,var(--accent) 45%,transparent)"></span>gut</span><span><span class="sw" style="background:color-mix(in srgb,var(--accent) 18%,transparent)"></span>eingeschränkt</span><span><span class="sw" style="background:var(--warn-soft)"></span>nicht empfohlen</span></div>
+    <div class="scroll"><table class="mx" id="mx"></table></div>
+  </div>
+</section>
+
+<section id="v-modelle" role="tabpanel" hidden>
+  <div style="display:grid;gap:20px">
+    <div class="panel">
+      <h2>Wie schnell ist das Budget weg?</h2>
+      <p class="hint">AIS.chat rechnet das monatliche Tokenvolumen in Cent ab – nach den Token-Preisen des jeweiligen Modells (so steht es im offenen Quellcode). Vergleich für eine typische Anfrage mit rund 3.000 Token Eingabe und 1.500 Token Antwort, bezogen auf GPT-5 nano = 1. Reasoning-Modelle verbrauchen zusätzlich Denk-Token.</p>
+      <div id="budget" style="display:grid;gap:8px"></div>
+      <p class="mini">Grundlage: öffentliche Listenpreise der Anbieter. Was AIS.chat für das EU-Hosting tatsächlich zahlt, ist nicht veröffentlicht; die Verhältnisse dürften ähnlich sein. Llama-3.3-70B: Schätzung.</p>
+    </div>
+    <div class="grid" id="cards"></div>
+  </div>
+</section>
+
+<section id="v-vibe-coding" role="tabpanel" hidden>
+  <div class="cols">
+    <div class="panel">
+      <h2>Vibe-Coding mit AIS.chat</h2>
+      <p class="hint">Beim Vibe-Coding beschreiben Sie in Alltagssprache, was eine Anwendung können soll, und die KI schreibt den Code. Für Schule eignen sich einzelne HTML-Dateien: Sie laufen in jedem Browser, auch offline, und brauchen keinen Server.</p>
+      <div class="warnbox"><b>Wichtig:</b> AIS.chat zeigt Code als Codeblock mit Kopieren- und Download-Schaltfläche, hat aber keine Live-Vorschau. Sie speichern die Datei und öffnen sie im Browser.</div>
+      <ol class="steps">
+        <li><div><b>Idee schärfen</b><p>Was soll die App tun, wer nutzt sie, auf welchem Gerät? Drei bis fünf konkrete Funktionen reichen für den ersten Entwurf.</p></div></li>
+        <li><div><b>Modell für den Entwurf wählen</b><p>Claude Sonnet 5.5 liefert die zuverlässigsten vollständigen Dateien. Fehlt es in Ihrem Land: GPT-5.5 oder Claude Sonnet 4.6.</p><span class="pill">Sonnet 5.5</span><span class="pill">GPT-5.5</span><span class="pill">Sonnet 4.6</span></div></li>
+        <li><div><b>Code übernehmen</b><p>Codeblock herunterladen oder kopieren, in einem Texteditor als <code>lernapp.html</code> (UTF-8) speichern und per Doppelklick im Browser öffnen.</p></div></li>
+        <li><div><b>Testen und Fehler genau beschreiben</b><p>Was haben Sie geklickt, was ist passiert, was war erwartet? Fehlermeldungen aus der Browser-Konsole (Taste F12) mitschicken.</p></div></li>
+        <li><div><b>Budgetbewusst nachbessern</b><p>Für kleine Änderungen wie Texte, Farben oder Schriftgrößen reicht Gemini 3.5 Flash Lite oder GPT-5.6-luna. Bei hartnäckigen Fehlern das Modell wechseln, etwa GPT-5.5 als Zweitmeinung. Lange Chats werden teuer, weil der ganze Verlauf mitgeschickt wird: nach einigen Runden einen neuen Chat beginnen und die aktuelle Datei einfügen.</p><span class="pill">3.5 Flash Lite</span><span class="pill">GPT-5.6-luna</span></div></li>
+        <li><div><b>Prüfen und teilen</b><p>Fachlich gegenprüfen, keine personenbezogenen Daten erfassen lassen. Teilen über die Lernplattform (z. B. Moodle) oder eine eigene Webseite.</p></div></li>
+      </ol>
+    </div>
+    <div style="display:grid;gap:16px">
+      <div class="panel">
+        <h3>Prompt-Vorlage für den Erstentwurf</h3>
+        <p class="mini">Ausgefüllt mit einem Beispiel – Thema und Funktionen ersetzen.</p>
+        <pre class="prompt" id="p1">Erstelle eine interaktive Lernanwendung als EINE vollständige HTML-Datei: HTML, CSS und JavaScript in einer Datei, ohne externe Bibliotheken, lauffähig offline im Browser.
+
+Thema: Brüche mit gleichem Nenner addieren
+Zielgruppe: Klasse 6, Mathematik
+Funktionen:
+- zufällige Aufgaben mit Nennern von 2 bis 12
+- Eingabe des Ergebnisses, sofortige Rückmeldung mit kurzer Erklärung
+- Brüche zusätzlich als Kreisdiagramm darstellen
+- Zähler für richtige Antworten, Schaltfläche „Neue Aufgabe“
+Gestaltung: deutschsprachig, große Schaltflächen, gut lesbar auf Tablet und Beamer, hoher Kontrast.
+
+Gib den vollständigen Code in einem einzigen Codeblock aus. Erkläre danach in drei Sätzen, wie ich die Datei teste.</pre>
+        <div class="bar-actions"><button class="btn primary" data-copy="p1">Vorlage kopieren</button><span class="status" id="s-p1" role="status"></span></div>
+      </div>
+      <div class="panel">
+        <h3>Prompt-Vorlage für Fehlerberichte</h3>
+        <pre class="prompt" id="p2">Die Datei funktioniert noch nicht wie gewünscht.
+Was ich getan habe: Ich habe auf „Neue Aufgabe“ geklickt.
+Was passiert: Das Kreisdiagramm bleibt leer.
+Was erwartet war: Beide Brüche erscheinen als Kreisausschnitte.
+Fehlermeldung aus der Konsole (F12): Uncaught TypeError: ctx is null
+
+Finde die Ursache, erkläre sie in einem Satz und gib die vollständige korrigierte Datei aus.</pre>
+        <div class="bar-actions"><button class="btn primary" data-copy="p2">Vorlage kopieren</button><span class="status" id="s-p2" role="status"></span></div>
+      </div>
+      <div class="panel">
+        <h3>Im Unterricht: Lernende coden selbst</h3>
+        <p class="hint">Die Prüfungswerkstatt beschreibt mit dem „Simulations- und Vibe-Coding-Assistenten“ (Uni Siegen, Idee 4.11) ein Format, in dem Lernende mit KI eine Simulation erstellen, sie systematisch testen, Grenzen benennen und das Produkt mündlich verteidigen. Für solche Lernszenarien ist GPT-5.6-luna ein guter Kompromiss: brauchbarer Code zu einem Bruchteil der Kosten von Sonnet 5.5.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="v-quellen" role="tabpanel" hidden>
+  <div class="cols">
+    <div class="panel">
+      <h2>Was sich gegenüber der digimatha-Übersicht ändert</h2>
+      <p class="hint">Die Seite digimatha.com/ki/ki-modell-auswahl.html übernimmt Daten aus dem Original von Martin Kurz mit Stand „Mitte September 2026“. Seitdem hat sich die Modellliste geändert.</p>
+      <table class="diff stack">
+        <thead><tr><th>Punkt</th><th>digimatha</th><th>Dieses Tool</th></tr></thead>
+        <tbody>
+          <tr><td>Claude Sonnet 5.5</td><td>fehlt</td><td>ergänzt (in AIS.chat seit 02.11.2026), stärkstes Modell für Code und Text</td></tr>
+          <tr><td>Gemini 3.5 Flash Lite</td><td>fehlt</td><td>ergänzt (seit 02.11.2026), löst Gemini 3.1 Lite praktisch ab</td></tr>
+          <tr><td>Mistral Nemo, Llama-3.1-8B</td><td>gelistet</td><td>nicht in Ihrer aktuellen Auswahl, daher entfernt</td></tr>
+          <tr><td>Einsatzzwecke</td><td>5 grobe Szenarien</td><td>16 Zwecke, u. a. Vibe-Coding, Feedback, Bildanalyse, Formate, Lernszenarien</td></tr>
+          <tr><td>Mathematik &amp; Logik</td><td>GPT-5.5, Gemini 3.1 Lite</td><td>GPT-5.5, Sonnet 5.5, GPT-5.6-luna; 3.1 Lite nur noch als Notlösung</td></tr>
+          <tr><td>Budget</td><td>nur Blatt-Symbol für sparsame Modelle</td><td>Budgetfaktor je Modell und wählbare Priorität</td></tr>
+          <tr><td>Llama-3.3-70B</td><td>„aktuell“, für Dialog und Allround</td><td>ältestes Modell (Dez. 2024), keine Bilder; nur noch für einfache Texte und Rollenspiele</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h2>So entstehen die Einschätzungen</h2>
+      <p class="hint"><b>Qualität (0–5)</b> je Einsatzzweck: Herstellerbenchmarks und unabhängige Messungen (Artificial Analysis, Vals.ai, SWE-Bench, Terminal-Bench, Langkontext-Test AA-LCR) sowie bekannte Eigenschaften wie Bildverarbeitung, Kontextlänge und Reasoning – übersetzt in eine redaktionelle Einschätzung für Schulaufgaben.</p>
+      <p class="hint"><b>Rangfolge:</b> Qualität plus gewichteter Budgetvorteil. „Beste Qualität“ gewichtet das Budget kaum, „Budget schonen“ stark. Modelle unter 2,5 Punkten landen immer unter „Nicht empfohlen“.</p>
+      <p class="hint"><b>Budget:</b> Laut AIS.chat-FAQ erhält jede Lehrkraft ein monatliches Tokenvolumen, das am Monatsersten auf 100 % zurückgesetzt wird; geteilte Lernszenarien und Dialogpartner verbrauchen einen von Ihnen festgelegten Anteil davon.</p>
+      <div class="warnbox"><b>Grenzen:</b> Welche Modelle verfügbar sind, entscheidet jedes Bundesland. Benchmarks stammen teils von den Herstellern. Modelle in AIS.chat können anders konfiguriert sein (z. B. Denkaufwand) als in den Tests. Ergebnisse immer prüfen.</div>
+    </div>
+    <div class="panel" style="grid-column:1/-1">
+      <h2>Quellen</h2>
+      <ul class="src">
+        <li><a href="https://ais-chat.schule/releases">AIS.chat – Release-Notes</a> (neue Modelle 02.11.2026, GPT-5.6-luna 10.09.2026)</li>
+        <li><a href="https://ais-chat.schule/faq">AIS.chat – FAQ</a> (Modelle, Reasoning, Tokenvolumen, Dateitypen, Websuche)</li>
+        <li><a href="https://github.com/FWU-DE/telli-dialog">Quellcode von AIS.chat (FWU-DE/telli-dialog)</a> – Budgetabrechnung in Cent, Codeblöcke mit Download</li>
+        <li><a href="https://digimatha.com/ki/ki-modell-auswahl.html">digimatha – KI-Modell-Auswahl</a>, Nachbau des Tools von Martin Kurz (CC BY-SA 4.0)</li>
+        <li><a href="https://www.anthropic.com/claude-sonnet-5-5">Anthropic – Claude Sonnet 5.5</a> und <a href="https://www.anthropic.com/news/claude-sonnet-4-6">Claude Sonnet 4.6</a></li>
+        <li><a href="https://openai.com/api/pricing/">OpenAI – API-Preise</a>, <a href="https://developers.openai.com/api/docs/models/gpt-5.5">GPT-5.5 Modellseite</a></li>
+        <li><a href="https://developers.cloudflare.com/ai/models/openai/gpt-5.6-luna/">GPT-5.6 Luna – Modellinfo und Preise</a>, <a href="https://artificialanalysis.ai/articles/gpt-5-6-has-landed">Artificial Analysis zu GPT-5.6</a></li>
+        <li><a href="https://www.datacamp.com/blog/gemini-3-6-flash-3-5-flash-lite-3-5-flash-cyber">DataCamp – Gemini 3.5 Flash-Lite vs. 3.1 Flash-Lite</a>, <a href="https://www.vals.ai/models/google_gemini-3.5-flash-lite">Vals.ai – Gemini 3.5 Flash Lite</a></li>
+        <li><a href="https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-1-flash-lite/">Google – Gemini 3.1 Flash-Lite</a>, <a href="https://artificialanalysis.ai/models/gemini-3-1-flash-lite-preview">Artificial Analysis – 3.1 Flash-Lite</a></li>
+        <li><a href="https://www.datalearner.com/en/ai-models/pretrained-models/gpt-5-6-luna/analysis">DataLearner – Benchmarks GPT-5.6 Luna</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <span>Idee und Szenario-Ansatz nach dem KI-Modell-Auswahl-Tool von Martin Kurz (Hessische Lehrkräfteakademie), CC BY-SA 4.0. Modellnamen und Kurzbeschreibungen aus AIS.chat. Einschätzungen: eigene Bewertung, Stand 25.11.2026.</span>
+</footer>
+</div></main>
+
+<script>
+{
+const IC = {
+  code:'<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',
+  doc:'<path d="M6 3h8l4 4v14H6z"/><path d="M9 12h6M9 16h6"/>',
+  pen:'<path d="M4 20l4-1 11-11-3-3L5 16z"/>',
+  chat:'<path d="M4 5h16v11H9l-5 4z"/>',
+  calc:'<path d="M5 3h14v18H5z"/><path d="M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2"/>',
+  check:'<path d="M4 12l5 5L20 6"/>',
+  lang:'<path d="M3 5h10M8 3v2c0 5-3 9-5 10M6 9c1 3 4 5 7 6M13 21l4-10 4 10M14.5 18h5"/>',
+  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  table:'<path d="M3 5h18v14H3zM3 10h18M9 5v14"/>',
+  img:'<path d="M3 5h18v14H3z"/><path d="M3 16l5-5 5 5 3-3 5 5"/><circle cx="16" cy="9" r="1.5"/>',
+  bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3 11v2h6v-2a6 6 0 0 0-3-11z"/>',
+  mail:'<path d="M3 6h18v12H3z"/><path d="M3 7l9 6 9-6"/>',
+  tutor:'<circle cx="12" cy="7" r="3"/><path d="M5 21c0-4 3-7 7-7s7 3 7 7"/>',
+  search:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-4-4"/>'
+};
+const svg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+
+// Reihenfolge der Qualitätswerte in den Szenarien
+const ORDER = ['s55','g55','s46','luna','f35','f31','nano','llama'];
+const M = {
+ s55:{n:'Claude Sonnet 5.5',p:'Anthropic',ais:'Starkes LLM mit gutem Sprachverständnis.',neu:true,rel:'28.09.2026',inais:'02.11.2026',rea:'ja (adaptives Denken)',vis:'Text und Bild',ctx:'1 Mio. Token',price:'2 $ / 10 $',f:28,b:2,
+  plus:['Bestes Gesamtpaket der Liste: Code, Text, Analyse','Kommt laut Anthropic nah an Opus 5.5 heran','Pro Token günstiger als Sonnet 4.6'],
+  minus:['Antwortet oft sehr ausführlich – kostet Budget','Für einfache Fragen überdimensioniert'],
+  when:'Wenn Qualität zählt: Vibe-Coding, Material, Feedback, Konzepte.'},
+ g55:{n:'GPT-5.5',p:'OpenAI',ais:'Teures, leistungsfähiges Modell für komplexe Aufgaben',rel:'23.04.2026',inais:'2026',rea:'ja (laut AIS.chat)',vis:'Text und Bild',ctx:'1,05 Mio. Token',price:'5 $ / 30 $',f:80,b:1,
+  plus:['Sehr stark bei Mathematik und mehrschrittigem Denken','Starkes Programmieren (Terminal-Bench 2.0: 82,7 %)'],
+  minus:['Teuerstes Modell – leert das Budget am schnellsten','Langsamer durch Denkphase','Wissensstand Dezember 2025'],
+  when:'Für harte Nüsse: anspruchsvolle Mathematik, komplexe Analysen, Zweitmeinung beim Coden.'},
+ s46:{n:'Claude Sonnet 4.6',p:'Anthropic',ais:'Schnelles, präzises LLM mit gutem Sprachverständnis.',rel:'17.02.2026',inais:'August 2026',rea:'hybrid',vis:'Text und Bild',ctx:'bis 1 Mio. Token',price:'3 $ / 15 $',f:42,b:1.5,
+  plus:['Natürliche Sprache, gutes Dokumentverständnis','Bleibt zuverlässig in vorgegebenen Rollen'],
+  minus:['Von Sonnet 5.5 überholt – und pro Token teurer als dieses'],
+  when:'Wenn Sonnet 5.5 in Ihrem Bundesland fehlt, oder als zweite Meinung.'},
+ luna:{n:'GPT-5.6-luna',p:'OpenAI',ais:'kosteneffizienter Allrounder (laut Release-Notes)',rel:'Juli 2026',inais:'10.09.2026',rea:'ja (laut AIS.chat)',vis:'Text und Bild',ctx:'1,05 Mio. Token',price:'0,20 $ / 1,20 $',f:3,b:4.5,
+  plus:['Bestes Preis-Leistungs-Verhältnis der Liste','Stark bei langen Dokumenten (AA-LCR 83,7 %)','Reasoning zum kleinen Preis'],
+  minus:['Bei komplexem Code und anspruchsvollen Texten hinter den großen Modellen','Denkphase kann Antworten verzögern'],
+  when:'Standardmodell für den Alltag und für geteilte Lernszenarien.'},
+ f35:{n:'Gemini 3.5 Flash Lite',p:'Google',ais:'schneller kosteneffizienter Allrounder',neu:true,rel:'21.07.2026',inais:'02.11.2026',rea:'ja (laut Artificial Analysis)',vis:'Text, Bild, Audio, Video',ctx:'1 Mio. Token',price:'0,30 $ / 2,50 $',f:6,b:3.5,
+  plus:['Sehr schnell (rund 350 Token pro Sekunde)','Großer Sprung zu 3.1 Lite (Terminal-Bench 2.1: 54 % statt 31 %)','Zuverlässig bei strukturierten Ausgaben'],
+  minus:['Bei Schreibstil und komplexem Denken unter Luna und den Sonnet-Modellen'],
+  when:'Schnelle Aufgaben, Bildanalyse, Quiz-Formate, kleine Code-Änderungen.'},
+ f31:{n:'Gemini 3.1 Lite',p:'Google',ais:'Performantes Modell für alltägliche Aufgaben',rel:'03.03.2026',inais:'2026',rea:'ja (laut AIS.chat)',vis:'Text, Bild, Audio, Video',ctx:'1 Mio. Token',price:'0,25 $ / 1,50 $',f:4,b:4,
+  plus:['Schnell und günstig'],
+  minus:['Vom Nachfolger 3.5 Flash Lite fast überall übertroffen','Von Artificial Analysis als veraltet geführt'],
+  when:'Kaum noch nötig – Gemini 3.5 Flash Lite ist bei ähnlichem Budget besser.'},
+ nano:{n:'GPT-5 nano',p:'OpenAI',ais:'Sehr schnell und günstig',leaf:true,rel:'August 2025',inais:'2025',rea:'–',vis:'Text und Bild',ctx:'400.000 Token',price:'0,05 $ / 0,40 $',f:1,b:5,
+  plus:['Sparsamstes Modell der Liste','Reicht für Definitionen und kurze Umformulierungen'],
+  minus:['Schwach bei komplexen Aufgaben, Code und langen Texten','Älterer Wissensstand (Mitte 2024)'],
+  when:'Kurze Fragen, wenn das Budget knapp wird.'},
+ llama:{n:'Llama-3.3-70B',p:'Meta',ais:'Ein leistungsstarkes, aktuelles Modell von Meta.',rel:'Dezember 2024',inais:'von Beginn an',rea:'nein',vis:'nur Text',ctx:'128.000 Token',price:'offenes Modell, Preis in AIS.chat nicht veröffentlicht',f:4,fest:true,b:4,
+  plus:['Offenes Modell (Open Weights)','Antwortet ohne Denkpause, natürlicher Ton'],
+  minus:['Ältestes Modell der Liste – „aktuell“ trifft nicht mehr zu','Verarbeitet keine Bilder','Schwach in Mathematik und Code'],
+  when:'Einfache Texte und Rollenspiele, wenn Ihnen ein offenes Modell wichtig ist.'}
+};
+
+const G = {vor:'Vorbereiten & Erstellen',mit:'Mit Lernenden',pruef:'Prüfen & Rückmelden',tech:'Technik, Daten & Organisation'};
+const S = [
+ {id:'material',g:'vor',ic:'doc',t:'Unterricht planen & Material erstellen',d:'Stundenverläufe, Arbeitsblätter, differenzierte Aufgaben, Tafelbilder.',ex:['Arbeitsblatt in drei Niveaustufen','Stundenverlauf mit Zeitplan','Lernlandkarte zur Reihe'],
+  q:[5,4.5,4.5,3.5,3,2.5,2,2.5],tip:'Kontext mitgeben: Klassenstufe, Bundesland, Lehrplanbezug, Vorwissen. Den Lehrplan als Datei hochladen.',
+  w:{s55:'Strukturiert, didaktisch stimmig und sprachlich sauber – die stärkste Wahl für Material, das Sie wirklich einsetzen.',s46:'Ähnlich gute Texte wie Sonnet 5.5, aber pro Token teurer.',luna:'Liefert brauchbare Entwürfe zum Bruchteil der Kosten; für Feinschliff ggf. ein Sonnet-Modell.'}},
+ {id:'kreativ',g:'vor',ic:'pen',t:'Kreatives Schreiben & Lesetexte',d:'Geschichten, Gedichte, Szenen und Lesetexte für den Unterricht.',ex:['Kurzgeschichte mit Wortschatz','Lesetext auf A2-Niveau','Dialogszene für ein Rollenspiel'],
+  q:[5,4,4.5,3.5,3,2.5,2,3],tip:'Stil und Zielgruppe benennen („wie ein Jugendbuch für Klasse 7“) und Beispiele mitgeben.',
+  w:{s55:'Claude-Modelle gelten als stilistisch stärkste Schreiber.',s46:'Natürlicher, abwechslungsreicher Ton.',llama:'Formuliert flüssig, aber mit älterem Wissensstand und weniger Nuancen.'}},
+ {id:'dokumente',g:'vor',ic:'search',t:'Lange Dokumente auswerten',d:'Lehrpläne, Erlasse, Studien zusammenfassen und befragen.',ex:['Kernlehrplan auf Kompetenzen filtern','Erlass in fünf Punkten','Fragen an eine Studie (PDF)'],
+  q:[4.5,4.5,4.5,4.5,4,3,2,1.5],tip:'Dateien direkt hochladen (PDF, DOCX, PPTX u. a.). Nach Seitenzahlen oder Zitaten fragen, um Aussagen prüfen zu können.',
+  w:{luna:'Sehr stark im Langkontext-Test AA-LCR (83,7 %) bei 1 Mio. Token – die günstige Wahl für lange PDFs.',s46:'Laut AIS.chat besonders gutes Dokumentverständnis.',f35:'Schnell, 1 Mio. Token Kontext; im Langkontext etwas schwächer (AA-LCR 76 %).',llama:'Kleinstes Kontextfenster (128.000 Token), keine Bilder oder Diagramme.'}},
+ {id:'konzept',g:'vor',ic:'bulb',t:'Konzepte, Schulentwicklung & Recherche',d:'Medienkonzept, Fortbildungsplanung, Argumentationen, Recherche mit Websuche.',ex:['Gliederung eines Medienkonzepts','Pro und Contra Handyverbot','Fortbildungsplan für das Kollegium'],
+  q:[5,5,4,3.5,3,2,1.5,2],tip:'Die Websuche ist im allgemeinen Chat dauerhaft aktiv. Quellen in der Antwort trotzdem öffnen und prüfen.',
+  w:{g55:'Stark bei mehrschrittigem Abwägen und komplexen Zusammenhängen.',s55:'Gleichauf mit GPT-5.5, bei deutlich geringerem Budgetverbrauch.'}},
+ {id:'sprachen',g:'vor',ic:'lang',t:'Sprachen, Übersetzen & Leichte Sprache',d:'Mehrsprachige Elternbriefe, Texte vereinfachen, DaZ und Fremdsprachen.',ex:['Elternbrief auf Ukrainisch und Arabisch','Sachtext in Leichter Sprache','Vokabelliste mit Beispielsätzen'],
+  q:[5,4.5,4.5,4,3.5,3,2.5,3],tip:'Bei Leichter Sprache und seltenen Sprachen das Ergebnis von Muttersprachlerinnen oder Muttersprachlern gegenlesen lassen.',
+  w:{s55:'Sehr sicheres Sprachgefühl, auch bei Vereinfachungen.',luna:'Laut Anbieter für mehrsprachige Aufgaben optimiert – günstig für Alltagsübersetzungen.'}},
+ {id:'dialog',g:'mit',ic:'chat',t:'Dialogpartner & Rollenspiele',d:'Historische Figuren, Gesprächssimulationen, Bewerbungsgespräche für Lernende.',ex:['Interview mit Marie Curie','Kundengespräch üben','Streitgespräch zur Energiewende'],
+  q:[4.5,4,4.5,4,3.5,3.5,2,2.5],prio:'b',tip:'Geteilte Dialogpartner verbrauchen Ihr Budget – bei 30 Lernenden summiert sich das. Ein günstiges Modell mit gutem Charakter-Prompt ist oft sinnvoller als das teuerste.',
+  w:{s46:'Bleibt zuverlässig in der Rolle und klingt natürlich – bei Klassenbetrieb aber teuer.',luna:'Gutes Preis-Leistungs-Verhältnis für viele parallele Schülerchats.',f35:'Sehr schnelle Antworten, gut für lebendige Gespräche.',llama:'Antwortet ohne Denkpause und natürlich; Fakten älter als 2024 fehlen.'}},
+ {id:'tutor',g:'mit',ic:'tutor',t:'KI-Tutor & Lernbegleitung',d:'Lernszenarien, die erklären, nachfragen und Hinweise in Stufen geben.',ex:['Hausaufgabenhilfe ohne Lösungen','Sokratischer Mathe-Tutor','Schreibcoach für Erörterungen'],
+  q:[4.5,4.5,4.5,4,3.5,2.5,2.5,2.5],prio:'b',tip:'Im Lernszenario festlegen: keine fertigen Lösungen, Hinweise in Stufen, Rückfragen zum Denkweg. Budgetanteil pro Szenario begrenzen.',
+  w:{luna:'Reasoning-Modell zum kleinen Preis – erklärt Schritt für Schritt und schont das Budget im Klassenbetrieb.',s55:'Hält sich am besten an didaktische Vorgaben, kostet aber rund zehnmal so viel wie Luna.'}},
+ {id:'mathe',g:'mit',ic:'calc',t:'Mathematik & Naturwissenschaften',d:'Aufgaben lösen, Lösungswege erklären, Rechnungen prüfen.',ex:['Lösungsweg zu einer Extremwertaufgabe','Fermi-Aufgabe mit Annahmen','Versuchsprotokoll auswerten'],
+  q:[4.5,5,4,4,3.5,3,2.5,1.5],tip:'AIS.chat nutzt bei Bedarf ein Mathematik-Werkzeug und zeichnet interaktive Grafiken. Reasoning-Modelle rechnen sorgfältiger – trotzdem nachrechnen.',
+  w:{g55:'Stärkstes Modell für mehrschrittiges Schlussfolgern – für anspruchsvolle Aufgaben, nicht für Routinerechnungen.',luna:'Reasoning-Modell mit gutem Preis-Leistungs-Verhältnis für Schulmathematik.',llama:'Kein Reasoning, schwach in Mathematik – nicht verwenden.'}},
+ {id:'feedback',g:'pruef',ic:'check',t:'Feedback & Korrektur nach Raster',d:'Schülertexte einschätzen, Rückmeldungen formulieren.',ex:['Rückmeldung zu einer Erörterung','Fehleranalyse Englischtext','Peer-Feedback vorbereiten'],
+  q:[5,4.5,4.5,3.5,3,2.5,1.5,2],tip:'Nur anonymisierte Texte einfügen – keine Namen. Die KI markiert und begründet, die Bewertung bleibt bei Ihnen.',
+  w:{s55:'Begründet Rückmeldungen nachvollziehbar am Raster und trifft einen wertschätzenden Ton.',g55:'Sehr gründlich, aber das teuerste Modell – bei vielen Texten schnell spürbar.'}},
+ {id:'pruefung',g:'pruef',ic:'doc',t:'Prüfungsaufgaben & Erwartungshorizonte',d:'Klassenarbeiten, Aufgabenvarianten, Operatoren, Anforderungsbereiche.',ex:['Nachschreibarbeit als Variante','Erwartungshorizont mit Punkten','Aufgaben nach AFB I–III'],
+  q:[5,5,4.5,4,3,2.5,2,2],tip:'Operatoren und Anforderungsbereiche Ihres Landes vorgeben. Lassen Sie die KI ihre eigene Aufgabe einmal lösen – so fallen Fehler auf.',
+  w:{s55:'Sehr gute Aufgabenqualität und saubere Erwartungshorizonte.',g55:'Gleichauf, besonders stark bei mathematischen Aufgaben.'}},
+ {id:'quiz',g:'pruef',ic:'table',t:'Quiz, Tabellen & Formate',d:'Multiple Choice, Lückentexte, Tabellen, Import-Formate für Lernplattformen.',ex:['20 Fragen im Moodle-GIFT-Format','Vokabeltabelle als CSV','Lückentext mit Lösung'],
+  q:[4.5,4.5,4.5,4,4,3,2.5,2.5],prio:'b',tip:'Das gewünschte Format mit einem Beispiel vorgeben. Die Antwort lässt sich als Einzelantwort herunterladen.',
+  w:{f35:'In Praxistests sehr zuverlässig bei strukturierten Ausgaben – schnell und günstig.',luna:'Saubere Formate zum kleinen Preis.'}},
+ {id:'vibe',g:'tech',ic:'code',neu:true,t:'Vibe-Coding: Lern-Apps & Simulationen',d:'Interaktive HTML-Seiten, Quiz, Simulationen oder kleine Werkzeuge per Beschreibung bauen lassen.',ex:['Bruchrechen-Trainer','Pendel-Simulation mit Schiebereglern','Zufallsgenerator für Gruppen'],
+  q:[5,4.5,4,3,3,2,1,1],prio:'q',tip:'AIS.chat gibt Code als Codeblock mit Kopieren- und Download-Schaltfläche aus, aber ohne Live-Vorschau. Datei als .html speichern und im Browser öffnen – Anleitung im Reiter „Vibe-Coding“.',
+  w:{s55:'Stärkstes Coding-Modell der Liste (SWE-Bench Pro 81,3 %), erzeugt am zuverlässigsten vollständige, lauffähige Dateien.',g55:'Sehr stark beim Programmieren und bei der Fehlersuche – ideal als Zweitmeinung, aber teuer.',s46:'Solide für einfache Apps, pro Token teurer als Sonnet 5.5.',f35:'Gut für kleine Änderungen an bestehendem Code, für ganze Apps fehleranfälliger.',luna:'Für kleine Apps und Änderungen brauchbar, für komplexe Simulationen zu unzuverlässig.',nano:'Code oft unvollständig oder fehlerhaft.',llama:'Ältestes Modell ohne Reasoning – für Vibe-Coding ungeeignet.'}},
+ {id:'informatik',g:'tech',ic:'code',t:'Programmieren lernen & Code erklären',d:'Python- oder Scratch-Aufgaben, Fehler finden, Code kommentieren.',ex:['Python-Fehler erklären','Aufgabe zu Schleifen','Code Zeile für Zeile kommentieren'],
+  q:[5,4.5,4,4,3.5,2.5,2,2],tip:'Für Lernende im Lernszenario: keine fertigen Lösungen, sondern Hinweise in Stufen.',
+  w:{luna:'Erklärt kurzen Code und findet Fehler zuverlässig – günstig genug für den Klassenbetrieb.',s55:'Beste Erklärungen und Fehleranalysen, auch bei längerem Code.'}},
+ {id:'bild',g:'tech',ic:'img',t:'Bilder, Fotos & Diagramme analysieren',d:'Tafelbilder, Diagramme, gescannte Arbeitsblätter, handschriftliche Lösungen.',ex:['Tafelfoto in Text umwandeln','Diagramm beschreiben lassen','Scan zu bearbeitbarem Arbeitsblatt'],
+  q:[4.5,4.5,4.5,3.5,4.5,3.5,2.5,0],tip:'Bis zu vier Bilder lassen sich einfügen, auch aus der Zwischenablage. Gute Belichtung und gerade Aufnahme verbessern das Ergebnis deutlich.',
+  w:{f35:'Von Grund auf multimodal (Bild, Audio, Video) und schnell – sehr gutes Preis-Leistungs-Verhältnis.',llama:'Verarbeitet keine Bilder (reines Textmodell).'}},
+ {id:'schnell',g:'tech',ic:'bolt',t:'Schnelle Fragen & Alltagshilfe',d:'Definitionen, Formulierungshilfen, kurze Erklärungen, Ideen.',ex:['Was ist ein Operator?','E-Mail freundlicher formulieren','Fünf Ideen für einen Stundeneinstieg'],
+  q:[4,3.5,4,4,4,3.5,3.5,3.5],prio:'s',tip:'Hier lohnt es sich am meisten, Budget zu sparen: Für einfache Fragen genügen die kleinen Modelle.',
+  w:{nano:'Sparsamstes Modell – für kurze Fragen völlig ausreichend.',f35:'Sehr schnell und günstig.',g55:'Überdimensioniert und langsam für einfache Fragen.'}},
+ {id:'verwaltung',g:'tech',ic:'mail',t:'Elternbriefe, E-Mails & Organisation',d:'Elternbriefe, Einladungen, Protokolle, Checklisten.',ex:['Elternbrief zum Wandertag','Protokoll aus Stichpunkten','Checkliste Klassenfahrt'],
+  q:[4.5,4,4.5,4,3.5,3,3,3.5],prio:'b',tip:'Keine personenbezogenen Daten von Schülerinnen und Schülern eingeben.',
+  w:{luna:'Gute, sachliche Texte zu geringen Kosten.',s46:'Besonders natürlicher, freundlicher Ton.'}}
+];
+
+const WB = {q:.1,b:.35,s:.8};
+const PN = {q:'Qualität entscheidet, Budget spielt kaum eine Rolle.',b:'Qualität zuerst, günstigere Modelle bekommen einen Bonus.',s:'Günstige Modelle rücken nach vorn, solange die Qualität reicht.'};
+let st = {active:new Set(ORDER),prio:'b',scen:'material',view:'auswahl',q:'',prioTouched:false};
+try{const raw=localStorage.getItem('modellwahl');if(raw){const o=JSON.parse(raw);if(Array.isArray(o.active)&&o.active.length)st.active=new Set(o.active.filter(x=>M[x]));if(WB[o.prio]){st.prio=o.prio;st.prioTouched=true}if(S.some(s=>s.id===o.scen))st.scen=o.scen}}catch(e){}
+const save=()=>{try{localStorage.setItem('modellwahl',JSON.stringify({active:[...st.active],prio:st.prioTouched?st.prio:null,scen:st.scen}))}catch(e){}};
+
+const tier = q => q>=4.5?['sehr gut','b1']:q>=3.5?['gut','b2']:q>=2.5?['eingeschränkt','b3']:['nicht empfohlen','b4'];
+const fmt = n => String(n).replace('.',',');
+const $ = id => document.getElementById(id);
+
+function ranking(s,prio){
+  const w=WB[prio];
+  return ORDER.map((id,i)=>({id,q:s.q[i],sc:s.q[i]+w*M[id].b})).filter(r=>st.active.has(r.id))
+    .sort((a,b)=>((b.q>=2.5)-(a.q>=2.5))||(b.sc-a.sc)||(b.q-a.q));
+}
+
+function renderToggles(){
+  $('mtoggles').innerHTML=ORDER.map(id=>`<label class="check${st.active.has(id)?'':' off'}"><input type="checkbox" value="${id}" ${st.active.has(id)?'checked':''}>${M[id].n}${M[id].leaf?' <span title="Sparsames Modell" class="mini">(sparsam)</span>':''}${M[id].neu?' <span class="badge b1" style="font-size:11px">neu</span>':''}</label>`).join('');
+}
+function renderPrio(){
+  document.querySelectorAll('#prio button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===st.prio));
+  $('prio-note').textContent=PN[st.prio];
+}
+function renderList(){
+  const q=st.q.trim().toLowerCase();
+  let h='';
+  for(const g in G){
+    const items=S.filter(s=>s.g===g&&(!q||(s.t+' '+s.d+' '+s.ex.join(' ')).toLowerCase().includes(q)));
+    if(!items.length)continue;
+    h+=`<div class="glabel">${G[g]}</div><div class="scen">`+items.map(s=>`<button data-s="${s.id}" class="${s.neu?'new':''}" aria-pressed="${s.id===st.scen}"><span class="ic">${svg(s.ic)}</span><span><strong>${s.t}</strong><small>${s.d}</small></span></button>`).join('')+'</div>';
+  }
+  $('scenlist').innerHTML=h||'<p class="empty">Kein Einsatzzweck gefunden. Versuchen Sie ein anderes Stichwort.</p>';
+}
+function mcard(r,pos,flags){
+  const m=M[r.id],s=S.find(x=>x.id===st.scen),[tl,tc]=tier(r.q);
+  const why=(s.w&&s.w[r.id])||m.when;
+  return `<div class="mc${flags.top?' top':''}"><div class="row1"><span class="pos">${pos}</span><h3>${m.n}</h3><span class="prov ${m.p}">${m.p}</span>${flags.top?'<span class="badge fill">Erste Wahl</span>':''}${flags.spar?'<span class="badge spar">Spartipp</span>':''}<span class="badge ${tc}">${tl}</span></div>
+  <div class="bars"><span>Eignung</span><span class="bar"><i style="width:${r.q/5*100}%"></i></span><span class="v">${fmt(r.q)} / 5</span><span>Budget</span><span class="bar b"><i style="width:${m.b/5*100}%"></i></span><span class="v">${m.fest?'ca. ':''}${m.f}× nano</span></div>
+  <p>${why}</p></div>`;
+}
+function renderResult(){
+  const s=S.find(x=>x.id===st.scen);
+  const r=ranking(s,st.prio),good=r.filter(x=>x.q>=2.5),bad=r.filter(x=>x.q<2.5);
+  let spar=null;
+  if(good.length){const cands=good.slice(1).filter(x=>x.q>=3.5&&M[x.id].b>M[good[0].id].b+1);if(cands.length)spar=cands.sort((a,b)=>M[b.id].b-M[a.id].b||b.q-a.q)[0].id}
+  let h=`<div class="rhead"><span class="mini">${G[s.g]}</span><h2>${s.t}</h2><p class="hint">${s.d}</p><div class="ex">${s.ex.map(e=>`<span>${e}</span>`).join('')}</div></div>`;
+  if(s.prio&&!st.prioTouched&&s.prio!==st.prio)h+=`<p class="mini">Für diesen Zweck empfehlen wir die Priorität „${{q:'Beste Qualität',b:'Ausgewogen',s:'Budget schonen'}[s.prio]}“. <button class="btn" data-setprio="${s.prio}" style="min-height:32px;padding:4px 10px;font-size:13px">übernehmen</button></p>`;
+  h+=`<div class="tip"><b>Tipp für AIS.chat</b>${s.tip}</div>`;
+  if(!r.length)h+='<p class="empty">Keine Modelle ausgewählt. Wählen Sie oben unter „Meine Modelle“ mindestens ein Modell.</p>';
+  else if(!good.length)h+='<p class="empty">Keines Ihrer ausgewählten Modelle eignet sich gut für diesen Zweck.</p>';
+  h+='<div class="rank">'+good.map((x,i)=>mcard(x,i+1,{top:i===0,spar:x.id===spar})).join('')+'</div>';
+  if(bad.length)h+=`<details class="weak"><summary>Nicht empfohlen (${bad.length})</summary><div class="rank">${bad.map(x=>mcard(x,'–',{})).join('')}</div></details>`;
+  const off=ORDER.filter(id=>!st.active.has(id));
+  if(off.length)h+=`<p class="mini">Ausgeblendet: ${off.map(id=>M[id].n).join(', ')}.</p>`;
+  $('result').innerHTML=h;
+}
+function renderMatrix(){
+  let h='<thead><tr><th>Einsatzzweck</th>'+ORDER.map(id=>`<th class="${st.active.has(id)?'':'dim'}">${M[id].n}</th>`).join('')+'</tr></thead><tbody>';
+  for(const g in G){
+    h+=`<tr class="grp"><td colspan="${ORDER.length+1}">${G[g]}</td></tr>`;
+    for(const s of S.filter(x=>x.g===g)){
+      const best=(ranking(s,st.prio).filter(x=>x.q>=2.5)[0]||{}).id;
+      h+=`<tr data-s="${s.id}" style="cursor:pointer"><td>${s.t}</td>`+ORDER.map((id,i)=>{const q=s.q[i];const bg=q<2.5?'var(--warn-soft)':`color-mix(in srgb,var(--accent) ${q>=4.5?80:q>=3.5?45:18}%,transparent)`;return `<td class="c${id===best?' best':''}${st.active.has(id)?'':' dim'}" style="background:${bg}" title="${M[id].n}: ${tier(q)[0]}">${fmt(q)}</td>`}).join('')+'</tr>';
+    }
+  }
+  $('mx').innerHTML=h+'</tbody>';
+}
+function renderModels(){
+  const max=Math.log(81);
+  $('budget').innerHTML=[...ORDER].sort((a,b)=>M[a].f-M[b].f).map(id=>`<div class="budrow"><span>${M[id].n}</span><span class="bar b"><i style="width:${Math.max(4,Math.log(M[id].f+1)/max*100)}%;background:${M[id].f>20?'var(--warn)':'var(--hoch)'}"></i></span><span class="v">${M[id].fest?'≈':''}${M[id].f}×</span></div>`).join('')+'<p class="mini">Balken logarithmisch: GPT-5.5 verbraucht rund 80-mal so viel wie GPT-5 nano, Claude Sonnet 5.5 rund ein Drittel von GPT-5.5.</p>';
+  $('cards').innerHTML=ORDER.map(id=>{const m=M[id];return `<article class="card${st.active.has(id)?'':' off'}"><div class="row1" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><h3 style="font-size:18px">${m.n}</h3><span class="prov ${m.p}">${m.p}</span>${m.neu?'<span class="badge b1">neu</span>':''}${m.leaf?'<span class="badge spar">sparsam</span>':''}</div>
+  <div class="ais">AIS.chat: „${m.ais}“</div>
+  <dl class="facts"><dt>Veröffentlicht</dt><dd>${m.rel}</dd><dt>In AIS.chat</dt><dd>${m.inais}</dd><dt>Reasoning</dt><dd>${m.rea}</dd><dt>Eingaben</dt><dd>${m.vis}</dd><dt>Kontext</dt><dd>${m.ctx}</dd><dt>Listenpreis</dt><dd>${m.price}${m.price.includes('$')?' pro Mio. Token (Ein-/Ausgabe)':''}</dd><dt>Budgetfaktor</dt><dd>${m.fest?'ca. ':''}${m.f}× GPT-5 nano</dd></dl>
+  <div class="pc"><div class="plus"><h4>Stärken</h4><ul>${m.plus.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="minus"><h4>Schwächen</h4><ul>${m.minus.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>
+  <div class="when"><b>Wann nehmen?</b>${m.when}</div></article>`}).join('');
+}
+function renderAll(){renderToggles();renderPrio();renderList();renderResult();renderMatrix();renderModels()}
+
+const VIEWS=['auswahl','matrix','modelle','vibe-coding','quellen'];
+function show(v,push){
+  if(!VIEWS.includes(v))v='auswahl';st.view=v;
+  document.querySelectorAll('nav.steps button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v));
+  VIEWS.forEach(x=>$('v-'+x).hidden=x!==v);
+  if(push&&location.hash!=='#'+v){try{history.replaceState(null,'','#'+v)}catch(e){location.hash=v}}
+}
+
+document.querySelector('nav.steps').addEventListener('click',e=>{const b=e.target.closest('button');if(b)show(b.dataset.v,true)});
+$('mtoggles').addEventListener('change',e=>{const id=e.target.value;if(e.target.checked)st.active.add(id);else st.active.delete(id);save();renderAll()});
+$('prio').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;st.prio=b.dataset.p;st.prioTouched=true;save();renderPrio();renderResult();renderMatrix()});
+$('scenlist').addEventListener('click',e=>{const b=e.target.closest('button[data-s]');if(!b)return;st.scen=b.dataset.s;save();renderList();renderResult();if(window.innerWidth<=880)$('result').scrollIntoView({behavior:'smooth',block:'start'})});
+$('result').addEventListener('click',e=>{const b=e.target.closest('[data-setprio]');if(!b)return;st.prio=b.dataset.setprio;st.prioTouched=true;save();renderPrio();renderResult();renderMatrix()});
+$('q').addEventListener('input',e=>{st.q=e.target.value;renderList()});
+$('mx').addEventListener('click',e=>{const tr=e.target.closest('tr[data-s]');if(!tr)return;st.scen=tr.dataset.s;save();renderList();renderResult();show('auswahl',true);window.scrollTo({top:0,behavior:'smooth'})});
+document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{
+  const id=b.dataset.copy,txt=$(id).textContent,out=$('s-'+id);
+  try{await navigator.clipboard.writeText(txt);out.textContent='Kopiert.'}
+  catch(err){const r=document.createRange();r.selectNodeContents($(id));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);out.textContent='Text ist markiert – mit Strg+C bzw. Cmd+C kopieren.'}
+}));
+window.addEventListener('hashchange',()=>show(location.hash.slice(1),false));
+
+if(!st.prioTouched){const s=S.find(x=>x.id===st.scen);}
+renderAll();
+show(location.hash.slice(1)||'auswahl',false);
+}
+</script>
+</body>
+</html>
