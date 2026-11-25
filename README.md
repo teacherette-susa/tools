@@ -12,3 +12,4 @@ Kleine HTML-Werkzeuge für Fortbildungen und Unterricht, veröffentlicht über G
 | AIS.chat Modelle | https://teacherette-susa.github.io/tools/ais-chat-modelle/ |
 | Retrospektiven | https://teacherette-susa.github.io/tools/retrospektiven/ |
 | Kreativitätstechniken | https://teacherette-susa.github.io/tools/kreativitaetstechniken/ |
+| Scrum-Werkstatt | https://teacherette-susa.github.io/tools/scrum-werkstatt/ |

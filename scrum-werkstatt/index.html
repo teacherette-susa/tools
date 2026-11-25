@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrum-Werkstatt – eduScrum im Unterricht</title>
+<style>
+:root{--accent:#0f766e;--accent-2:#14b8a6;--accent-soft:#ccfbf1;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--bg:#f4f6fa;--card:#fff;--warn:#b45309;--warn-soft:#fef3c7;--bad:#b91c1c;--bad-soft:#fee2e2;--ok:#15803d;--ok-soft:#dcfce7;--font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:var(--font);color:var(--ink);line-height:1.5;background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:24px 20px 60px}
+.hidden{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+svg.i{width:18px;height:18px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* Buttons & Formulare */
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 13px;font-weight:600;font-size:14px;cursor:pointer;text-decoration:none;color:var(--ink);transition:all .15s;white-space:nowrap}
+.btn:hover{border-color:var(--accent-2);color:var(--accent)}
+.btn.p{background:var(--accent);border-color:var(--accent);color:#fff}.btn.p:hover{background:#115e59;color:#fff}
+.btn.s{padding:5px 9px;font-size:13px;border-radius:8px}
+.btn.ghost{border-color:transparent;background:transparent}.btn.ghost:hover{background:var(--accent-soft)}
+.btn.danger:hover{border-color:#fca5a5;color:var(--bad);background:var(--bad-soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;font-size:14px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent-2);outline-offset:0;border-color:transparent}
+textarea{resize:vertical;min-height:70px}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:10px 0 4px}
+:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1 1 200px;min-width:0}
+.muted{color:var(--muted)}.small{font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 4px 18px rgba(15,23,42,.04)}
+.card h2{margin:0 0 4px;font-size:19px}.card h3{margin:0 0 6px;font-size:16px}
+.card .lead{margin:0 0 14px;color:var(--muted);font-size:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.stack>*+*{margin-top:10px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:#115e59;white-space:nowrap}
+.chip.grey{background:#eef2f7;color:#475569}.chip.warn{background:var(--warn-soft);color:var(--warn)}.chip.bad{background:var(--bad-soft);color:var(--bad)}.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:0 0 auto;border:1px solid rgba(0,0,0,.15)}
+.empty{border:2px dashed var(--line);border-radius:14px;padding:18px;text-align:center;color:var(--muted);font-size:14px}
+/* Kopf */
+.hero{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:40px 44px;box-shadow:0 12px 32px rgba(15,23,42,.06)}
+.hero::before{content:"";position:absolute;width:380px;height:380px;right:-100px;top:-160px;border-radius:50%;background:radial-gradient(circle,#99f6e4 0%,rgba(153,246,228,0) 70%)}
+.hero::after{content:"";position:absolute;width:300px;height:300px;right:160px;bottom:-200px;border-radius:50%;background:radial-gradient(circle,#fde68a 0%,rgba(253,230,138,0) 70%)}
+.hero>*{position:relative;z-index:1}
+.eyebrow{display:inline-block;font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 11px;border-radius:999px}
+.hero h1{font-size:clamp(28px,4vw,42px);line-height:1.1;margin:14px 0 12px;letter-spacing:-.02em}
+.hero p{max-width:720px;color:#334155;margin:0 0 10px}
+.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.cycle{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;cursor:pointer;text-align:left;transition:all .15s}
+.step:hover{border-color:var(--accent-2);transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.07)}
+.step b{display:flex;align-items:center;gap:8px;font-size:14.5px}.step span{display:block;font-size:12.5px;color:var(--muted);margin-top:4px}
+.step .n{width:24px;height:24px;border-radius:8px;background:var(--accent-soft);color:#115e59;display:inline-grid;place-items:center;font-size:12px;font-weight:800}
+/* Raum-Zugang */
+.gate{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+/* App */
+#app header.top{position:sticky;top:0;z-index:20;background:rgba(244,246,250,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topin{max-width:1200px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px;margin-right:auto}
+.brand .logo{width:34px;height:34px;border-radius:10px;background:var(--accent);color:#fff;display:grid;place-items:center}
+.tabs{max-width:1200px;margin:0 auto;padding:0 14px 8px;display:flex;gap:4px;overflow-x:auto;scrollbar-width:thin}
+.tab{border:0;background:transparent;padding:8px 12px;border-radius:10px;font-weight:600;font-size:14px;color:#475569;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.tab:hover{background:#e9eef5}.tab.on{background:var(--card);color:var(--accent);box-shadow:0 1px 0 var(--line),0 2px 8px rgba(15,23,42,.06)}
+.viewhead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.viewhead h2{margin:0;font-size:24px;letter-spacing:-.01em}.viewhead p{margin:4px 0 0;color:var(--muted);max-width:720px}
+/* Backlog & Stories */
+.blist{display:flex;flex-direction:column;gap:10px}
+.bitem{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;background:#fff;border:1px solid var(--line);border-left:6px solid var(--c,#cbd5e1);border-radius:14px;padding:12px 14px}
+.bitem.drag{opacity:.4}.bitem.over{outline:2px dashed var(--accent-2)}
+.bitem .handle{cursor:grab;color:#94a3b8;padding-top:2px}
+.bitem h4{margin:0;font-size:15px}.bitem .story{font-size:13.5px;color:#334155;margin-top:2px}
+.bitem .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.bitem .acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.prio-Muss{background:#fee2e2;color:#b91c1c}.prio-Soll{background:#fef3c7;color:#b45309}.prio-Kann{background:#e0f2fe;color:#0369a1}.prio-Später{background:#eef2f7;color:#475569}
+.storycard{border:1px solid var(--line);border-top:8px solid var(--c,#cbd5e1);border-radius:14px;padding:14px;background:#fff}
+.storycard .tpl{font-size:15px;line-height:1.55}.storycard .tpl b{color:var(--accent)}
+.storycard ul{margin:8px 0 0;padding-left:20px;font-size:13.5px}
+.colors{display:flex;gap:6px;flex-wrap:wrap}
+.colors button{width:26px;height:26px;border-radius:8px;border:2px solid transparent;cursor:pointer}
+.colors button.on{border-color:var(--ink)}
+.invest{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:6px}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;padding:7px 9px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}
+.check input{margin-top:3px;accent-color:var(--accent)}
+.aclist{display:flex;flex-direction:column;gap:6px}
+.acrow{display:flex;gap:6px}
+/* Board */
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.col{background:#eef2f7;border-radius:16px;padding:10px;min-height:260px;display:flex;flex-direction:column;gap:8px}
+.col.over{outline:2px dashed var(--accent-2);background:#e6fffb}
+.colhead{display:flex;justify-content:space-between;align-items:center;padding:4px 6px 2px;font-weight:700;font-size:14px}
+.task{background:#fff;border:1px solid var(--line);border-left:6px solid var(--c,#cbd5e1);border-radius:12px;padding:10px 10px 8px;cursor:grab;box-shadow:0 2px 6px rgba(15,23,42,.04)}
+.task.drag{opacity:.4}
+.task .t{font-weight:600;font-size:14px;word-break:break-word}
+.task .s{font-size:12px;color:var(--muted);margin-top:2px}
+.task .b{display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.pts{font-weight:800;font-size:12px;background:#0f172a;color:#fff;border-radius:7px;padding:2px 7px}
+.task .mv{margin-left:auto;display:flex;gap:2px}
+.task.blocked{box-shadow:0 0 0 2px #fca5a5}
+.blockers .bl{display:flex;gap:8px;align-items:flex-start;padding:9px 10px;border:1px solid #fecaca;background:#fff7f7;border-radius:12px}
+.blockers .bl.solved{border-color:var(--line);background:#fff;opacity:.65}
+.blockers .bl.solved .tx{text-decoration:line-through}
+/* Poker */
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:10px}
+.pcard{aspect-ratio:3/4;border-radius:14px;border:2px solid var(--line);background:#fff;font-size:26px;font-weight:800;cursor:pointer;display:grid;place-items:center;transition:all .15s}
+.pcard:hover{border-color:var(--accent-2);transform:translateY(-3px)}
+.pcard.on{background:var(--accent);border-color:var(--accent);color:#fff;transform:translateY(-6px)}
+.voters{display:flex;flex-wrap:wrap;gap:10px}
+.voter{min-width:92px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;background:#fff}
+.voter .v{font-size:22px;font-weight:800;margin-top:2px}
+.voter.done{border-color:var(--accent-2);background:#f0fdfa}
+/* Stand-up */
+.timer{font-variant-numeric:tabular-nums;font-size:54px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.bar{height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.bar.warn i{background:#f59e0b}.bar.over i{background:#ef4444}
+.speakers{display:flex;flex-wrap:wrap;gap:6px}
+.spk{padding:5px 10px;border-radius:999px;border:1px solid var(--line);font-size:13px;background:#fff}
+.spk.now{background:var(--accent);border-color:var(--accent);color:#fff}
+.spk.done{background:var(--ok-soft);border-color:#bbf7d0;color:var(--ok)}
+table.t{width:100%;border-collapse:collapse;font-size:13.5px}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px 8px;text-align:left;vertical-align:top}
+table.t th{color:var(--muted);font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.tablewrap{overflow-x:auto}
+/* Review */
+.rub{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.seg button{border:0;background:transparent;padding:6px 11px;cursor:pointer;font-weight:700;font-size:13px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--accent);color:#fff}
+.decision{display:flex;gap:8px;flex-wrap:wrap}
+.decision label{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:7px 11px;background:#fff;cursor:pointer;font-size:14px}
+.decision input{accent-color:var(--accent)}
+/* Fortschritt */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.kpi .l{font-size:12.5px;color:var(--muted);font-weight:600}.kpi .v{font-size:28px;font-weight:800;letter-spacing:-.02em}
+canvas{width:100%;display:block}
+/* Toast */
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#0f172a;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:all .25s;z-index:50;max-width:90vw}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+dialog{border:0;border-radius:18px;padding:0;max-width:640px;width:calc(100% - 32px);box-shadow:0 24px 60px rgba(15,23,42,.25)}
+dialog::backdrop{background:rgba(15,23,42,.35)}
+dialog .dh{padding:18px 20px 0}.dialog-body{padding:8px 20px 18px}
+dialog .df{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--line);background:#f8fafc}
+@media (max-width:900px){.grid2,.grid3,.gate{grid-template-columns:1fr}.kanban{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}.hero{padding:26px 22px}.bitem{grid-template-columns:1fr}.bitem .handle{display:none}.bitem .acts{justify-content:flex-start}}
+@media print{#app header.top,.noprint{display:none!important}body{background:#fff}.card{box-shadow:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></symbol>
+ <symbol id="i-team" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.6c2.6.1 4.6 1.8 5.4 4.9"/></symbol>
+ <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></symbol>
+ <symbol id="i-story" viewBox="0 0 24 24"><path d="M5 3h10l4 4v14H5z"/><path d="M15 3v4h4"/><path d="M8 12h8M8 16h6"/></symbol>
+ <symbol id="i-cards" viewBox="0 0 24 24"><rect x="3" y="6" width="10" height="14" rx="2"/><path d="M9 4.5l9.5 2.5-3.2 12.1"/></symbol>
+ <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/></symbol>
+ <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></symbol>
+ <symbol id="i-check" viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+ <symbol id="i-loop" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0114-5.3L20 9"/><path d="M20 4v5h-5"/><path d="M20 12a8 8 0 01-14 5.3L4 15"/><path d="M4 20v-5h5"/></symbol>
+ <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16"/><path d="M7 16l4-5 3 3 5-7"/></symbol>
+ <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-3.6 10.8c.7.6 1.1 1.4 1.1 2.2h5c0-.8.4-1.6 1.1-2.2A6 6 0 0012 3z"/></symbol>
+ <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 16h5"/></symbol>
+ <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></symbol>
+ <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+ <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+ <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+ <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+ <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+ <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></symbol>
+ <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+ <symbol id="i-grip" viewBox="0 0 24 24"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></symbol>
+ <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+ <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 00-1-1H5a1 1 0 00-1 1v10a1 1 0 001 1h3"/></symbol>
+ <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></symbol>
+ <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+ <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+ <symbol id="i-out" viewBox="0 0 24 24"><path d="M15 4h4a1 1 0 011 1v14a1 1 0 01-1 1h-4"/><path d="M10 17l-5-5 5-5M5 12h11"/></symbol>
+</svg>
+
+<!-- ===================== Startseite / Raumzugang ===================== -->
+<div id="landing"><div class="wrap">
+ <header class="hero">
+  <span class="eyebrow">eduScrum · alle Bausteine in einem Tool</span>
+  <h1>Scrum-Werkstatt</h1>
+  <p>Vom Product Backlog über User Stories, Schätzen und Board bis zu Stand-up, Review und Retrospektive: Euer Team arbeitet in einem gemeinsamen Raum, alle sehen Änderungen in Echtzeit.</p>
+  <p class="muted small">Teilt den Raumcode mit eurem Team. Bitte nur Vornamen oder Pseudonyme verwenden.</p>
+  <div class="links">
+   <a class="btn" href="https://teacherette-susa.github.io/tools/kreativitaetstechniken/" target="_blank" rel="noopener"><svg class="i"><use href="#i-bulb"/></svg>Kreativitätstechniken</a>
+   <a class="btn" href="https://teacherette-susa.github.io/tools/retrospektiven/" target="_blank" rel="noopener"><svg class="i"><use href="#i-loop"/></svg>Retrospektiven</a>
+   <a class="btn" href="https://app.ais-chat.schule/assistants/f43232a9-f081-4a0d-8ef3-687f7a99b7eb" target="_blank" rel="noopener"><svg class="i"><use href="#i-bot"/></svg>Scrummy (AIS.chat)</a>
+  </div>
+ </header>
+
+ <div class="gate">
+  <section class="card">
+   <h2>Raum beitreten</h2>
+   <p class="lead">Ihr habt einen Code von eurer Lehrkraft oder aus eurem Team bekommen.</p>
+   <label class="f" for="gName">Dein Name (Vorname oder Pseudonym)</label>
+   <input type="text" id="gName" maxlength="30" placeholder="z. B. Alex" autocomplete="off">
+   <label class="f" for="gCode">Raumcode</label>
+   <div class="row"><input class="grow" type="text" id="gCode" maxlength="24" placeholder="z. B. TEAM-K7P3" autocomplete="off" style="text-transform:uppercase"><button class="btn p" id="gJoin">Beitreten</button></div>
+   <p class="small muted" id="gMsg" aria-live="polite"></p>
+  </section>
+  <section class="card">
+   <h2>Neuen Raum anlegen</h2>
+   <p class="lead">Ein Raum pro Team und Projekt. Der Raum bleibt online gespeichert, solange ihr ihn nutzt.</p>
+   <label class="f" for="gRoom">Team- oder Projektname</label>
+   <input type="text" id="gRoom" maxlength="80" placeholder="z. B. Team Blau – Werbekampagne">
+   <div class="row" style="margin-top:14px"><button class="btn p" id="gCreate"><svg class="i"><use href="#i-plus"/></svg>Raum erstellen</button><button class="btn" id="gLocal" title="Nur in diesem Browser, ohne Internet-Synchronisierung">Ohne Online-Raum testen</button></div>
+   <p class="small muted" id="gSupa">Verbindung wird geprüft …</p>
+  </section>
+ </div>
+
+ <section class="card" style="margin-top:18px">
+  <h2>Der Ablauf im Überblick</h2>
+  <p class="lead">So greifen die Bausteine ineinander. Nach dem Beitritt findet ihr jeden Schritt als eigenen Reiter.</p>
+  <div class="cycle" id="cycleLanding"></div>
+ </section>
+</div></div>
+
+<!-- ===================== App ===================== -->
+<div id="app" class="hidden">
+ <header class="top">
+  <div class="topin">
+   <div class="brand"><span class="logo"><svg class="i"><use href="#i-board"/></svg></span><span><span id="hTeam">Scrum-Werkstatt</span><br><span class="small muted" style="font-weight:500">Raum <b id="hCode"></b></span></span></div>
+   <span class="chip grey" id="hSync">lokal</span>
+   <span class="chip grey" id="hOnline" title="Gerade im Raum"></span>
+   <button class="btn s" id="hShare"><svg class="i"><use href="#i-copy"/></svg>Link kopieren</button>
+   <button class="btn s" id="hExport"><svg class="i"><use href="#i-dl"/></svg>Export</button>
+   <button class="btn s ghost" id="hLeave" title="Raum verlassen"><svg class="i"><use href="#i-out"/></svg></button>
+  </div>
+  <nav class="tabs" id="tabs" aria-label="Bausteine"></nav>
+ </header>
+ <main class="wrap" id="view"></main>
+</div>
+
+<dialog id="dlg"><form method="dialog"><div class="dh"><h3 id="dlgT" style="margin:0"></h3></div><div class="dialog-body" id="dlgB"></div><div class="df" id="dlgF"></div></form></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="importFile" accept=".json,application/json" class="hidden">
+
+<script>
+(function(){
+'use strict';
+/* ---------- Konstanten ---------- */
+var SUPA_URL='https://gocxbvdqcjgjgkiokydd.supabase.co';
+var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvY3hidmRxY2pnamdraW9reWRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNTU1MjAsImV4cCI6MjA3MjczMTUyMH0.Gs5RmRMl3YLCSiEuQA9Coit_3Zp4CrIK4oOxZEjuUTc';
+var LINKS={kreativ:'https://teacherette-susa.github.io/tools/kreativitaetstechniken/',retro:'https://teacherette-susa.github.io/tools/retrospektiven/',scrummy:'https://app.ais-chat.schule/assistants/f43232a9-f081-4a0d-8ef3-687f7a99b7eb',hats:'https://app.ais-chat.schule/assistants/e4d24c44-d5cc-4eac-8673-352d3cd58509'};
+var POINTS=[1,3,8,20,40,100];
+var COLORS=['#fde68a','#bbf7d0','#fbcfe8','#bfdbfe','#fed7aa','#e9d5ff','#a5f3fc','#d9f99d'];
+var PRIOS=['Muss','Soll','Kann','Später'];
+var COLS=[['todo','Zu erledigen'],['doing','In Arbeit'],['done','Erledigt']];
+var VIEWS=[
+ ['start','Start','i-home','Überblick über Sprint, Fortschritt und nächste Schritte'],
+ ['team','Team & Kodex','i-team','Rollen, Teamkodex und Definition of Done festlegen'],
+ ['stories','User Stories','i-story','Anforderungen als „Als … möchte ich … damit …“ formulieren'],
+ ['backlog','Backlog','i-list','Stories sammeln, priorisieren und für den Sprint auswählen'],
+ ['poker','Schätzen','i-cards','Aufwand gemeinsam mit Scrum Poker schätzen'],
+ ['board','Board','i-board','Aufgaben von „Zu erledigen“ bis „Erledigt“ bewegen'],
+ ['standup','Stand-up','i-clock','Kurzes Daily mit Timebox: gestern, heute, Hindernisse'],
+ ['review','Review','i-check','Ergebnisse zeigen, gegen Kriterien prüfen, Feedback geben'],
+ ['retro','Retro','i-loop','Zurückblicken und Vereinbarungen für den nächsten Sprint treffen'],
+ ['progress','Fortschritt','i-chart','Burn-up-Diagramm und Wochenpunkte']
+];
+var REVIEW_FORMATS=['Präsentation (5–7 Min.)','Demo / Prototyp-Durchlauf','Galeriegang / Markt der Möglichkeiten','Quiz mit Begründungen','Leistungscheck / Kurztest','Erklärvideo / Screencast','Poster / Infografik mit Fragerunde','FAQ / How-to aus Nutzersicht','Peer-Teaching (5-Minuten-Lektion)','Mini-Pitch'];
+var RUBRIC=[['goal','Lernziel erreicht'],['evidence','Belege / Evidenz'],['correct','Fachliche Richtigkeit'],['present','Darstellung / Struktur'],['team','Team-Zusammenarbeit']];
+var INVEST=[['I','Unabhängig','lässt sich ohne andere Stories umsetzen'],['N','Verhandelbar','Details dürfen sich noch ändern'],['V','Wertvoll','bringt erkennbaren Nutzen'],['E','Schätzbar','wir können den Aufwand einschätzen'],['S','Klein','passt in einen Sprint'],['T','Testbar','Akzeptanzkriterien sind überprüfbar']];
+
+/* ---------- Hilfen ---------- */
+function $(s,r){return (r||document).querySelector(s)}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function ico(n){return '<svg class="i" aria-hidden="true"><use href="#'+n+'"/></svg>'}
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
+function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('on')},2400)}
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fmtDate(s){if(!s)return '';var p=String(s).slice(0,10).split('-');return p.length===3?p[2]+'.'+p[1]+'.'+p[0]:s}
+function genCode(){var a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',s='';for(var i=0;i<4;i++)s+=a[Math.floor(Math.random()*a.length)];return 'TEAM-'+s}
+function copyText(t){if(navigator.clipboard&&navigator.clipboard.writeText){return navigator.clipboard.writeText(t).then(function(){toast('Kopiert')},function(){window.prompt('Kopieren:',t)})}window.prompt('Kopieren:',t)}
+function download(name,text,type){var b=new Blob([text],{type:type||'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}
+function setUrlRoom(code){try{var u=new URL(location.href);if(code)u.searchParams.set('raum',code);else u.searchParams.delete('raum');history.replaceState(null,'',u.toString())}catch(e){}}
+function dialog(title,bodyHtml,buttons){return new Promise(function(res){var d=$('#dlg');$('#dlgT').textContent=title;$('#dlgB').innerHTML=bodyHtml;var f=$('#dlgF');f.innerHTML='';(buttons||[['ok','OK',true]]).forEach(function(b){var x=document.createElement('button');x.className='btn'+(b[2]?' p':'');x.value=b[0];x.textContent=b[1];f.appendChild(x)});d.onclose=function(){res(d.returnValue)};d.returnValue='';try{d.showModal()}catch(e){d.setAttribute('open','')}})}
+
+/* ---------- Zustand ---------- */
+var S={code:null,name:'',mode:'local',items:{},meta:{},view:'start',online:{},
+ sb:null,ch:null,pending:{items:{},meta:{}},flushT:null,syncState:'lokal',me:lsGet('scrum-me')||uid(),
+ poker:{target:'',round:1,votes:{},revealed:false,mine:null}};
+lsSet('scrum-me',S.me);
+function M(k,d){var m=S.meta[k];return m&&m.v!==undefined?m.v:d}
+function items(t){return Object.keys(S.items).map(function(k){return S.items[k]}).filter(function(x){return x&&!x.del&&(!t||x.t===t)})}
+function item(id){var x=S.items[id];return x&&!x.del?x:null}
+function stories(){return items('story').sort(function(a,b){return (a.order||0)-(b.order||0)})}
+function tasks(){return items('task').sort(function(a,b){return (a.order||0)-(b.order||0)})}
+function storyColor(id){var s=item(id);return s?s.color:'#cbd5e1'}
+function members(){return (M('members',[])||[]).filter(Boolean)}
+
+function saveLocal(){if(!S.code)return;lsSet('scrum-room-'+S.code,JSON.stringify({items:S.items,meta:S.meta,name:M('teamName','')}))}
+function put(id,patch,silent){var old=S.items[id]||{id:id};var it=Object.assign({},old,patch,{id:id,u:Date.now(),by:S.name});S.items[id]=it;S.pending.items[id]=it;queue();if(!silent)rerender();return it}
+function del(id){put(id,{del:true})}
+function setMeta(k,v,silent){var m={v:v,u:Date.now()};S.meta[k]=m;S.pending.meta[k]=m;queue();if(!silent)rerender()}
+function queue(){saveLocal();if(S.ch&&S.mode==='online'){var p={items:S.pending.items,meta:S.pending.meta};broadcast('patch',{from:S.me,items:Object.assign({},p.items),meta:Object.assign({},p.meta)})}clearTimeout(S.flushT);S.flushT=setTimeout(flush,900);setSync(S.mode==='online'?'speichert …':'lokal gespeichert')}
+var lastBroadcast={items:{},meta:{}};
+function broadcast(ev,payload){try{if(S.ch)S.ch.send({type:'broadcast',event:ev,payload:payload})}catch(e){}}
+function flush(){if(S.mode!=='online'||!S.sb){S.pending={items:{},meta:{}};setSync(S.mode==='online'?'online':'lokal');return}
+ var p=S.pending;if(!Object.keys(p.items).length&&!Object.keys(p.meta).length){setSync('online');return}
+ S.pending={items:{},meta:{}};
+ S.sb.rpc('scrum_patch',{p_code:S.code,p_items:p.items,p_meta:p.meta}).then(function(r){if(r.error){throw r.error}setSync('online gespeichert')}).catch(function(e){Object.assign(S.pending.items,p.items);Object.assign(S.pending.meta,p.meta);setSync('nicht gespeichert – neuer Versuch',true);clearTimeout(S.flushT);S.flushT=setTimeout(flush,5000)})}
+function merge(itemsIn,metaIn){var changed=false;
+ Object.keys(itemsIn||{}).forEach(function(k){var n=itemsIn[k],o=S.items[k];if(!n)return;if(!o||(n.u||0)>(o.u||0)){S.items[k]=n;changed=true}});
+ Object.keys(metaIn||{}).forEach(function(k){var n=metaIn[k],o=S.meta[k];if(!n)return;if(!o||(n.u||0)>(o.u||0)){S.meta[k]=n;changed=true}});
+ if(changed){saveLocal();rerender(true)}return changed}
+function setSync(t,bad){S.syncState=t;var e=$('#hSync');if(!e)return;e.textContent=t;e.className='chip '+(bad?'bad':(S.mode==='online'?'':'grey'))}
+
+/* ---------- Supabase ---------- */
+var supaPromise=null;
+function loadSupa(){if(supaPromise)return supaPromise;supaPromise=new Promise(function(res){if(window.supabase&&window.supabase.createClient)return res(true);var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.5/dist/umd/supabase.min.js';s.onload=function(){res(!!(window.supabase&&window.supabase.createClient))};s.onerror=function(){res(false)};document.head.appendChild(s);setTimeout(function(){res(!!(window.supabase&&window.supabase.createClient))},9000)}).then(function(ok){if(!ok)return null;try{S.sb=window.supabase.createClient(SUPA_URL,SUPA_KEY,{realtime:{params:{eventsPerSecond:10}}});return S.sb}catch(e){return null}});return supaPromise}
+function checkBackend(){return loadSupa().then(function(sb){if(!sb)return 'offline';return sb.rpc('scrum_get',{p_code:'XXXX-0000'}).then(function(r){if(r.error){var m=(r.error.message||'')+' '+(r.error.code||'');if(/PGRST202|Could not find|does not exist|404/i.test(m))return 'notable';return 'error'}return 'ok'},function(){return 'error'})})}
+function subscribe(){if(!S.sb)return;try{if(S.ch)S.sb.removeChannel(S.ch)}catch(e){}
+ S.ch=S.sb.channel('scrum:'+S.code,{config:{presence:{key:S.me},broadcast:{self:false}}});
+ S.ch.on('broadcast',{event:'patch'},function(m){var p=m.payload||{};if(p.from===S.me)return;merge(p.items,p.meta)});
+ S.ch.on('broadcast',{event:'poker'},function(m){onPoker(m.payload||{})});
+ S.ch.on('presence',{event:'sync'},function(){var st=S.ch.presenceState();S.online={};Object.keys(st).forEach(function(k){var a=st[k][0];if(a)S.online[k]=a.name||'?'});showOnline();if(S.view==='poker')renderView()});
+ S.ch.subscribe(function(status){if(status==='SUBSCRIBED'){S.ch.track({name:S.name,at:Date.now()});broadcast('poker',{a:'hello',from:S.me})}});
+}
+function showOnline(){var n=Object.keys(S.online).length;var e=$('#hOnline');if(!e)return;if(S.mode!=='online'){e.classList.add('hidden');return}e.classList.remove('hidden');var names=Object.keys(S.online).map(function(k){return S.online[k]});e.textContent=n+' online';e.title=names.join(', ')}
+setInterval(function(){if(S.mode==='online'&&S.sb&&S.code&&document.visibilityState==='visible'){S.sb.rpc('scrum_get',{p_code:S.code}).then(function(r){if(r.data)merge(r.data.items,r.data.meta)})}},45000);
+
+/* ---------- Raum betreten ---------- */
+var backend='checking';
+function gateMsg(t){$('#gMsg').textContent=t}
+function enter(code,mode,data){S.code=code;S.mode=mode;S.items={};S.meta={};
+ var loc=lsGet('scrum-room-'+code);if(loc){try{var l=JSON.parse(loc);S.items=l.items||{};S.meta=l.meta||{}}catch(e){}}
+ if(data){merge(data.items,data.meta);if(data.name&&!M('teamName',''))setMeta('teamName',data.name,true)}
+ lsSet('scrum-name',S.name);lsSet('scrum-last',code);setUrlRoom(code);
+ $('#landing').classList.add('hidden');$('#app').classList.remove('hidden');
+ $('#hCode').textContent=code;setSync(mode==='online'?'online':'nur lokal');
+ if(mode==='online'){subscribe();
+  // lokale, noch nicht hochgeladene Änderungen nachreichen
+  var up={},um={};Object.keys(S.items).forEach(function(k){var srv=data&&data.items&&data.items[k];if(!srv||(S.items[k].u||0)>(srv.u||0))up[k]=S.items[k]});Object.keys(S.meta).forEach(function(k){var srv=data&&data.meta&&data.meta[k];if(!srv||(S.meta[k].u||0)>(srv.u||0))um[k]=S.meta[k]});
+  if(Object.keys(up).length||Object.keys(um).length){S.pending={items:up,meta:um};flush()}}
+ showOnline();var h=(location.hash||'').slice(1);S.view=VIEWS.some(function(v){return v[0]===h})?h:'start';renderTabs();renderView();window.scrollTo(0,0)}
+function getName(){var n=$('#gName').value.trim();if(!n){gateMsg('Bitte zuerst deinen Namen eintragen.');$('#gName').focus();return null}S.name=n.slice(0,30);return S.name}
+function join(){if(!getName())return;var code=$('#gCode').value.trim().toUpperCase();if(!code){gateMsg('Bitte den Raumcode eintragen.');return}
+ gateMsg('Raum wird gesucht …');
+ if(backend!=='ok'){if(lsGet('scrum-room-'+code)){enter(code,'local');return}gateMsg(backend==='notable'?'Online-Räume sind noch nicht eingerichtet (Supabase-Tabelle fehlt). Diesen Raum gibt es in diesem Browser nicht.':'Keine Verbindung zum Server. Diesen Raum gibt es in diesem Browser nicht.');return}
+ S.sb.rpc('scrum_get',{p_code:code}).then(function(r){if(r.error){gateMsg('Fehler: '+r.error.message);return}if(!r.data){gateMsg('Zu diesem Code gibt es keinen Raum. Tippfehler?');return}enter(code,'online',r.data)},function(){gateMsg('Keine Verbindung zum Server.')})}
+function create(){if(!getName())return;var name=$('#gRoom').value.trim();
+ if(backend!=='ok'){gateMsg('');var c=genCode();enter(c,'local');if(name)setMeta('teamName',name);seedDefaults();toast('Lokaler Raum '+c+' – nur in diesem Browser');return}
+ var tries=0;(function attempt(){var c=genCode();S.sb.rpc('scrum_create',{p_code:c,p_name:name}).then(function(r){if(r.error){if(/existiert/.test(r.error.message)&&tries++<4)return attempt();$('#gSupa').textContent='Fehler: '+r.error.message;return}enter(c,'online',{items:{},meta:{}});if(name)setMeta('teamName',name);seedDefaults();toast('Raum '+c+' erstellt – Code mit dem Team teilen')},function(){$('#gSupa').textContent='Keine Verbindung zum Server.'})})()}
+function seedDefaults(){if(!M('dod',null))setMeta('dod',['Ergebnis ist schriftlich dokumentiert','Alle Akzeptanzkriterien sind erfüllt','Ein anderes Teammitglied hat es geprüft','Quellen sind angegeben'],true);if(!M('weeks',null))setMeta('weeks',6,true);if(!M('week',null))setMeta('week',1,true);if(M('members',null)==null)setMeta('members',[S.name],true);rerender()}
+function leave(){try{if(S.ch)S.sb.removeChannel(S.ch)}catch(e){}S.ch=null;flush();S.code=null;setUrlRoom(null);$('#app').classList.add('hidden');$('#landing').classList.remove('hidden');try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}}
+
+/* ---------- Navigation ---------- */
+function renderTabs(){var t=$('#tabs');if(!t.children.length)t.innerHTML=VIEWS.map(function(v){return '<button class="tab" data-v="'+v[0]+'">'+ico(v[2])+v[1]+'</button>'}).join('');$$('.tab',t).forEach(function(x){var on=x.dataset.v===S.view;x.classList.toggle('on',on);if(on)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});var n=M('teamName','')||'Scrum-Werkstatt';if($('#hTeam').textContent!==n)$('#hTeam').textContent=n}
+function go(v){S.view=v;try{history.replaceState(null,'','#'+v)}catch(e){}renderTabs();renderView();window.scrollTo(0,0)}
+$('#tabs').addEventListener('click',function(e){var b=e.target.closest('.tab');if(b)go(b.dataset.v)});
+function cycleHtml(){return VIEWS.slice(1).map(function(v,i){return '<button class="step" data-go="'+v[0]+'"><b><span class="n">'+(i+1)+'</span>'+v[1]+'</b><span>'+v[3]+'</span></button>'}).join('')}
+
+/* Fokus und Eingaben beim Neuzeichnen erhalten */
+var rrT=null;
+function rerender(remote){if(!S.code)return;if(remote){clearTimeout(rrT);rrT=setTimeout(function(){renderTabs();renderView(true)},120);return}renderTabs();renderView(true)}
+function renderView(keep){var a=document.activeElement,key=a&&a.dataset&&a.dataset.k,val=null,ss=null,se=null;var kv={};if(keep)$$('#view [data-keep]').forEach(function(e){kv[e.dataset.keep]=e.type==='checkbox'?e.checked:e.value});
+ if(keep&&S.view==='stories'&&$('#usTitle'))draft=readStoryForm();
+ if(keep&&key&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA')){val=a.value;try{ss=a.selectionStart;se=a.selectionEnd}catch(e){}}
+ var sy=window.scrollY;var fn=R[S.view]||R.start;$('#view').innerHTML=fn();
+ Object.keys(kv).forEach(function(k){var e=$('#view [data-keep="'+k+'"]');if(!e)return;if(e.type==='checkbox')e.checked=kv[k];else e.value=kv[k]});
+ if(A[S.view])A[S.view]();
+ if(keep){window.scrollTo(0,sy);if(key){var n=$('[data-k="'+key+'"]');if(n){if(val!==null)n.value=val;n.focus();try{if(ss!=null)n.setSelectionRange(ss,se)}catch(e){}}}}}
+function head(t,p,right){return '<div class="viewhead"><div><h2>'+t+'</h2><p>'+p+'</p></div><div class="row noprint">'+(right||'')+'</div></div>'}
+function extBtn(k,label,icon){return '<a class="btn" href="'+LINKS[k]+'" target="_blank" rel="noopener">'+ico(icon)+label+ico('i-ext')+'</a>'}
+function storyOpts(sel,withEmpty){return (withEmpty?'<option value="">– ohne User Story –</option>':'')+stories().map(function(s){return '<option value="'+s.id+'"'+(s.id===sel?' selected':'')+'>'+esc(s.title||'(ohne Titel)')+'</option>'}).join('')}
+function memberOpts(sel){return '<option value="">– niemand –</option>'+members().map(function(m){return '<option'+(m===sel?' selected':'')+'>'+esc(m)+'</option>'}).join('')}
+function sprintTasks(){return tasks()}
+function sumPts(list){return list.reduce(function(s,t){return s+(parseInt(t.pts,10)||0)},0)}
+
+var R={},A={};
+
+/* ========== START ========== */
+R.start=function(){var ts=tasks(),done=ts.filter(function(t){return t.col==='done'}),bl=items('blocker').filter(function(b){return !b.solved});
+ var goal=M('goal','');
+ return head('Hallo '+esc(S.name)+'!','Hier seht ihr den Stand eures Sprints auf einen Blick.',extBtn('scrummy','Scrummy fragen','i-bot'))+
+ '<div class="kpis"><div class="kpi"><div class="l">Sprint-Woche</div><div class="v">'+M('week',1)+' / '+M('weeks',6)+'</div></div><div class="kpi"><div class="l">User Stories</div><div class="v">'+stories().length+'</div></div><div class="kpi"><div class="l">Punkte erledigt</div><div class="v">'+sumPts(done)+' / '+sumPts(ts)+'</div></div><div class="kpi"><div class="l">Offene Hindernisse</div><div class="v" style="color:'+(bl.length?'var(--bad)':'inherit')+'">'+bl.length+'</div></div></div>'+
+ '<div class="grid2" style="margin-top:18px"><section class="card"><h3>Sprint-Ziel</h3><p class="lead">Was soll am Ende dieses Sprints fertig sein? Ein Satz genügt.</p><textarea data-k="goal" id="goal" placeholder="z. B. Wir haben ein getestetes Plakat-Konzept für die Werbekampagne.">'+esc(goal)+'</textarea>'+
+ '<div class="row" style="margin-top:10px"><label class="small muted">Sprint Nr. <input type="number" min="1" id="sprintNo" data-k="sprintNo" value="'+M('sprintNo',1)+'" style="width:80px"></label><label class="small muted">Start <input type="date" id="startDate" data-k="startDate" value="'+esc(M('startDate',''))+'" style="width:160px"></label></div></section>'+
+ '<section class="card"><h3>Weiterführende Tools</h3><p class="lead">Für Ideenfindung, KI-Begleitung und Reflexion.</p><div class="stack">'+
+ '<div class="row">'+extBtn('kreativ','Kreativitätstechniken','i-bulb')+'<span class="small muted grow">Ideen für Stories und Lösungen finden</span></div>'+
+ '<div class="row">'+extBtn('scrummy','Scrummy','i-bot')+'<span class="small muted grow">KI-Assistent in AIS.chat: Pakete, DoD, Kodex</span></div>'+
+ '<div class="row">'+extBtn('hats','6-Hüte-Assistent','i-bot')+'<span class="small muted grow">Entscheidungen aus sechs Perspektiven</span></div>'+
+ '<div class="row">'+extBtn('retro','Retrospektiven','i-loop')+'<span class="small muted grow">14 Retro-Formate mit Live-Tools</span></div></div></section></div>'+
+ '<section class="card" style="margin-top:18px"><h3>Der Ablauf</h3><p class="lead">Klickt auf einen Schritt, um ihn zu öffnen.</p><div class="cycle">'+cycleHtml()+'</div></section>'};
+A.start=function(){bindMeta('#goal','goal');bindMeta('#sprintNo','sprintNo',true);bindMeta('#startDate','startDate');$$('[data-go]').forEach(function(b){b.onclick=function(){go(b.dataset.go)}})};
+function bindMeta(sel,key,num){var e=$(sel);if(!e)return;var t=null;var h=function(){var v=num?(parseInt(e.value,10)||1):e.value;setMeta(key,v,true);renderTabs()};e.addEventListener('input',function(){clearTimeout(t);t=setTimeout(h,500)});e.addEventListener('change',h)}
+
+/* ========== TEAM ========== */
+R.team=function(){var mem=members(),dod=M('dod',[])||[];
+ return head('Team & Kodex','Wer übernimmt welche Rolle, wie arbeitet ihr zusammen und wann gilt etwas als fertig?',extBtn('scrummy','Kodex mit Scrummy entwickeln','i-bot'))+
+ '<div class="grid2"><section class="card"><h3>Team</h3><label class="f" for="teamName">Team- oder Projektname</label><input type="text" id="teamName" data-k="teamName" value="'+esc(M('teamName',''))+'">'+
+ '<div class="grid2" style="gap:12px"><div><label class="f" for="po">Product Owner</label><input type="text" id="po" data-k="po" placeholder="meist die Lehrkraft" value="'+esc(M('po',''))+'"></div><div><label class="f" for="sm">Scrum Master / Team Captain</label><input type="text" id="sm" data-k="sm" value="'+esc(M('sm',''))+'"></div></div>'+
+ '<label class="f">Teammitglieder</label><div class="aclist" id="memList">'+mem.map(function(m,i){return '<div class="acrow"><input type="text" data-k="mem'+i+'" data-i="'+i+'" value="'+esc(m)+'"><button class="btn s danger" data-delmem="'+i+'" aria-label="Entfernen">'+ico('i-trash')+'</button></div>'}).join('')+'</div>'+
+ '<div class="row" style="margin-top:8px"><input class="grow" type="text" id="newMem" data-keep="newMem" placeholder="Name hinzufügen" maxlength="30"><button class="btn" id="addMem">'+ico('i-plus')+'Hinzufügen</button></div></section>'+
+ '<section class="card"><h3>Definition of Done</h3><p class="lead">Diese Kriterien gelten für jede User Story. Im Review hakt ihr sie ab.</p><div class="aclist" id="dodList">'+dod.map(function(d,i){return '<div class="acrow"><input type="text" data-k="dod'+i+'" data-i="'+i+'" value="'+esc(d)+'"><button class="btn s danger" data-deldod="'+i+'" aria-label="Entfernen">'+ico('i-trash')+'</button></div>'}).join('')+'</div>'+
+ '<div class="row" style="margin-top:8px"><input class="grow" type="text" id="newDod" data-keep="newDod" placeholder="z. B. Rechtschreibung geprüft"><button class="btn" id="addDod">'+ico('i-plus')+'Hinzufügen</button></div></section></div>'+
+ '<section class="card" style="margin-top:18px"><h3>Teamkodex</h3><p class="lead">Wie wollt ihr zusammenarbeiten? Was tut ihr bei Konflikten? Welche Regeln gelten für alle?</p><textarea id="kodex" data-k="kodex" style="min-height:160px" placeholder="– Wir hören einander aus.&#10;– Wer etwas nicht schafft, sagt es früh.&#10;– Entscheidungen treffen wir gemeinsam.">'+esc(M('kodex',''))+'</textarea>'+
+ '<details style="margin-top:10px"><summary class="small" style="cursor:pointer;font-weight:600">Leitfragen für den Kodex</summary><ul class="small muted"><li>Was ist euch bei der Zusammenarbeit besonders wichtig?</li><li>Wie möchtet ihr mit Meinungsverschiedenheiten umgehen?</li><li>Wie und wann informiert ihr euch gegenseitig?</li><li>Was passiert, wenn jemand Absprachen nicht einhält?</li></ul></details></section>'};
+A.team=function(){bindMeta('#teamName','teamName');bindMeta('#po','po');bindMeta('#sm','sm');bindMeta('#kodex','kodex');
+ listBind('#memList','members','delmem','#newMem','#addMem');listBind('#dodList','dod','deldod','#newDod','#addDod')};
+function listBind(listSel,key,delAttr,newSel,addSel){var list=$(listSel);
+ $$('input',list).forEach(function(inp){var t=null;inp.addEventListener('input',function(){clearTimeout(t);t=setTimeout(function(){var arr=(M(key,[])||[]).slice();arr[+inp.dataset.i]=inp.value;setMeta(key,arr,true)},450)})});
+ $$('[data-'+delAttr+']',list).forEach(function(b){b.onclick=function(){var arr=(M(key,[])||[]).slice();arr.splice(+b.getAttribute('data-'+delAttr),1);setMeta(key,arr)}});
+ var add=function(){var v=$(newSel).value.trim();if(!v)return;$(newSel).value='';var arr=(M(key,[])||[]).slice();arr.push(v);setMeta(key,arr);var n=$(newSel);if(n)n.focus()};
+ $(addSel).onclick=add;$(newSel).addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();add()}})}
+
+/* ========== USER STORIES ========== */
+var editStory=null,draft=null;
+R.stories=function(){var list=stories();var s=editStory?item(editStory):null;var d=draft||s||{role:'',want:'',benefit:'',title:'',ac:[''],prio:'Soll',color:COLORS[list.length%COLORS.length],invest:{}};
+ var ac=(d.ac&&d.ac.length?d.ac:['']);
+ return head('User Stories','Formuliert jede Anforderung aus Sicht der Menschen, die sie nutzen: Wer möchte was und warum? Akzeptanzkriterien sagen, wann die Story erfüllt ist.',extBtn('kreativ','Ideen finden','i-bulb'))+
+ '<div class="grid2"><section class="card"><h3>'+(s?'User Story bearbeiten':'Neue User Story')+'</h3>'+
+ '<label class="f" for="usTitle">Kurztitel (erscheint auf dem Board)</label><input type="text" id="usTitle" maxlength="80" value="'+esc(d.title)+'" placeholder="z. B. Plakat-Entwurf">'+
+ '<label class="f" for="usRole">Als … (Rolle, Zielgruppe)</label><input type="text" id="usRole" value="'+esc(d.role)+'" placeholder="z. B. Kundin im Drogeriemarkt">'+
+ '<label class="f" for="usWant">möchte ich … (Ziel, Funktion)</label><input type="text" id="usWant" value="'+esc(d.want)+'" placeholder="z. B. auf einen Blick erkennen, was das Duschgel besonders macht">'+
+ '<label class="f" for="usBen">damit … (Nutzen)</label><input type="text" id="usBen" value="'+esc(d.benefit)+'" placeholder="z. B. ich mich schnell entscheiden kann">'+
+ '<label class="f">Akzeptanzkriterien</label><div class="aclist" id="usAc">'+ac.map(function(a,i){return '<div class="acrow"><input type="text" class="ac" value="'+esc(a)+'" placeholder="z. B. Der Produktname ist aus 3 m Entfernung lesbar"><button class="btn s danger" data-acdel="'+i+'" type="button" aria-label="Kriterium entfernen">'+ico('i-trash')+'</button></div>'}).join('')+'</div>'+
+ '<button class="btn s" id="usAcAdd" type="button" style="margin-top:6px">'+ico('i-plus')+'Kriterium</button>'+
+ '<div class="grid2" style="gap:12px"><div><label class="f" for="usPrio">Priorität</label><select id="usPrio">'+PRIOS.map(function(p){return '<option'+(p===d.prio?' selected':'')+'>'+p+'</option>'}).join('')+'</select></div><div><label class="f">Farbe</label><div class="colors" id="usColors">'+COLORS.map(function(c){return '<button type="button" data-c="'+c+'" style="background:'+c+'" class="'+(c===d.color?'on':'')+'" aria-label="Farbe '+c+'"></button>'}).join('')+'</div></div></div>'+
+ '<label class="f">INVEST-Check</label><div class="invest">'+INVEST.map(function(v){var on=d.invest&&d.invest[v[0]];return '<label class="check"><input type="checkbox" data-inv="'+v[0]+'"'+(on?' checked':'')+'><span><b>'+v[1]+'</b><br><span class="muted">'+v[2]+'</span></span></label>'}).join('')+'</div>'+
+ '<div class="row" style="margin-top:16px"><button class="btn p" id="usSave">'+ico('i-check')+(s?'Änderungen speichern':'Ins Backlog übernehmen')+'</button>'+(s?'<button class="btn" id="usCancel">Abbrechen</button>':'<button class="btn" id="usReset">Leeren</button>')+'</div></section>'+
+ '<section class="card"><h3>Vorschau</h3><div id="usPreview"></div><h3 style="margin-top:22px">Alle User Stories ('+list.length+')</h3><div class="stack" style="margin-top:10px">'+
+ (list.length?list.map(function(x){return storyCard(x,true)}).join(''):'<div class="empty">Noch keine User Stories. Legt links die erste an.</div>')+'</div></section></div>'};
+function storyText(x){var r=x.role||'…',w=x.want||'…',b=x.benefit||'…';return 'Als <b>'+esc(r)+'</b> möchte ich <b>'+esc(w)+'</b>, damit <b>'+esc(b)+'</b>.'}
+function storyCard(x,actions){var ac=(x.ac||[]).filter(Boolean);return '<div class="storycard" style="--c:'+esc(x.color||'#cbd5e1')+'"><div class="row" style="justify-content:space-between"><b>'+esc(x.title||'(ohne Titel)')+'</b><span class="row" style="gap:6px"><span class="chip prio-'+esc(x.prio||'Soll')+'">'+esc(x.prio||'Soll')+'</span>'+(x.pts?'<span class="pts">'+x.pts+'</span>':'')+'</span></div><div class="tpl" style="margin-top:6px">'+storyText(x)+'</div>'+(ac.length?'<ul>'+ac.map(function(a){return '<li>'+esc(a)+'</li>'}).join('')+'</ul>':'')+(actions?'<div class="row noprint" style="margin-top:10px"><button class="btn s" data-edit="'+x.id+'">'+ico('i-edit')+'Bearbeiten</button><button class="btn s danger" data-del="'+x.id+'">'+ico('i-trash')+'Löschen</button></div>':'')+'</div>'}
+function readStoryForm(){var inv={};$$('[data-inv]').forEach(function(c){if(c.checked)inv[c.dataset.inv]=true});return {title:$('#usTitle').value.trim(),role:$('#usRole').value.trim(),want:$('#usWant').value.trim(),benefit:$('#usBen').value.trim(),ac:$$('#usAc .ac').map(function(i){return i.value.trim()}).filter(Boolean),prio:$('#usPrio').value,color:($('#usColors .on')||{}).dataset?$('#usColors .on').dataset.c:COLORS[0],invest:inv}}
+A.stories=function(){var prev=function(){var f=readStoryForm();$('#usPreview').innerHTML=storyCard(f,false)};prev();
+ $$('#view input, #view select').forEach(function(e){if(e.closest('#usPreview'))return;e.addEventListener('input',prev);e.addEventListener('change',prev)});
+ $('#usColors').onclick=function(e){var b=e.target.closest('[data-c]');if(!b)return;$$('#usColors button').forEach(function(x){x.classList.toggle('on',x===b)});prev()};
+ $('#usAcAdd').onclick=function(){var d=document.createElement('div');d.className='acrow';d.innerHTML='<input type="text" class="ac" placeholder="Weiteres Kriterium"><button class="btn s danger" type="button" aria-label="Kriterium entfernen">'+ico('i-trash')+'</button>';$('#usAc').appendChild(d);var i=$('input',d);i.addEventListener('input',prev);i.focus();$('button',d).onclick=function(){d.remove();prev()}};
+ $$('[data-acdel]').forEach(function(b){b.onclick=function(){b.parentElement.remove();prev()}});
+ $('#usSave').onclick=function(){var f=readStoryForm();if(!f.title&&!f.want){toast('Bitte mindestens Titel oder Ziel eintragen');return}if(!f.title)f.title=f.want.slice(0,60);
+  if(editStory&&item(editStory)){put(editStory,f,true);editStory=null;toast('User Story gespeichert')}else{var mx=stories().reduce(function(m,s){return Math.max(m,s.order||0)},0);f.t='story';f.order=mx+1;f.status='backlog';f.pts=null;put(uid(),f,true);toast('Ins Backlog übernommen')}draft=null;renderTabs();renderView();var t=$('#usTitle');if(t)t.focus()};
+ var c=$('#usCancel');if(c)c.onclick=function(){editStory=null;draft=null;renderView()};var r=$('#usReset');if(r)r.onclick=function(){draft=null;renderView()};
+ storyActions()};
+function storyActions(){$$('[data-edit]').forEach(function(b){b.onclick=function(){editStory=b.dataset.edit;draft=null;go('stories')}});
+ $$('[data-del]').forEach(function(b){b.onclick=function(){var s=item(b.dataset.del);dialog('User Story löschen?','<p>„'+esc(s&&s.title)+'“ und die zugehörigen Aufgaben auf dem Board werden gelöscht.</p>',[['no','Abbrechen'],['yes','Löschen',true]]).then(function(v){if(v!=='yes')return;tasks().forEach(function(t){if(t.story===b.dataset.del)put(t.id,{del:true},true)});del(b.dataset.del)})}})}
+
+/* ========== BACKLOG ========== */
+var bFilter='alle';
+R.backlog=function(){var list=stories();var f=list.filter(function(s){return bFilter==='alle'||(s.status||'backlog')===bFilter});var sp=list.filter(function(s){return s.status==='sprint'});
+ return head('Product Backlog','Alle User Stories, sortiert nach Wichtigkeit. Zieht die Karten in die richtige Reihenfolge und nehmt die obersten in den Sprint.','<button class="btn p" id="toStories">'+ico('i-plus')+'Neue User Story</button>')+
+ '<div class="row" style="margin-bottom:14px"><div class="seg" id="bFilter">'+[['alle','Alle'],['backlog','Backlog'],['sprint','Im Sprint'],['done','Fertig']].map(function(x){return '<button data-f="'+x[0]+'" class="'+(bFilter===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('')+'</div><span class="chip">'+sp.length+' Stories im Sprint · '+sumPts(sp)+' Punkte</span><span class="small muted">Punkte schätzt ihr im Reiter „Schätzen“.</span></div>'+
+ (f.length?'<div class="blist" id="blist">'+f.map(function(s,i){var st=s.status||'backlog';var tk=tasks().filter(function(t){return t.story===s.id});var dn=tk.filter(function(t){return t.col==='done'}).length;
+  return '<div class="bitem" draggable="true" data-id="'+s.id+'" style="--c:'+esc(s.color)+'"><span class="handle" title="Ziehen zum Sortieren">'+ico('i-grip')+'</span><div><h4>'+esc(s.title||'(ohne Titel)')+'</h4><div class="story">'+storyText(s)+'</div><div class="meta"><span class="chip prio-'+esc(s.prio||'Soll')+'">'+esc(s.prio||'Soll')+'</span>'+(s.pts?'<span class="pts">'+s.pts+' P</span>':'<span class="chip grey">nicht geschätzt</span>')+'<span class="chip '+(st==='sprint'?'':st==='done'?'ok':'grey')+'">'+({backlog:'Backlog',sprint:'Im Sprint',done:'Fertig'}[st])+'</span>'+(tk.length?'<span class="chip grey">'+dn+'/'+tk.length+' Aufgaben erledigt</span>':'')+((s.ac||[]).length?'<span class="chip grey">'+s.ac.length+' Kriterien</span>':'')+'</div></div>'+
+  '<div class="acts"><button class="btn s" data-up="'+s.id+'" aria-label="Nach oben">'+ico('i-up')+'</button><button class="btn s" data-dn="'+s.id+'" aria-label="Nach unten">'+ico('i-down')+'</button>'+
+  (st!=='sprint'?'<button class="btn s" data-st="sprint" data-id2="'+s.id+'">In den Sprint</button>':'<button class="btn s" data-st="backlog" data-id2="'+s.id+'">Zurück ins Backlog</button>')+
+  (st!=='done'?'<button class="btn s" data-st="done" data-id2="'+s.id+'">Fertig</button>':'')+
+  '<button class="btn s" data-edit="'+s.id+'" aria-label="Bearbeiten">'+ico('i-edit')+'</button><button class="btn s danger" data-del="'+s.id+'" aria-label="Löschen">'+ico('i-trash')+'</button></div></div>'}).join('')+'</div>':'<div class="empty">Keine User Stories in dieser Ansicht. <a href="#" id="toStories2">Jetzt eine anlegen</a>.</div>')};
+A.backlog=function(){$('#toStories').onclick=function(){editStory=null;draft=null;go('stories')};var t2=$('#toStories2');if(t2)t2.onclick=function(e){e.preventDefault();editStory=null;draft=null;go('stories')};
+ $('#bFilter').onclick=function(e){var b=e.target.closest('[data-f]');if(b){bFilter=b.dataset.f;renderView()}};
+ $$('[data-st]').forEach(function(b){b.onclick=function(){put(b.dataset.id2,{status:b.dataset.st});toast(b.dataset.st==='sprint'?'In den Sprint übernommen – Aufgaben auf dem Board anlegen':'Gespeichert')}});
+ var move=function(id,dir){var l=stories();var i=l.findIndex(function(s){return s.id===id});var j=i+dir;if(j<0||j>=l.length)return;var a=l[i],b=l[j];var oa=a.order||i,ob=b.order||j;if(oa===ob){ob=oa+dir}put(a.id,{order:ob},true);put(b.id,{order:oa})};
+ $$('[data-up]').forEach(function(b){b.onclick=function(){move(b.dataset.up,-1)}});$$('[data-dn]').forEach(function(b){b.onclick=function(){move(b.dataset.dn,1)}});
+ storyActions();
+ var dragId=null;$$('.bitem').forEach(function(el){el.addEventListener('dragstart',function(e){dragId=el.dataset.id;el.classList.add('drag');try{e.dataTransfer.setData('text/plain',dragId)}catch(x){}});el.addEventListener('dragend',function(){el.classList.remove('drag');$$('.bitem.over').forEach(function(x){x.classList.remove('over')})});
+  el.addEventListener('dragover',function(e){e.preventDefault();el.classList.add('over')});el.addEventListener('dragleave',function(){el.classList.remove('over')});
+  el.addEventListener('drop',function(e){e.preventDefault();el.classList.remove('over');if(!dragId||dragId===el.dataset.id)return;var l=stories().filter(function(s){return s.id!==dragId});var idx=l.findIndex(function(s){return s.id===el.dataset.id});l.splice(idx,0,item(dragId));l.forEach(function(s,i){if(s.order!==i+1)put(s.id,{order:i+1},true)});rerender()})})};
+
+/* ========== SCHÄTZEN (Poker) ========== */
+function pokerTargets(){var o=[];stories().forEach(function(s){if(s.status!=='done')o.push(['s:'+s.id,'Story: '+(s.title||'(ohne Titel)')])});tasks().forEach(function(t){if(t.col!=='done')o.push(['t:'+t.id,'Aufgabe: '+(t.title||'(ohne Titel)')])});return o}
+function targetItem(v){if(!v)return null;return item(v.slice(2))}
+R.poker=function(){var P=S.poker;var tg=targetItem(P.target);var votes=P.votes;var ids=Object.keys(votes);
+ var people=Object.keys(S.online).length?Object.keys(S.online).map(function(k){return {id:k,name:S.online[k]}}):[{id:S.me,name:S.name}];
+ var vals=ids.map(function(k){return votes[k].v}).filter(function(v){return typeof v==='number'}).sort(function(a,b){return a-b});
+ var med=vals.length?(vals.length%2?vals[(vals.length-1)/2]:(vals[vals.length/2-1]+vals[vals.length/2])/2):null;
+ var sugg=med==null?null:POINTS.reduce(function(b,p){return Math.abs(p-med)<Math.abs(b-med)?p:b},POINTS[0]);
+ var spread=vals.length?vals[vals.length-1]/vals[0]:1;
+ return head('Schätzen mit Scrum Poker','Jede Person wählt verdeckt eine Karte. Dann deckt ihr gemeinsam auf. Liegen die Werte weit auseinander, erklären die Personen mit dem höchsten und dem niedrigsten Wert ihre Sicht, dann schätzt ihr erneut.',S.mode!=='online'?'<span class="chip warn">Ohne Online-Raum nur für dich allein</span>':'')+
+ '<div class="grid2"><section class="card"><h3>Was schätzen wir?</h3><select id="pTarget"><option value="">– Story oder Aufgabe auswählen –</option>'+pokerTargets().map(function(o){return '<option value="'+o[0]+'"'+(o[0]===P.target?' selected':'')+'>'+esc(o[1])+'</option>'}).join('')+'</select>'+
+ (tg?'<div style="margin-top:12px">'+(tg.t==='story'?storyCard(tg,false):'<div class="storycard" style="--c:'+esc(storyColor(tg.story))+'"><b>'+esc(tg.title)+'</b>'+(tg.story&&item(tg.story)?'<div class="small muted">zu: '+esc(item(tg.story).title)+'</div>':'')+'</div>')+'</div>':'<p class="small muted" style="margin-top:10px">Wählt zuerst aus, was geschätzt wird. Alle im Raum sehen dieselbe Auswahl.</p>')+
+ '<h3 style="margin-top:18px">Deine Karte <span class="small muted">(Runde '+P.round+')</span></h3><div class="deck" id="deck">'+POINTS.map(function(p){return '<button class="pcard'+(P.mine===p?' on':'')+'" data-p="'+p+'">'+p+'</button>'}).concat(['<button class="pcard'+(P.mine==='?'?' on':'')+'" data-p="?" title="Ich kann es noch nicht einschätzen">?</button>']).join('')+'</div>'+
+ '<p class="small muted" style="margin-top:10px">Faustregel: 1 = in einer Viertelstunde erledigt · 8 = etwa eine Doppelstunde · 40 und mehr = besser in kleinere Aufgaben teilen.</p></section>'+
+ '<section class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Teilnehmende</h3><div class="row"><button class="btn p" id="pReveal"'+(P.revealed||!ids.length?' disabled':'')+'>Aufdecken</button><button class="btn" id="pNew">Neue Runde</button></div></div>'+
+ '<div class="voters" style="margin-top:12px">'+people.map(function(p){var v=votes[p.id];return '<div class="voter'+(v?' done':'')+'"><div class="small">'+esc(p.name)+'</div><div class="v">'+(v?(P.revealed?esc(v.v):'✓'):'–')+'</div></div>'}).join('')+'</div>'+
+ (P.revealed&&vals.length?'<div class="card" style="margin-top:16px;background:#f8fafc;box-shadow:none"><div class="row"><span class="chip">Median '+med+'</span><span class="chip grey">Spanne '+vals[0]+'–'+vals[vals.length-1]+'</span>'+(spread>=5?'<span class="chip warn">Weit auseinander – kurz besprechen und neu schätzen</span>':'<span class="chip ok">Ziemlich einig</span>')+'</div>'+
+ (tg?'<div class="row" style="margin-top:12px"><span class="small">Wert übernehmen:</span>'+POINTS.map(function(p){return '<button class="btn s'+(p===sugg?' p':'')+'" data-take="'+p+'">'+p+'</button>'}).join('')+'</div>':'')+'</div>':'')+
+ (tg&&tg.pts?'<p class="small muted" style="margin-top:12px">Aktuell gespeichert: <b>'+tg.pts+' Punkte</b></p>':'')+'</section></div>'};
+A.poker=function(){var P=S.poker;
+ $('#pTarget').onchange=function(){P.target=this.value;P.votes={};P.revealed=false;P.mine=null;broadcast('poker',{a:'target',target:P.target,round:P.round});renderView()};
+ $('#deck').onclick=function(e){var b=e.target.closest('[data-p]');if(!b||P.revealed)return;var v=b.dataset.p==='?'?'?':parseInt(b.dataset.p,10);P.mine=v;P.votes[S.me]={name:S.name,v:v};broadcast('poker',{a:'vote',from:S.me,name:S.name,v:v,round:P.round});renderView()};
+ $('#pReveal').onclick=function(){P.revealed=true;broadcast('poker',{a:'reveal',round:P.round});renderView()};
+ $('#pNew').onclick=function(){P.round++;P.votes={};P.revealed=false;P.mine=null;broadcast('poker',{a:'new',round:P.round,target:P.target});renderView()};
+ $$('[data-take]').forEach(function(b){b.onclick=function(){var tg=targetItem(P.target);if(!tg)return;put(tg.id,{pts:parseInt(b.dataset.take,10)});toast(b.dataset.take+' Punkte gespeichert')}})};
+function onPoker(p){var P=S.poker;
+ if(p.a==='hello'){broadcast('poker',{a:'state',to:p.from,target:P.target,round:P.round,revealed:P.revealed,votes:P.votes});return}
+ if(p.a==='state'){if(p.to!==S.me)return;if(p.round>=P.round){P.target=p.target;P.round=p.round;P.revealed=p.revealed;P.votes=Object.assign({},p.votes,P.votes)}}
+ if(p.a==='target'){P.target=p.target;P.votes={};P.revealed=false;P.mine=null}
+ if(p.a==='vote'){if(p.round!==P.round)return;P.votes[p.from]={name:p.name,v:p.v}}
+ if(p.a==='reveal'){P.revealed=true}
+ if(p.a==='new'){P.round=p.round;P.target=p.target||P.target;P.votes={};P.revealed=false;P.mine=null}
+ if(S.view==='poker')renderView()}
+
+/* ========== BOARD ========== */
+var boardFilter='';
+R.board=function(){var ts=tasks().filter(function(t){return !boardFilter||t.story===boardFilter});var bl=items('blocker');var open=bl.filter(function(b){return !b.solved});
+ var spStories=stories().filter(function(s){return s.status==='sprint'});
+ return head('Scrum-Board','Legt für jede User Story im Sprint konkrete Aufgaben an. Zieht sie per Maus oder mit den Pfeilen weiter. Was nach „Erledigt“ kommt, zählt für die aktuelle Woche.','<label class="small muted">Woche <input type="number" min="1" id="bWeek" data-k="bweek" value="'+M('week',1)+'" style="width:70px"></label>')+
+ (spStories.length?'':'<div class="card" style="margin-bottom:14px;background:var(--warn-soft);border-color:#fde68a;box-shadow:none"><b>Noch keine User Story im Sprint.</b> Wählt im <a href="#" data-go="backlog">Backlog</a> die Stories aus, an denen ihr in diesem Sprint arbeitet.</div>')+
+ '<section class="card" style="margin-bottom:16px"><div class="row"><input type="text" class="grow" id="tTitle" data-keep="tTitle" placeholder="Neue Aufgabe, z. B. „3 Farbkombinationen anlegen“" maxlength="120"><select id="tStory" data-keep="tStory" style="max-width:240px">'+storyOpts(boardFilter||(spStories[0]&&spStories[0].id),true)+'</select><select id="tPts" data-keep="tPts" style="max-width:110px" aria-label="Punkte">'+POINTS.map(function(p){return '<option>'+p+'</option>'}).join('')+'</select><select id="tWho" data-keep="tWho" style="max-width:160px" aria-label="Zuständig">'+memberOpts('')+'</select><button class="btn p" id="tAdd">'+ico('i-plus')+'Aufgabe</button></div>'+
+ '<div class="row" style="margin-top:10px"><span class="small muted">Anzeigen:</span><select id="bFilt" style="max-width:280px"><option value="">Alle User Stories</option>'+storyOpts(boardFilter,false)+'</select></div></section>'+
+ '<div class="kanban">'+COLS.map(function(c){var l=ts.filter(function(t){return (t.col||'todo')===c[0]});return '<div class="col" data-col="'+c[0]+'"><div class="colhead"><span>'+c[1]+'</span><span class="chip grey">'+l.length+' · '+sumPts(l)+' P</span></div>'+(l.length?l.map(taskHtml).join(''):'<div class="small muted" style="padding:10px 6px">Hierher ziehen</div>')+'</div>'}).join('')+'</div>'+
+ '<section class="card blockers" style="margin-top:18px"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Hindernisse '+(open.length?'<span class="chip bad">'+open.length+' offen</span>':'<span class="chip ok">keine offenen</span>')+'</h3></div><p class="lead" style="margin-top:4px">Was hält euch auf? Was braucht ihr? Hindernisse aus dem Stand-up landen automatisch hier.</p>'+
+ '<div class="row" style="margin-bottom:10px"><input class="grow" type="text" id="blText" data-keep="blText" placeholder="z. B. Uns fehlt Zugang zum Drucker"><select id="blTask" style="max-width:240px"><option value="">– betrifft keine bestimmte Aufgabe –</option>'+tasks().filter(function(t){return t.col!=='done'}).map(function(t){return '<option value="'+t.id+'">'+esc(t.title)+'</option>'}).join('')+'</select><button class="btn" id="blAdd">'+ico('i-plus')+'Hindernis</button></div>'+
+ '<div class="stack" style="--gap:8px">'+(bl.length?bl.sort(function(a,b){return (a.solved?1:0)-(b.solved?1:0)||(b.u||0)-(a.u||0)}).map(function(b){var t=item(b.task);return '<div class="bl'+(b.solved?' solved':'')+'"><input type="checkbox" data-solve="'+b.id+'"'+(b.solved?' checked':'')+' aria-label="Gelöst" style="margin-top:4px;accent-color:var(--accent)"><div class="grow"><div class="tx">'+esc(b.text)+'</div><div class="small muted">'+esc(b.by||'')+(t?' · betrifft „'+esc(t.title)+'“':'')+'</div></div><button class="btn s danger" data-bldel="'+b.id+'" aria-label="Löschen">'+ico('i-trash')+'</button></div>'}).join(''):'<div class="small muted">Keine Hindernisse eingetragen.</div>')+'</div></section>'};
+function taskHtml(t){var s=item(t.story);var blk=items('blocker').some(function(b){return !b.solved&&b.task===t.id});var ci=COLS.findIndex(function(c){return c[0]===(t.col||'todo')});
+ return '<div class="task'+(blk?' blocked':'')+'" draggable="true" data-id="'+t.id+'" style="--c:'+esc(s?s.color:'#cbd5e1')+'"><div class="t">'+esc(t.title)+'</div>'+(s?'<div class="s">'+esc(s.title)+'</div>':'')+
+ '<div class="b"><span class="pts" title="Punkte">'+(t.pts||'?')+'</span>'+(t.who?'<span class="chip grey">'+esc(t.who)+'</span>':'')+(blk?'<span class="chip bad">'+ico('i-alert')+'blockiert</span>':'')+(t.col==='done'&&t.week?'<span class="chip ok">Woche '+t.week+'</span>':'')+
+ '<span class="mv"><button class="btn s ghost" data-mv="-1" data-id="'+t.id+'" aria-label="Nach links"'+(ci===0?' disabled':'')+'>'+ico('i-left')+'</button><button class="btn s ghost" data-tedit="'+t.id+'" aria-label="Bearbeiten">'+ico('i-edit')+'</button><button class="btn s ghost" data-mv="1" data-id="'+t.id+'" aria-label="Nach rechts"'+(ci===2?' disabled':'')+'>'+ico('i-right')+'</button></span></div></div>'}
+function moveTask(id,col){var t=item(id);if(!t||t.col===col)return;var p={col:col};if(col==='done')p.week=parseInt(M('week',1),10)||1;else p.week=null;var mx=tasks().filter(function(x){return x.col===col}).reduce(function(m,x){return Math.max(m,x.order||0)},0);p.order=mx+1;put(id,p);if(col==='done')toast('Erledigt – DoD geprüft?')}
+A.board=function(){$$('[data-go]').forEach(function(b){b.onclick=function(e){e.preventDefault();go(b.dataset.go)}});
+ bindMeta('#bWeek','week',true);
+ $('#bFilt').onchange=function(){boardFilter=this.value;renderView()};
+ var add=function(){var ti=$('#tTitle').value.trim();if(!ti){$('#tTitle').focus();return}$('#tTitle').value='';put(uid(),{t:'task',title:ti,story:$('#tStory').value,pts:parseInt($('#tPts').value,10),who:$('#tWho').value,col:'todo',order:Date.now()});setTimeout(function(){var e=$('#tTitle');if(e)e.focus()},50)};
+ $('#tAdd').onclick=add;$('#tTitle').addEventListener('keydown',function(e){if(e.key==='Enter')add()});
+ $$('[data-mv]').forEach(function(b){b.onclick=function(){var t=item(b.dataset.id);var ci=COLS.findIndex(function(c){return c[0]===(t.col||'todo')});var n=COLS[ci+parseInt(b.dataset.mv,10)];if(n)moveTask(t.id,n[0])}});
+ $$('[data-tedit]').forEach(function(b){b.onclick=function(){editTask(b.dataset.tedit)}});
+ var dragId=null;$$('.task').forEach(function(el){el.addEventListener('dragstart',function(e){dragId=el.dataset.id;el.classList.add('drag');try{e.dataTransfer.setData('text/plain',dragId)}catch(x){}});el.addEventListener('dragend',function(){el.classList.remove('drag')})});
+ $$('.col').forEach(function(c){c.addEventListener('dragover',function(e){e.preventDefault();c.classList.add('over')});c.addEventListener('dragleave',function(e){if(!c.contains(e.relatedTarget))c.classList.remove('over')});c.addEventListener('drop',function(e){e.preventDefault();c.classList.remove('over');var id=dragId;try{id=id||e.dataTransfer.getData('text/plain')}catch(x){}if(id)moveTask(id,c.dataset.col)})});
+ var addB=function(){var tx=$('#blText').value.trim();if(!tx)return;$('#blText').value='';put(uid(),{t:'blocker',text:tx,task:$('#blTask').value,solved:false})};$('#blAdd').onclick=addB;$('#blText').addEventListener('keydown',function(e){if(e.key==='Enter')addB()});
+ $$('[data-solve]').forEach(function(c){c.onchange=function(){put(c.dataset.solve,{solved:c.checked})}});$$('[data-bldel]').forEach(function(b){b.onclick=function(){del(b.dataset.bldel)}})};
+function editTask(id){var t=item(id);if(!t)return;
+ dialog('Aufgabe bearbeiten','<label class="f" for="eT">Aufgabe</label><input type="text" id="eT" value="'+esc(t.title)+'"><label class="f" for="eS">User Story</label><select id="eS">'+storyOpts(t.story,true)+'</select><div class="grid2" style="gap:12px"><div><label class="f" for="eP">Punkte</label><select id="eP">'+POINTS.map(function(p){return '<option'+(p===t.pts?' selected':'')+'>'+p+'</option>'}).join('')+'</select></div><div><label class="f" for="eW">Zuständig</label><select id="eW">'+memberOpts(t.who)+'</select></div></div><label class="f" for="eN">Notiz</label><textarea id="eN">'+esc(t.note||'')+'</textarea>',[['del','Löschen'],['cancel','Abbrechen'],['save','Speichern',true]]).then(function(v){
+  if(v==='save'){put(id,{title:$('#eT').value.trim()||t.title,story:$('#eS').value,pts:parseInt($('#eP').value,10),who:$('#eW').value,note:$('#eN').value})}
+  else if(v==='del'){del(id);toast('Aufgabe gelöscht')}})}
+
+/* ========== STAND-UP ========== */
+var suTick=null;
+function curStandup(){var l=items('standup').sort(function(a,b){return (b.created||0)-(a.created||0)});return l[0]&&!l[0].closed?l[0]:null}
+R.standup=function(){var su=curStandup();var past=items('standup').filter(function(s){return s.closed}).sort(function(a,b){return (b.created||0)-(a.created||0)});
+ var dur=M('suDur',60);
+ if(!su){return head('Daily Stand-up','Jede Person spricht 30 bis 90 Sekunden: Was habe ich seit dem letzten Mal geschafft? Was ist heute mein nächster konkreter Schritt? Was hält mich auf?')+
+  '<div class="grid2"><section class="card"><h3>Stand-up vorbereiten</h3><p class="lead">Reihenfolge wird zufällig gemischt (Round Robin). Teammitglieder pflegt ihr im Reiter „Team & Kodex“.</p>'+
+  (members().length?'<div class="speakers">'+members().map(function(m){return '<span class="spk">'+esc(m)+'</span>'}).join('')+'</div>':'<div class="empty">Noch keine Teammitglieder eingetragen. <a href="#" data-go="team">Jetzt eintragen</a>.</div>')+
+  '<label class="f" for="suDur">Redezeit pro Person</label><select id="suDur" style="max-width:200px">'+[30,45,60,75,90].map(function(s){return '<option value="'+s+'"'+(s===dur?' selected':'')+'>'+s+' Sekunden</option>'}).join('')+'</select>'+
+  '<div class="row" style="margin-top:16px"><button class="btn p" id="suStart"'+(members().length?'':' disabled')+'>'+ico('i-play')+'Stand-up starten</button></div></section>'+
+  '<section class="card"><h3>Gute Next Steps sind …</h3><ul class="small" style="margin:6px 0 0;padding-left:18px;line-height:1.7"><li><b>konkret:</b> „3 Farbkombinationen anlegen und begründen“</li><li><b>messbar:</b> „1 Skizze finalisieren, Maße ergänzen“</li><li><b>klein:</b> heute in der Stunde schaffbar</li><li><b>mit Bezug zum Board:</b> Titel der Aufgabe nennen</li></ul><p class="small muted" style="margin-top:12px">Diskussionen gehören auf den Parkplatz und werden nach dem Stand-up besprochen.</p></section></div>'+
+  pastHtml(past)}
+ var order=su.order||[],idx=su.idx||0,cur=order[idx],ent=su.entries||{},e=ent[cur]||{};
+ var finished=idx>=order.length;
+ return head('Daily Stand-up läuft','Start '+new Date(su.created).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' · Alle im Raum sehen denselben Stand.','<button class="btn" id="suAbort">Abbrechen</button>')+
+ '<div class="speakers" style="margin-bottom:14px">'+order.map(function(m,i){return '<span class="spk'+(i===idx?' now':'')+(ent[m]?' done':'')+'">'+esc(m)+'</span>'}).join('')+'</div>'+
+ (finished?standupDone(su):
+ '<div class="grid2"><section class="card"><div class="row" style="justify-content:space-between"><div><div class="small muted">Jetzt dran</div><div style="font-size:24px;font-weight:800">'+esc(cur)+'</div></div><div style="text-align:right"><div class="timer" id="suTimer">0:00</div></div></div><div class="bar" id="suBar" style="margin-top:12px"><i></i></div>'+
+ '<div class="row" style="margin-top:12px"><button class="btn p" id="suRun">'+(su.running?ico('i-pause')+'Pause':ico('i-play')+'Timer starten')+'</button><button class="btn" id="suReset">Zurücksetzen</button><span class="small muted">'+(su.dur||60)+' Sek.</span></div>'+
+ '<label class="f" for="suTask">Woran arbeitest du? (Aufgabe vom Board)</label><select id="suTask" data-keep="suTask'+idx+'"><option value="">– auswählen –</option>'+tasks().filter(function(t){return t.col!=='done'}).map(function(t){return '<option value="'+t.id+'"'+(e.task===t.id?' selected':'')+'>'+esc(t.title)+'</option>'}).join('')+'</select>'+
+ '<label class="f" for="suY">Seit dem letzten Mal geschafft</label><textarea id="suY" data-k="suY" data-keep="suY'+idx+'" placeholder="kurz & konkret">'+esc(e.y||'')+'</textarea>'+
+ '<label class="f" for="suT">Heute: mein nächster konkreter Schritt (1 Satz)</label><textarea id="suT" data-k="suT" data-keep="suT'+idx+'" placeholder="z. B. 3 Farbkombinationen anlegen und begründen">'+esc(e.today||'')+'</textarea>'+
+ '<label class="f" for="suB">Hindernis – was brauche ich?</label><input type="text" id="suB" data-k="suB" data-keep="suB'+idx+'" value="'+esc(e.b||'')+'" placeholder="„kein Hindernis“ oder kurz benennen">'+
+ '<div class="row" style="margin-top:14px"><button class="btn p" id="suNext">'+ico('i-right')+'Speichern & nächste Person</button><button class="btn" id="suSkip">Überspringen</button></div></section>'+
+ '<section class="card"><h3>Parkplatz</h3><p class="lead">Themen, die nach dem Stand-up besprochen werden.</p><textarea id="suPark" data-k="suPark" style="min-height:120px">'+esc(su.park||'')+'</textarea>'+
+ '<h3 style="margin-top:18px">Bisher</h3>'+entriesTable(su)+'</section></div>')};
+function entriesTable(su){var ent=su.entries||{};var ks=(su.order||[]).filter(function(m){return ent[m]});if(!ks.length)return '<p class="small muted">Noch keine Beiträge.</p>';
+ return '<div class="tablewrap"><table class="t"><thead><tr><th>Name</th><th>Geschafft</th><th>Heute</th><th>Hindernis</th></tr></thead><tbody>'+ks.map(function(m){var e=ent[m];var t=item(e.task);return '<tr><td><b>'+esc(m)+'</b>'+(t?'<div class="small muted">'+esc(t.title)+'</div>':'')+'</td><td>'+esc(e.y)+'</td><td>'+esc(e.today)+'</td><td>'+(e.b&&!/^kein/i.test(e.b)?'<span class="chip bad">'+esc(e.b)+'</span>':'<span class="muted">–</span>')+'</td></tr>'}).join('')+'</tbody></table></div>'}
+function standupDone(su){var q=su.check||{};var qs=[['a','Jeder Beitrag nannte eine Aufgabe vom Board'],['b','Jeder Beitrag endete mit einem messbaren Next Step'],['c','Hindernisse benannt oder „kein Hindernis“ gesagt'],['d','Timebox eingehalten']];
+ return '<div class="grid2"><section class="card"><h3>Alle waren dran</h3><p class="lead">Kurz. Klar. Sichtbar. Jetzt noch der Qualitätscheck (30 Sekunden).</p><div class="stack">'+qs.map(function(x){return '<label class="check"><input type="checkbox" data-q="'+x[0]+'"'+(q[x[0]]?' checked':'')+'><span>'+x[1]+'</span></label>'}).join('')+'</div>'+
+ '<h3 style="margin-top:18px">Danach</h3><ol class="small" style="padding-left:18px;line-height:1.8;margin:6px 0 0"><li>Parkplatz-Themen besprechen und Vorgehen klären (5 Min.)</li><li>Board aktualisieren: Aufgaben verschieben, neue anlegen (10 Min.)</li></ol>'+
+ '<div class="row" style="margin-top:16px"><button class="btn p" id="suClose">'+ico('i-check')+'Stand-up abschließen</button><button class="btn" data-go="board">Zum Board</button></div></section>'+
+ '<section class="card"><h3>Parkplatz</h3><textarea id="suPark" data-k="suPark" style="min-height:100px">'+esc(su.park||'')+'</textarea><h3 style="margin-top:18px">Protokoll</h3>'+entriesTable(su)+'</section></div>'}
+function pastHtml(past){if(!past.length)return '';return '<section class="card" style="margin-top:18px"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Frühere Stand-ups</h3><button class="btn s" id="suMd">'+ico('i-copy')+'Als Markdown kopieren</button></div>'+past.slice(0,10).map(function(s){return '<details style="margin-top:10px"><summary style="cursor:pointer;font-weight:600">'+new Date(s.created).toLocaleString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+' · '+Object.keys(s.entries||{}).length+' Beiträge</summary><div style="margin-top:8px">'+entriesTable(s)+(s.park?'<p class="small"><b>Parkplatz:</b> '+esc(s.park)+'</p>':'')+'</div></details>'}).join('')+'</section>'}
+function suElapsed(su){var base=su.elapsed||0;if(su.running&&su.startedAt)base+=(Date.now()-su.startedAt)/1000;return base}
+A.standup=function(){clearInterval(suTick);$$('[data-go]').forEach(function(b){b.onclick=function(e){e.preventDefault();go(b.dataset.go)}});
+ var su=curStandup();
+ if(!su){var d=$('#suDur');if(d)d.onchange=function(){setMeta('suDur',parseInt(d.value,10),true)};
+  var st=$('#suStart');if(st)st.onclick=function(){var o=members().slice();for(var i=o.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=o[i];o[i]=o[j];o[j]=x}put(uid(),{t:'standup',created:Date.now(),order:o,idx:0,entries:{},park:'',dur:parseInt(($('#suDur')||{}).value||M('suDur',60),10),running:false,elapsed:0,startedAt:null})};
+  var md=$('#suMd');if(md)md.onclick=function(){copyText(items('standup').filter(function(s){return s.closed}).sort(function(a,b){return (b.created||0)-(a.created||0)}).map(standupMd).join('\n\n'))};return}
+ var park=$('#suPark');if(park){var pt=null;park.addEventListener('input',function(){clearTimeout(pt);pt=setTimeout(function(){put(su.id,{park:park.value},true)},500)})}
+ $('#suAbort')&&($('#suAbort').onclick=function(){dialog('Stand-up abbrechen?','<p>Die bisherigen Beiträge werden gelöscht.</p>',[['no','Weiter machen'],['yes','Abbrechen',true]]).then(function(v){if(v==='yes')del(su.id)})});
+ var cl=$('#suClose');if(cl){$$('[data-q]').forEach(function(c){c.onchange=function(){var q=Object.assign({},su.check||{});q[c.dataset.q]=c.checked;put(su.id,{check:q},true)}});cl.onclick=function(){put(su.id,{closed:true});toast('Stand-up gespeichert')};return}
+ var paint=function(){var s=item(su.id);if(!s)return;var el=suElapsed(s),d=s.dur||60,left=Math.round(d-el);var t=$('#suTimer');if(!t){clearInterval(suTick);return}var a=Math.abs(left);t.textContent=(left<0?'+':'')+Math.floor(a/60)+':'+String(a%60).padStart(2,'0');t.style.color=left<0?'var(--bad)':(left<=10?'var(--warn)':'');var bar=$('#suBar');bar.className='bar'+(left<0?' over':(left<=10?' warn':''));$('i',bar).style.width=Math.min(100,el/d*100)+'%'};
+ paint();suTick=setInterval(paint,250);
+ $('#suRun').onclick=function(){var s=item(su.id);if(s.running)put(su.id,{running:false,elapsed:suElapsed(s),startedAt:null});else put(su.id,{running:true,startedAt:Date.now()})};
+ $('#suReset').onclick=function(){put(su.id,{running:false,elapsed:0,startedAt:null})};
+ var next=function(save){var s=item(su.id);var name=s.order[s.idx];var ent=Object.assign({},s.entries||{});
+  if(save){var e={y:$('#suY').value.trim(),today:$('#suT').value.trim(),b:$('#suB').value.trim(),task:$('#suTask').value,sec:Math.round(suElapsed(s))};ent[name]=e;
+   if(e.b&&!/^kein/i.test(e.b)){put(uid(),{t:'blocker',text:e.b+' ('+name+')',task:e.task,solved:false},true);toast('Hindernis ins Board übernommen')}}
+  put(su.id,{entries:ent,idx:s.idx+1,running:false,elapsed:0,startedAt:null})};
+ $('#suNext').onclick=function(){next(true)};$('#suSkip').onclick=function(){next(false)}};
+function standupMd(s){var ent=s.entries||{};return '### Stand-up '+new Date(s.created).toLocaleString('de-DE')+'\n\n| Name | Geschafft | Heute | Hindernis |\n|---|---|---|---|\n'+(s.order||[]).filter(function(m){return ent[m]}).map(function(m){var e=ent[m];return '| '+m+' | '+(e.y||'').replace(/\n/g,' ')+' | '+(e.today||'').replace(/\n/g,' ')+' | '+(e.b||'–')+' |'}).join('\n')+(s.park?'\n\n**Parkplatz:** '+s.park:'')}
+
+/* ========== REVIEW ========== */
+var revStory='';
+R.review=function(){var list=stories().filter(function(s){return s.status!=='backlog'});if(!revStory&&list[0])revStory=list[0].id;var s=item(revStory);
+ var rv=items('review').filter(function(r){return r.story===revStory})[0]||{};var dod=M('dod',[])||[];var ac=(s&&s.ac)||[];
+ var rub=rv.rub||{};var total=RUBRIC.reduce(function(t,r){return t+(rub[r[0]]||0)},0);
+ var all=items('review').filter(function(r){return item(r.story)});
+ return head('Sprint Review','Zeigt, was ihr geschafft habt, als „Story of Learning“. Prüft jede User Story gegen ihre Akzeptanzkriterien und die Definition of Done und gebt kurzes Feedback.')+
+ (list.length?'<div class="grid2"><section class="card"><label class="f" for="rStory" style="margin-top:0">User Story</label><select id="rStory">'+list.map(function(x){return '<option value="'+x.id+'"'+(x.id===revStory?' selected':'')+'>'+esc(x.title)+'</option>'}).join('')+'</select>'+
+ (s?'<div style="margin-top:12px">'+storyCard(s,false)+'</div>':'')+
+ '<label class="f" for="rFormat">Präsentationsform</label><select id="rFormat">'+REVIEW_FORMATS.map(function(f){return '<option'+(f===rv.format?' selected':'')+'>'+f+'</option>'}).join('')+'</select>'+
+ '<label class="f">Akzeptanzkriterien erfüllt?</label><div class="stack">'+(ac.length?ac.map(function(a,i){return '<label class="check"><input type="checkbox" data-acc="'+i+'"'+((rv.acc||{})[i]?' checked':'')+'><span>'+esc(a)+'</span></label>'}).join(''):'<p class="small muted">Für diese Story sind keine Akzeptanzkriterien hinterlegt.</p>')+'</div>'+
+ '<label class="f">Definition of Done erfüllt?</label><div class="stack">'+(dod.length?dod.map(function(a,i){return '<label class="check"><input type="checkbox" data-dod="'+i+'"'+((rv.dod||{})[i]?' checked':'')+'><span>'+esc(a)+'</span></label>'}).join(''):'<p class="small muted">Noch keine Definition of Done. Legt sie im Reiter „Team & Kodex“ fest.</p>')+'</div></section>'+
+ '<section class="card"><h3>Bewertung <span class="chip" id="rTotal">'+total+' / 20</span></h3><p class="lead">0 = nicht erkennbar · 4 = voll erfüllt</p><div class="rub">'+RUBRIC.map(function(r){return '<span>'+r[1]+'</span><span class="seg" data-rub="'+r[0]+'">'+[0,1,2,3,4].map(function(n){return '<button type="button" data-n="'+n+'" class="'+(rub[r[0]]===n?'on':'')+'">'+n+'</button>'}).join('')+'</span>'}).join('')+'</div>'+
+ '<label class="f" for="rFb">Feedback: Würdigung + 1 konkreter Verbesserungshinweis</label><textarea id="rFb" data-k="rFb">'+esc(rv.fb||'')+'</textarea>'+
+ '<label class="f">Entscheidung</label><div class="decision">'+[['ok','angenommen'],['cond','angenommen mit Auflagen'],['redo','Überarbeitung nötig']].map(function(d){return '<label><input type="radio" name="rDec" value="'+d[0]+'"'+(rv.dec===d[0]?' checked':'')+'>'+d[1]+'</label>'}).join('')+'</div>'+
+ '<label class="f" for="rCond">Auflagen / Nacharbeiten – was, bis wann?</label><textarea id="rCond" data-k="rCond">'+esc(rv.cond||'')+'</textarea>'+
+ '<div class="row" style="margin-top:14px"><button class="btn p" id="rSave">'+ico('i-check')+'Review speichern</button><span class="small muted">Änderungen werden automatisch gespeichert.</span></div></section></div>':'<div class="empty">Noch keine User Story im Sprint. Wählt im <a href="#" data-go="backlog">Backlog</a> Stories für den Sprint aus.</div>')+
+ (all.length?'<section class="card" style="margin-top:18px"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Ergebnisse</h3><button class="btn s" id="rMd">'+ico('i-copy')+'Als Markdown kopieren</button></div><div class="tablewrap" style="margin-top:10px"><table class="t"><thead><tr><th>User Story</th><th>Form</th><th>Punkte</th><th>Entscheidung</th><th>Feedback</th></tr></thead><tbody>'+all.map(function(r){var x=item(r.story);var tt=RUBRIC.reduce(function(t,q){return t+((r.rub||{})[q[0]]||0)},0);return '<tr><td><b>'+esc(x.title)+'</b></td><td>'+esc(r.format||'')+'</td><td>'+tt+'/20</td><td>'+decChip(r.dec)+'</td><td>'+esc(r.fb||'')+(r.cond?'<div class="small muted">Auflagen: '+esc(r.cond)+'</div>':'')+'</td></tr>'}).join('')+'</tbody></table></div></section>':'')};
+function decChip(d){return d==='ok'?'<span class="chip ok">angenommen</span>':d==='cond'?'<span class="chip warn">mit Auflagen</span>':d==='redo'?'<span class="chip bad">Überarbeitung</span>':'<span class="muted">–</span>'}
+A.review=function(){$$('[data-go]').forEach(function(b){b.onclick=function(e){e.preventDefault();go(b.dataset.go)}});
+ var rs=$('#rStory');if(!rs){var m0=$('#rMd');if(m0)m0.onclick=reviewMd;return}rs.onchange=function(){revStory=this.value;renderView()};
+ var rvId=function(){var r=items('review').filter(function(x){return x.story===revStory})[0];return r?r.id:null};
+ var saveRev=function(final){if(!$('#rFormat')||$('#rStory').value!==revStory)return;var rub={};$$('.seg[data-rub]').forEach(function(sg){var o=$('.on',sg);if(o)rub[sg.dataset.rub]=parseInt(o.dataset.n,10)});var acc={},dd={};$$('[data-acc]').forEach(function(c){if(c.checked)acc[c.dataset.acc]=true});$$('[data-dod]').forEach(function(c){if(c.checked)dd[c.dataset.dod]=true});
+  var dec=($('input[name=rDec]:checked')||{}).value||'';var data={t:'review',story:revStory,format:$('#rFormat').value,rub:rub,acc:acc,dod:dd,fb:$('#rFb').value,dec:dec,cond:$('#rCond').value,date:today()};
+  var old=items('review').filter(function(x){return x.story===revStory})[0];put(rvId()||uid(),data,true);
+  if(dec&&(!old||old.dec!==dec)){if(dec==='ok')put(revStory,{status:'done'},true);else put(revStory,{status:'sprint'},true)}
+  if(final){rerender();toast(dec==='ok'?'Gespeichert – Story ist fertig':'Review gespeichert')}};
+ $$('.seg[data-rub]').forEach(function(sg){sg.onclick=function(e){var b=e.target.closest('[data-n]');if(!b)return;$$('button',sg).forEach(function(x){x.classList.toggle('on',x===b)});var tot=0;$$('.seg[data-rub]').forEach(function(s2){var o=$('.on',s2);tot+=o?parseInt(o.dataset.n,10):0});$('#rTotal').textContent=tot+' / 20';saveRev(false)}});
+ $$('[data-acc],[data-dod],input[name=rDec]').forEach(function(c){c.onchange=function(){saveRev(false)}});$('#rFormat').onchange=function(){saveRev(false)};
+ var rt=null;['#rFb','#rCond'].forEach(function(q){$(q).addEventListener('input',function(){clearTimeout(rt);rt=setTimeout(function(){saveRev(false)},600)})});
+ $('#rSave').onclick=function(){saveRev(true)};
+ var m=$('#rMd');if(m)m.onclick=reviewMd};
+function reviewMd(){var lines=['## Sprint Review – '+(M('teamName','')||S.code)+' ('+fmtDate(today())+')','','| User Story | Form | Punkte | Entscheidung | Feedback | Auflagen |','|---|---|---|---|---|---|'];items('review').forEach(function(r){var x=item(r.story);if(!x)return;var tt=RUBRIC.reduce(function(t,q){return t+((r.rub||{})[q[0]]||0)},0);lines.push('| '+x.title+' | '+(r.format||'')+' | '+tt+'/20 | '+({ok:'angenommen',cond:'mit Auflagen',redo:'Überarbeitung'}[r.dec]||'–')+' | '+(r.fb||'').replace(/\n/g,' ')+' | '+(r.cond||'').replace(/\n/g,' ')+' |')});copyText(lines.join('\n'))}
+
+/* ========== RETRO ========== */
+R.retro=function(){var acts=items('action').sort(function(a,b){return (a.done?1:0)-(b.done?1:0)||(a.created||0)-(b.created||0)});
+ var kinds=[['start','Damit fangen wir an'],['stop','Damit hören wir auf'],['keep','Das behalten wir bei']];
+ return head('Retrospektive','Am Ende jedes Sprints schaut ihr auf eure Zusammenarbeit: Was lief gut, was nicht, was ändert ihr? Wählt ein Format aus der Retro-Sammlung und haltet hier eure Vereinbarungen fest.',extBtn('retro','Retro-Formate öffnen','i-loop'))+
+ '<div class="grid2"><section class="card"><h3>Vereinbarungen für den nächsten Sprint</h3><p class="lead">Höchstens zwei bis drei konkrete Maßnahmen, damit sie wirklich umgesetzt werden.</p>'+
+ '<div class="row"><select id="aKind" style="max-width:220px">'+kinds.map(function(k){return '<option value="'+k[0]+'">'+k[1]+'</option>'}).join('')+'</select><input class="grow" type="text" id="aText" data-keep="aText" placeholder="z. B. Wir prüfen Aufgaben zu zweit, bevor sie nach „Erledigt“ kommen"><button class="btn p" id="aAdd">'+ico('i-plus')+'Hinzufügen</button></div>'+
+ '<div class="stack" style="margin-top:14px">'+(acts.length?acts.map(function(a){var k=kinds.find(function(x){return x[0]===a.kind})||kinds[0];return '<label class="check" style="cursor:default"><input type="checkbox" data-adone="'+a.id+'"'+(a.done?' checked':'')+'><span class="grow"><span class="chip '+(a.kind==='stop'?'bad':a.kind==='keep'?'ok':'')+'" style="margin-right:6px">'+k[1]+'</span>'+(a.done?'<s>'+esc(a.text)+'</s>':esc(a.text))+'<span class="small muted"> · Sprint '+(a.sprint||1)+'</span></span><button class="btn s danger" data-adel="'+a.id+'" type="button" aria-label="Löschen">'+ico('i-trash')+'</button></label>'}).join(''):'<div class="small muted">Noch keine Vereinbarungen.</div>')+'</div></section>'+
+ '<section class="card"><h3>Passende Formate</h3><p class="lead">Alle Formate gibt es als Live-Tool in der Retro-Sammlung.</p><ul class="small" style="padding-left:18px;line-height:1.8;margin:0"><li><b>Start – Stop – Continue:</b> schnell, klar, gut für den Einstieg</li><li><b>FLAP:</b> Future, Lessons learned, Accomplishments, Problems</li><li><b>Starfish:</b> mehr, weniger, weiter so, anfangen, aufhören</li><li><b>I like – I wish:</b> wertschätzend, gut für junge Teams</li><li><b>Wetterbericht / Battery Check:</b> Stimmungsbild zu Beginn</li></ul>'+
+ '<p class="small muted" style="margin-top:12px">Regeln für einen sicheren Raum: Wir sprechen über Vorgehen, nicht über Personen. Was gesagt wird, bleibt im Team. Timebox strikt einhalten.</p><div class="row" style="margin-top:12px">'+extBtn('retro','Zur Retro-Sammlung','i-loop')+extBtn('hats','6-Hüte-Assistent','i-bot')+'</div></section></div>'};
+A.retro=function(){var add=function(){var t=$('#aText').value.trim();if(!t)return;$('#aText').value='';put(uid(),{t:'action',kind:$('#aKind').value,text:t,done:false,created:Date.now(),sprint:M('sprintNo',1)})};$('#aAdd').onclick=add;$('#aText').addEventListener('keydown',function(e){if(e.key==='Enter')add()});
+ $$('[data-adone]').forEach(function(c){c.onchange=function(){put(c.dataset.adone,{done:c.checked})}});$$('[data-adel]').forEach(function(b){b.onclick=function(e){e.preventDefault();del(b.dataset.adel)}})};
+
+/* ========== FORTSCHRITT ========== */
+function weekData(){var W=Math.max(1,parseInt(M('weeks',6),10)||6);var ts=tasks();var total=sumPts(ts);var per=[];for(var i=1;i<=W;i++)per.push(sumPts(ts.filter(function(t){return t.col==='done'&&(parseInt(t.week,10)||1)===i})));var cum=[],r=0;per.forEach(function(p){r+=p;cum.push(r)});return {W:W,total:total,per:per,cum:cum}}
+R.progress=function(){var d=weekData();var cw=Math.min(d.W,parseInt(M('week',1),10)||1);var doneP=d.cum[d.W-1]||0;var ideal=d.total?Math.round(d.total/d.W*cw):0;
+ return head('Fortschritt','Das Burn-up-Diagramm zeigt, wie viele Punkte ihr Woche für Woche erledigt habt, im Vergleich zum geplanten Umfang. Erledigte Aufgaben zählen für die Woche, in der sie nach „Erledigt“ gezogen wurden.','<button class="btn" id="pPrint">Drucken</button>')+
+ '<div class="kpis"><div class="kpi"><div class="l">Geplant</div><div class="v">'+d.total+' P</div></div><div class="kpi"><div class="l">Erledigt</div><div class="v">'+doneP+' P</div></div><div class="kpi"><div class="l">Soll bis Woche '+cw+'</div><div class="v">'+ideal+' P</div></div><div class="kpi"><div class="l">Stand</div><div class="v" style="color:'+(doneP>=ideal?'var(--ok)':'var(--warn)')+'">'+(doneP>=ideal?'im Plan':'Rückstand')+'</div></div></div>'+
+ '<section class="card" style="margin-top:18px"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Burn-up</h3><div class="row"><label class="small muted">Wochen im Sprint <input type="number" min="1" max="20" id="pWeeks" data-k="pWeeks" value="'+d.W+'" style="width:70px"></label><label class="small muted">Aktuelle Woche <input type="number" min="1" id="pWeek" data-k="pWeek" value="'+cw+'" style="width:70px"></label><button class="btn s" id="pNext">Nächste Woche</button></div></div><canvas id="chart" height="320" style="margin-top:12px" role="img" aria-label="Burn-up-Diagramm"></canvas>'+
+ '<div class="row small" style="margin-top:8px"><span class="row" style="gap:6px"><span class="dot" style="background:#0f766e"></span>erledigt (kumuliert)</span><span class="row" style="gap:6px"><span class="dot" style="background:#94a3b8"></span>geplanter Umfang</span><span class="row" style="gap:6px"><span class="dot" style="background:#f59e0b"></span>gleichmäßiges Tempo</span></div></section>'+
+ '<section class="card" style="margin-top:18px"><h3>Punkte pro Woche</h3><div class="tablewrap"><table class="t"><thead><tr><th>Woche</th>'+d.per.map(function(_,i){return '<th>'+(i+1)+'</th>'}).join('')+'</tr></thead><tbody><tr><td>erledigt</td>'+d.per.map(function(p){return '<td>'+p+'</td>'}).join('')+'</tr><tr><td>kumuliert</td>'+d.cum.map(function(p){return '<td><b>'+p+'</b></td>'}).join('')+'</tr></tbody></table></div></section>'};
+A.progress=function(){['#pWeeks','#pWeek'].forEach(function(q){$(q).onchange=function(){var v=Math.max(1,parseInt(this.value,10)||1);setMeta(q==='#pWeeks'?'weeks':'week',v)}});$('#pNext').onclick=function(){var w=parseInt(M('week',1),10)||1;if(w<(parseInt(M('weeks',6),10)||6))setMeta('week',w+1);else toast('Letzte Woche des Sprints erreicht')};$('#pPrint').onclick=function(){window.print()};drawChart()};
+function drawChart(){var c=$('#chart');if(!c)return;var d=weekData();var dpr=window.devicePixelRatio||1;var W=c.clientWidth||800,H=320;c.width=W*dpr;c.height=H*dpr;c.style.height=H+'px';var g=c.getContext('2d');g.scale(dpr,dpr);
+ var L=44,Rr=16,T=16,B=36,w=W-L-Rr,h=H-T-B;var ymax=Math.max(10,d.total,d.cum[d.W-1]||0);var step=Math.pow(10,Math.floor(Math.log10(ymax)));if(ymax/step<4)step/=2;ymax=Math.ceil(ymax/step)*step;
+ var X=function(i){return L+(d.W<=1?w/2:i/(d.W)*w)},Y=function(v){return T+h-(v/ymax)*h};
+ g.font='12px Inter,system-ui,sans-serif';g.fillStyle='#64748b';g.strokeStyle='#e2e8f0';g.lineWidth=1;
+ for(var v=0;v<=ymax+0.001;v+=step){g.beginPath();g.moveTo(L,Y(v));g.lineTo(L+w,Y(v));g.stroke();g.textAlign='right';g.fillText(String(Math.round(v)),L-8,Y(v)+4)}
+ g.textAlign='center';for(var i=0;i<=d.W;i++){g.fillText(i===0?'Start':'W'+i,X(i),H-12)}
+ g.setLineDash([6,5]);g.strokeStyle='#94a3b8';g.lineWidth=2;g.beginPath();g.moveTo(X(0),Y(d.total));g.lineTo(X(d.W),Y(d.total));g.stroke();
+ g.strokeStyle='#f59e0b';g.beginPath();g.moveTo(X(0),Y(0));g.lineTo(X(d.W),Y(d.total));g.stroke();g.setLineDash([]);
+ var cw=Math.min(d.W,parseInt(M('week',1),10)||1);g.strokeStyle='#0f766e';g.lineWidth=3;g.beginPath();g.moveTo(X(0),Y(0));for(i=1;i<=cw;i++)g.lineTo(X(i),Y(d.cum[i-1]));g.stroke();
+ g.fillStyle='#0f766e';for(i=1;i<=cw;i++){g.beginPath();g.arc(X(i),Y(d.cum[i-1]),4,0,7);g.fill()}}
+window.addEventListener('resize',function(){if(S.view==='progress')drawChart()});
+
+/* ---------- Export / Import ---------- */
+function exportMd(){var L=[];L.push('# '+(M('teamName','')||'Scrum-Werkstatt')+' – Raum '+S.code,'','Stand: '+new Date().toLocaleString('de-DE'),'');
+ if(M('goal',''))L.push('**Sprint-Ziel:** '+M('goal',''),'');
+ L.push('## Team','','- Product Owner: '+(M('po','')||'–'),'- Scrum Master: '+(M('sm','')||'–'),'- Mitglieder: '+(members().join(', ')||'–'),'');
+ if(M('kodex',''))L.push('## Teamkodex','',M('kodex',''),'');
+ var dod=M('dod',[])||[];if(dod.length)L.push('## Definition of Done','',dod.map(function(x){return '- '+x}).join('\n'),'');
+ L.push('## Product Backlog','');stories().forEach(function(s,i){L.push((i+1)+'. **'+s.title+'** ('+(s.prio||'')+(s.pts?', '+s.pts+' P':'')+', '+({backlog:'Backlog',sprint:'im Sprint',done:'fertig'}[s.status||'backlog'])+')','   Als '+(s.role||'…')+' möchte ich '+(s.want||'…')+', damit '+(s.benefit||'…')+'.');(s.ac||[]).forEach(function(a){L.push('   - [ ] '+a)})});L.push('');
+ L.push('## Board','');COLS.forEach(function(c){var l=tasks().filter(function(t){return (t.col||'todo')===c[0]});L.push('### '+c[1]+' ('+sumPts(l)+' P)','');l.forEach(function(t){var s=item(t.story);L.push('- '+t.title+' ['+(t.pts||'?')+' P'+(t.who?', '+t.who:'')+(s?', '+s.title:'')+']')});L.push('')});
+ var bl=items('blocker');if(bl.length){L.push('## Hindernisse','');bl.forEach(function(b){L.push('- ['+(b.solved?'x':' ')+'] '+b.text)});L.push('')}
+ var d=weekData();L.push('## Fortschritt','','| Woche | '+d.per.map(function(_,i){return i+1}).join(' | ')+' |','|---|'+d.per.map(function(){return '---'}).join('|')+'|','| erledigt | '+d.per.join(' | ')+' |','| kumuliert | '+d.cum.join(' | ')+' |','');
+ var acts=items('action');if(acts.length){L.push('## Vereinbarungen aus der Retro','');acts.forEach(function(a){L.push('- ['+(a.done?'x':' ')+'] '+a.text)});L.push('')}
+ return L.join('\n')}
+$('#hExport').onclick=function(){dialog('Export','<p>Sichert den Raum als Datei oder kopiert eine lesbare Zusammenfassung.</p><div class="stack"><button type="button" class="btn" id="xJson">'+ico('i-dl')+'Sicherung herunterladen (.json)</button><button type="button" class="btn" id="xMd">'+ico('i-dl')+'Zusammenfassung herunterladen (.md)</button><button type="button" class="btn" id="xCopy">'+ico('i-copy')+'Zusammenfassung kopieren</button><button type="button" class="btn" id="xImp">Sicherung importieren …</button></div>',[['ok','Schließen',true]]);
+ var stamp=today();$('#xJson').onclick=function(){download('scrum-'+S.code+'-'+stamp+'.json',JSON.stringify({app:'scrum-werkstatt',v:1,code:S.code,items:S.items,meta:S.meta},null,1),'application/json')};
+ $('#xMd').onclick=function(){download('scrum-'+S.code+'-'+stamp+'.md',exportMd(),'text/markdown;charset=utf-8')};$('#xCopy').onclick=function(){copyText(exportMd())};$('#xImp').onclick=function(){$('#importFile').click()}};
+$('#importFile').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.app!=='scrum-werkstatt')throw 0;var now=Date.now();Object.keys(d.items||{}).forEach(function(k){var it=Object.assign({},d.items[k],{u:now});S.items[k]=it;S.pending.items[k]=it});Object.keys(d.meta||{}).forEach(function(k){var m={v:d.meta[k].v,u:now};S.meta[k]=m;S.pending.meta[k]=m});queue();rerender();toast('Sicherung importiert');try{$('#dlg').close()}catch(e){}}catch(e){toast('Das ist keine Sicherung der Scrum-Werkstatt')}};r.readAsText(f);this.value=''};
+$('#hShare').onclick=function(){var u;try{u=new URL(location.href);u.hash='';u.searchParams.set('raum',S.code);u=u.toString()}catch(e){u=S.code}copyText(u);toast('Link zum Raum kopiert – Code: '+S.code)};
+$('#hLeave').onclick=leave;
+
+/* ---------- Start ---------- */
+$('#cycleLanding').innerHTML=cycleHtml();$$('#cycleLanding .step').forEach(function(b){b.disabled=true;b.style.cursor='default'});
+$('#gName').value=lsGet('scrum-name')||'';
+var qp=null;try{qp=new URL(location.href).searchParams.get('raum')}catch(e){}
+$('#gCode').value=(qp||lsGet('scrum-last')||'').toUpperCase();
+$('#gJoin').onclick=join;$('#gCreate').onclick=create;$('#gCode').addEventListener('keydown',function(e){if(e.key==='Enter')join()});
+$('#gLocal').onclick=function(){if(!getName())return;var c='LOKAL-'+genCode().slice(5);enter(c,'local');seedDefaults();toast('Lokaler Testraum – nur in diesem Browser')};
+checkBackend().then(function(b){backend=b;var t=$('#gSupa');if(b==='ok')t.textContent='Online-Räume verfügbar: Änderungen werden gespeichert und live geteilt.';else if(b==='notable')t.innerHTML='<b>Online-Räume noch nicht eingerichtet:</b> In Supabase fehlt die Tabelle „scrum_rooms“. Bis dahin funktioniert die Werkstatt nur lokal in diesem Browser.';else t.textContent='Keine Verbindung zum Server: Räume werden nur in diesem Browser gespeichert.';
+ if(qp&&$('#gName').value){join()}});
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')flush()});
+window.addEventListener('beforeunload',function(){flush()});
+})();
+</script>
+</body>
+</html>
