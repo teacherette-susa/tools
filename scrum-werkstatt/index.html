@@ -1046,11 +1046,19 @@ AD_R.settings=function(){return head('Einstellungen','Name der Klasse, PIN und A
  '<p class="small muted">Klassencode: <b>'+esc(AD.cls.code)+'</b>. Mit Code und PIN öffnet ihr die Klasse auch auf einem anderen Gerät.</p><div class="row"><button class="btn p" id="asNameSave">'+ico('i-check')+'Speichern</button></div></section>'+
  '<section class="card"><h3>PIN ändern</h3><label class="f" for="asPin">Neue PIN (mind. 4 Zeichen)</label><input type="password" id="asPin" maxlength="40" autocomplete="new-password"><label class="f" for="asPin2">Neue PIN wiederholen</label><input type="password" id="asPin2" maxlength="40" autocomplete="new-password">'+
  '<div class="row" style="margin-top:12px"><button class="btn p" id="asPinSave">PIN ändern</button><button class="btn" id="asOut">'+ico('i-out')+'Abmelden</button></div>'+
- '<p class="small muted">Nach fünf falschen PIN-Eingaben ist die Klasse zehn Minuten gesperrt.</p></section></div>'};
+ '<p class="small muted">Nach fünf falschen PIN-Eingaben ist die Klasse zehn Minuten gesperrt.</p></section></div>'+
+ '<section class="card" style="margin-top:18px;border-color:#fecaca"><h3 style="color:var(--bad)">Klasse löschen</h3><p class="lead">Die Klasse mit Vorgaben, Material und Übersicht wird endgültig gelöscht. Das lässt sich nicht rückgängig machen.</p>'+
+ '<label class="check"><input type="checkbox" id="adDelRooms"><span><b>Auch alle '+(AD.cls.rooms||[]).length+' Gruppenräume löschen</b><br><span class="muted">Ohne Haken bleiben die Räume erhalten und sind über ihre Codes weiter erreichbar, zum Beispiel wenn die Lernenden ihre Ergebnisse noch brauchen.</span></span></label>'+
+ '<div class="grid2" style="gap:12px"><div><label class="f" for="adDelName">Zur Bestätigung den Klassennamen eintippen: <b>'+esc(AD.cls.name||AD.cls.code)+'</b></label><input type="text" id="adDelName" autocomplete="off"></div><div><label class="f" for="adDelPin">PIN</label><input type="password" id="adDelPin" maxlength="40" autocomplete="current-password"></div></div>'+
+ '<div class="row" style="margin-top:12px"><button class="btn danger" id="adDel">'+ico('i-trash')+'Klasse endgültig löschen</button></div></section>'};
 AD_A.settings=function(){$('#asNameSave').onclick=function(){var n=$('#asName').value.trim();if(!n)return;adSave({},n).then(function(){adRender();toast('Gespeichert')}).catch(function(e){toast(e.message)})};
  $('#asPinSave').onclick=function(){var p=$('#asPin').value,p2=$('#asPin2').value;if(p.length<4){toast('Die PIN muss mindestens 4 Zeichen haben');return}if(p!==p2){toast('Die PINs stimmen nicht überein');return}
   adRpc('scrum_class_set_pin',{p_code:AD.code,p_pin:AD.pin,p_new_pin:p}).then(function(){AD.pin=p;try{sessionStorage.setItem('scrum-ad-pin',p)}catch(e){}$('#asPin').value='';$('#asPin2').value='';toast('PIN geändert')}).catch(function(e){toast(e.message)})};
- $('#asOut').onclick=adLogout};
+ $('#asOut').onclick=adLogout;
+ $('#adDel').onclick=function(){var want=(AD.cls.name||AD.cls.code).trim();if($('#adDelName').value.trim()!==want){toast('Der Klassenname stimmt nicht');$('#adDelName').focus();return}var pin=$('#adDelPin').value;if(!pin){toast('Bitte die PIN eintragen');$('#adDelPin').focus();return}
+  var withRooms=$('#adDelRooms').checked,n=(AD.cls.rooms||[]).length,code=AD.cls.code;
+  dialog('Klasse wirklich löschen?','<p>„'+esc(want)+'“ wird endgültig gelöscht'+(withRooms?', <b>zusammen mit allen '+n+' Gruppenräumen und deren Inhalten</b>':'. Die '+n+' Gruppenräume bleiben erhalten')+'.</p>',[['no','Abbrechen'],['yes','Endgültig löschen',true]]).then(function(v){if(v!=='yes')return;
+   adRpc('scrum_class_delete',{p_code:code,p_pin:pin,p_delete_rooms:withRooms}).then(function(r){if(lsGet('scrum-ad-last')===code)lsDel('scrum-ad-last');adLogout();toast('Klasse gelöscht'+(withRooms?' – '+((r&&r.roomsDeleted)||0)+' Räume gelöscht':''))}).catch(function(e){toast(e.message)})})}};
 
 $('#adTabs').addEventListener('click',function(e){var b=e.target.closest('[data-at]');if(!b)return;AD.tab=b.dataset.at;adRender();window.scrollTo(0,0)});
 $('#adOut').onclick=adLogout;$('#adHome').onclick=closeAdmin;
