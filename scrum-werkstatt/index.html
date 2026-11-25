@@ -208,6 +208,7 @@ dialog .df{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;borde
   <div class="links">
    <a class="btn p" href="#landingBasics"><svg class="i"><use href="#i-book"/></svg>Scrum verstehen</a>
    <a class="btn p" href="#gateAnchor"><svg class="i"><use href="#i-right"/></svg>Raum betreten</a>
+   <a class="btn" href="#videoLernende" id="gVideoL"><svg class="i"><use href="#i-play"/></svg>Erklärvideo</a>
    <a class="btn" href="?lehrkraft" id="gTeacher"><svg class="i"><use href="#i-team"/></svg>Für Lehrkräfte</a>
    <a class="btn" href="https://teacherette-susa.github.io/tools/kreativitaetstechniken/" target="_blank" rel="noopener"><svg class="i"><use href="#i-bulb"/></svg>Kreativitätstechniken</a>
    <a class="btn" href="https://teacherette-susa.github.io/tools/retrospektiven/" target="_blank" rel="noopener"><svg class="i"><use href="#i-loop"/></svg>Retrospektiven</a>
@@ -215,6 +216,7 @@ dialog .df{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;borde
   </div>
  </header>
 
+ <section class="card" id="videoLernende" style="margin-top:22px"><h2>Erklärvideo: So arbeitet ihr mit Scrum</h2><p class="lead">In gut 6 Minuten: was Scrum ist, welche Rollen es gibt und wie ihr die Werkstatt von der Sprintplanung bis zur Retrospektive nutzt.</p><div id="videoLernendeBox"></div></section>
  <div style="margin-top:22px"><div class="viewhead"><div><h2>Scrum verstehen</h2><p>Was ist Scrum, wer macht was und wie hängen die Bausteine zusammen? Ein Überblick mit Erklärgrafiken und allen Begriffen zum Nachschlagen.</p></div></div><div id="landingBasics"></div></div>
  <div id="gateAnchor"></div>
  <div class="gate">
@@ -265,6 +267,7 @@ dialog .df{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;borde
    <div class="brand"><span class="logo"><svg class="i"><use href="#i-board"/></svg></span><span><span id="hTeam">Scrum-Werkstatt</span><br><span class="small muted" style="font-weight:500">Raum <b id="hCode"></b></span></span></div>
    <span class="chip grey" id="hSync">lokal</span>
    <span class="chip grey" id="hOnline" title="Gerade im Raum"></span>
+   <button class="btn s" id="hVideo"><svg class="i"><use href="#i-play"/></svg>Erklärvideo</button>
    <button class="btn s" id="hShare"><svg class="i"><use href="#i-copy"/></svg>Link kopieren</button>
    <button class="btn s" id="hExport"><svg class="i"><use href="#i-dl"/></svg>Export</button>
    <button class="btn s ghost" id="hLeave" title="Raum verlassen"><svg class="i"><use href="#i-out"/></svg></button>
@@ -899,11 +902,14 @@ $('#hExport').onclick=function(){dialog('Export','<p>Sichert den Raum als Datei 
  $('#xMd').onclick=function(){download('scrum-'+S.code+'-'+stamp+'.md',exportMd(),'text/markdown;charset=utf-8')};$('#xCopy').onclick=function(){copyText(exportMd())};$('#xImp').onclick=function(){$('#importFile').click()}};
 $('#importFile').onchange=function(){var f=this.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.app!=='scrum-werkstatt')throw 0;var now=Date.now();Object.keys(d.items||{}).forEach(function(k){var it=Object.assign({},d.items[k],{u:now});S.items[k]=it;S.pending.items[k]=it});Object.keys(d.meta||{}).forEach(function(k){var m={v:d.meta[k].v,u:now};S.meta[k]=m;S.pending.meta[k]=m});queue();rerender();toast('Sicherung importiert');try{$('#dlg').close()}catch(e){}}catch(e){toast('Das ist keine Sicherung der Scrum-Werkstatt')}};r.readAsText(f);this.value=''};
 $('#hShare').onclick=function(){var u;try{u=new URL(location.href);u.hash='';u.searchParams.set('raum',S.code);u=u.toString()}catch(e){u=S.code}copyText(u);toast('Link zum Raum kopiert – Code: '+S.code)};
-$('#hLeave').onclick=leave;
+$('#hLeave').onclick=leave;$('#hVideo').onclick=showVideoL;
 
 /* ---------- Start ---------- */
 /* ========== LEHRKRAFT-BEREICH ========== */
 var AD={code:null,pin:null,cls:null,tab:'overview',created:null,tpl:null};
+function videoTag(src,poster){return '<video controls preload="metadata" playsinline poster="'+poster+'" style="width:100%;border-radius:12px;background:#0f766e;display:block"><source src="'+src+'" type="video/mp4">Ihr Browser kann das Video nicht abspielen. <a href="'+src+'">Video herunterladen</a></video>'}
+var VIDEO_L_HTML=videoTag('erklaervideo-lernende.mp4','erklaervideo-lernende-poster.jpg');
+function showVideoL(){var d=$('#dlg');d.classList.add('wide');dialog('Erklärvideo: So arbeitet ihr mit Scrum',VIDEO_L_HTML,[['ok','Schließen',true]]).then(function(){d.classList.remove('wide');$('#dlgB').innerHTML=''})}
 var VIDEO_HTML='<video controls preload="metadata" playsinline poster="erklaervideo-poster.jpg" style="width:100%;border-radius:12px;background:#0f766e;display:block"><source src="erklaervideo-lehrkraft.mp4" type="video/mp4">Ihr Browser kann das Video nicht abspielen. <a href="erklaervideo-lehrkraft.mp4">Video herunterladen</a></video>';
 function showVideo(){var d=$('#dlg');d.classList.add('wide');dialog('Erklärvideo: Lehrkraft-Bereich',VIDEO_HTML,[['ok','Schließen',true]]).then(function(){d.classList.remove('wide');$('#dlgB').innerHTML=''})}
 function adRpc(fn,args){return loadSupa().then(function(sb){if(!sb)throw new Error('Keine Verbindung zum Server.');return sb.rpc(fn,args).then(function(r){if(r.error){var m=r.error.message||'';if(/PGRST202|Could not find/i.test(m))throw new Error('Der Lehrkraft-Bereich ist in Supabase noch nicht eingerichtet (scrum-klassen.sql fehlt).');throw new Error(m)}if(r.data&&r.data.error)throw new Error(r.data.error);return r.data})})}
@@ -1073,6 +1079,7 @@ $('#gTeacher').onclick=function(e){e.preventDefault();openAdmin()};
 function loadClassMat(){var c=M('classCode','');if(!c||S.mode!=='online'||!S.sb){S.classMat=null;return}
  S.sb.rpc('scrum_class_public',{p_code:c}).then(function(r){if(r.error||!r.data){S.classMat=null;return}S.classMat=r.data.material||[];S.className=r.data.name||'';if(S.view==='material'||S.view==='start')renderView(true)},function(){})}
 
+$('#videoLernendeBox').innerHTML=VIDEO_L_HTML;
 $('#landingBasics').innerHTML=basicsHtml(false);bindBasics($('#landingBasics'));
 $('#cycleLanding').innerHTML=cycleHtml();$$('#cycleLanding .step').forEach(function(b){b.disabled=true;b.style.cursor='default'});
 $('#gName').value=lsGet('scrum-name')||'';
