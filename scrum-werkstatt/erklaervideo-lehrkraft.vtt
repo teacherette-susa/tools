@@ -1,0 +1,195 @@
+WEBVTT
+
+00:00.500 --> 00:11.495
+Willkommen zur Scrum-Werkstatt. In diesem Video zeige ich
+Ihnen den Lehrkraft-Bereich: wie Sie eine Klasse anlegen,
+Gruppenräume vorbereiten und alle Sprints im Blick behalten.
+
+00:12.500 --> 00:25.006
+Die Scrum-Werkstatt öffnen Sie im Browser, eine Installation
+ist nicht nötig. Auf der Startseite finden Sie eine
+Einführung in Scrum, den Zugang zu den Gruppenräumen und den
+Button „Für Lehrkräfte“.
+
+00:25.356 --> 00:28.833
+Dort beginnt alles, was Sie als Lehrkraft vorbereiten.
+
+00:29.833 --> 00:38.051
+Im Lehrkraft-Bereich legen Sie zuerst eine Klasse an. Tragen
+Sie den Namen der Klasse und des Fachs ein, dazu Ihren
+eigenen Namen.
+
+00:38.401 --> 00:50.321
+Unter diesem Namen erscheinen Sie in allen Räumen als
+Product Owner. Vergeben Sie außerdem eine PIN. Sie wird
+verschlüsselt gespeichert und lässt sich nicht
+wiederherstellen, notieren Sie sie also gut.
+
+00:50.671 --> 00:57.680
+Nach dem Anlegen sehen Sie oben den Klassencode. Mit
+Klassencode und PIN öffnen Sie die Klasse später auf jedem
+Gerät.
+
+00:58.700 --> 01:11.967
+Im Reiter Vorgaben legen Sie fest, womit jeder neue
+Gruppenraum startet: den Beginn des Sprints, seine Dauer in
+Wochen und die Definition of Done, also die Kriterien, die
+jedes Ergebnis erfüllen muss.
+
+01:12.317 --> 01:24.222
+In das Feld Termine schreiben Sie die wichtigsten Stationen
+des Sprints, zum Beispiel Sprint Planning, Stand-ups und
+Review. Diese Termine sehen die Gruppen später auf der
+Startseite ihres Raums.
+
+01:25.233 --> 01:34.383
+Unter Material hinterlegen Sie Links zu Dateien für die
+ganze Klasse, zum Beispiel das Briefing,
+Hintergrundinformationen oder den Bewertungsbogen.
+
+01:34.733 --> 01:45.543
+Die Dateien selbst bleiben dort, wo Sie sie ohnehin
+speichern: in Moodle, LOGINEO NRW, Nextcloud oder OneDrive.
+Die Werkstatt merkt sich nur den Link.
+
+01:45.893 --> 01:55.966
+Ein kurzer Hinweis, etwa „Vor der Sprintplanung lesen“,
+hilft den Lernenden bei der Orientierung. Achten Sie darauf,
+dass alle Lernenden die Links öffnen dürfen.
+
+01:56.967 --> 02:05.578
+Damit die Gruppen nicht bei null anfangen, können Sie User
+Stories vorbereiten. Dafür legen Sie einen ganz normalen
+Raum als Vorlage an.
+
+02:05.928 --> 02:16.066
+Hier formulieren Sie die Stories aus Sicht der Lernenden
+oder der Kundin, mit Akzeptanzkriterien und Priorität. Auf
+Wunsch ergänzen Sie auch schon erste Aufgaben.
+
+02:17.067 --> 02:27.606
+Im Reiter Gruppen anlegen schreiben Sie die Namen Ihrer
+Gruppen untereinander. Wählen Sie aus, was jeder Raum
+enthalten soll: Ihre Vorgaben und die vorbereiteten Stories.
+
+02:27.956 --> 02:37.296
+Dazu tragen Sie den Code Ihres Vorlage-Raums ein und klicken
+auf Prüfen. Die Werkstatt zeigt, wie viele Stories und
+Aufgaben übernommen werden.
+
+02:37.646 --> 02:45.058
+Ein Klick auf Räume anlegen, und alle Gruppenräume sind
+fertig. Rechts erscheint für jede Gruppe ein Link mit QR-
+Code.
+
+02:46.067 --> 02:53.098
+Mit Linkzettel drucken erhalten Sie eine Seite mit einem
+Zettel pro Gruppe: Name, QR-Code und Raumcode.
+
+02:53.448 --> 03:03.065
+Die Gruppen scannen den Code, tragen ihren Vornamen ein und
+sind sofort in ihrem Raum. Alternativ kopieren Sie alle
+Links auf einmal, etwa für Moodle.
+
+03:04.067 --> 03:13.183
+Während des Sprints ist die Übersicht Ihr wichtigstes
+Werkzeug. Für jede Gruppe sehen Sie das Sprint-Ziel, den
+Fortschritt als Balken und die erledigten Punkte.
+
+03:13.533 --> 03:23.942
+Dazu kommen offene Hindernisse, Reviews, Links und der
+Projektordner der Gruppe. Rot markierte Hindernisse zeigen
+Ihnen, wo eine Gruppe Unterstützung braucht.
+
+03:24.292 --> 03:30.585
+Auch wann zuletzt gearbeitet wurde, erkennen Sie auf einen
+Blick. Mit Öffnen springen Sie direkt in den Raum.
+
+03:31.600 --> 03:40.694
+So sieht ein Gruppenraum aus. Auf der Startseite stehen
+Sprint-Woche, Anzahl der Stories, erledigte Punkte und
+offene Hindernisse.
+
+03:41.044 --> 03:47.827
+Darunter das Sprint-Ziel der Gruppe, der Link zum
+Projektordner und die Termine, die Sie vorgegeben haben.
+
+03:48.833 --> 03:56.541
+Unter Team und Kodex tragen die Lernenden ihre Namen ein,
+bestimmen einen Scrum Captain und schreiben ihren Teamkodex.
+
+03:56.891 --> 04:02.143
+Die Definition of Done aus Ihren Vorgaben steht bereits hier
+und kann bei Bedarf ergänzt werden.
+
+04:03.167 --> 04:14.700
+Im Backlog liegen die User Stories, sortiert nach
+Wichtigkeit. Die Gruppe ordnet sie, nimmt die wichtigsten in
+den Sprint und sieht für jede Story, wie viele Aufgaben
+schon erledigt sind.
+
+04:15.733 --> 04:25.247
+Den Aufwand schätzen die Gruppen mit Scrum Poker. Jede
+Person wählt verdeckt eine Karte. Sitzt die Gruppe an einem
+Gerät, tippt sie nacheinander auf die Namen.
+
+04:25.597 --> 04:35.117
+Beim Aufdecken zeigt die Werkstatt den Median und wie einig
+sich die Gruppe ist. Liegen die Werte weit auseinander, wird
+kurz diskutiert und neu geschätzt.
+
+04:36.133 --> 04:47.388
+Auf dem Board wandern die Aufgaben von Zu erledigen über In
+Arbeit nach Erledigt, jeweils in der Farbe ihrer Story und
+mit der zuständigen Person. Hindernisse werden rot markiert.
+
+04:47.738 --> 04:50.259
+Genau diese erscheinen auch in Ihrer Übersicht.
+
+04:51.267 --> 04:59.284
+Beim Stand-up mischt die Werkstatt die Reihenfolge und misst
+die Redezeit. Genannte Hindernisse landen automatisch auf
+dem Board.
+
+05:00.300 --> 05:04.709
+Im Reiter Material finden die Lernenden oben Ihr Material
+für die ganze Klasse.
+
+05:05.059 --> 05:13.494
+Darunter sammelt die Gruppe eigene Links, zum Beispiel zum
+Moodboard oder zu den Folien, und ordnet sie einer Story
+oder Aufgabe zu.
+
+05:13.844 --> 05:17.160
+So finden Sie im Review alle Ergebnisse an einer Stelle.
+
+05:18.167 --> 05:27.069
+Im Review prüft die Gruppe jede Story gegen ihre
+Akzeptanzkriterien und die Definition of Done. Das verlinkte
+Material lässt sich direkt öffnen.
+
+05:27.419 --> 05:32.813
+Mit dem Bewertungsraster und einem kurzen Feedback halten
+Sie fest, ob die Story angenommen ist.
+
+05:33.833 --> 05:43.892
+Unter Fortschritt zeigt ein Burn-up-Diagramm, ob die Gruppe
+im Plan liegt. In der Retrospektive hält die Gruppe zwei bis
+drei Vereinbarungen für den nächsten Sprint fest.
+
+05:44.242 --> 05:47.149
+Passende Formate finden Sie in der Retro-Sammlung.
+
+05:48.167 --> 05:58.605
+Zurück im Lehrkraft-Bereich: Unter Einstellungen ändern Sie
+den Klassennamen und die PIN. Am Ende des Schuljahrs können
+Sie die Klasse löschen, auf Wunsch mit allen Gruppenräumen.
+
+05:58.955 --> 06:03.330
+Zur Sicherheit geben Sie dafür den Klassennamen und die PIN
+noch einmal ein.
+
+06:04.433 --> 06:13.116
+Das war der Lehrkraft-Bereich der Scrum-Werkstatt. Probieren
+Sie ihn am besten mit einer Testklasse aus. Viel Freude mit
+Ihren Scrum-Projekten!

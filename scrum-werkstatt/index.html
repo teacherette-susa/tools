@@ -216,7 +216,7 @@ dialog .df{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;borde
   </div>
  </header>
 
- <section class="card" id="videoLernende" style="margin-top:22px"><h2>Erklärvideo: So arbeitet ihr mit Scrum</h2><p class="lead">In gut 6 Minuten: was Scrum ist, welche Rollen es gibt und wie ihr die Werkstatt von der Sprintplanung bis zur Retrospektive nutzt.</p><div id="videoLernendeBox"></div></section>
+ <section class="card" id="videoLernende" style="margin-top:22px"><h2>Erklärvideo: So arbeitet ihr mit Scrum</h2><p class="lead">In gut 5 Minuten: was Scrum ist, welche Rollen es gibt und wie ihr die Werkstatt von der Sprintplanung bis zur Retrospektive nutzt.</p><div id="videoLernendeBox"></div></section>
  <div style="margin-top:22px"><div class="viewhead"><div><h2>Scrum verstehen</h2><p>Was ist Scrum, wer macht was und wie hängen die Bausteine zusammen? Ein Überblick mit Erklärgrafiken und allen Begriffen zum Nachschlagen.</p></div></div><div id="landingBasics"></div></div>
  <div id="gateAnchor"></div>
  <div class="gate">
@@ -907,10 +907,10 @@ $('#hLeave').onclick=leave;$('#hVideo').onclick=showVideoL;
 /* ---------- Start ---------- */
 /* ========== LEHRKRAFT-BEREICH ========== */
 var AD={code:null,pin:null,cls:null,tab:'overview',created:null,tpl:null};
-function videoTag(src,poster){return '<video controls preload="metadata" playsinline poster="'+poster+'" style="width:100%;border-radius:12px;background:#0f766e;display:block"><source src="'+src+'" type="video/mp4">Ihr Browser kann das Video nicht abspielen. <a href="'+src+'">Video herunterladen</a></video>'}
-var VIDEO_L_HTML=videoTag('erklaervideo-lernende.mp4','erklaervideo-lernende-poster.jpg');
+function videoTag(src,poster,vtt){return '<video controls preload="metadata" playsinline poster="'+poster+'" style="width:100%;border-radius:12px;background:#0f766e;display:block"><source src="'+src+'" type="video/mp4">'+(vtt?'<track kind="subtitles" srclang="de" label="Deutsch" src="'+vtt+'">':'')+'Ihr Browser kann das Video nicht abspielen. <a href="'+src+'">Video herunterladen</a></video>'}
+var VIDEO_L_HTML=videoTag('erklaervideo-lernende.mp4','erklaervideo-lernende-poster.jpg','erklaervideo-lernende.vtt');
 function showVideoL(){var d=$('#dlg');d.classList.add('wide');dialog('Erklärvideo: So arbeitet ihr mit Scrum',VIDEO_L_HTML,[['ok','Schließen',true]]).then(function(){d.classList.remove('wide');$('#dlgB').innerHTML=''})}
-var VIDEO_HTML='<video controls preload="metadata" playsinline poster="erklaervideo-poster.jpg" style="width:100%;border-radius:12px;background:#0f766e;display:block"><source src="erklaervideo-lehrkraft.mp4" type="video/mp4">Ihr Browser kann das Video nicht abspielen. <a href="erklaervideo-lehrkraft.mp4">Video herunterladen</a></video>';
+var VIDEO_HTML=videoTag('erklaervideo-lehrkraft.mp4','erklaervideo-poster.jpg','erklaervideo-lehrkraft.vtt');
 function showVideo(){var d=$('#dlg');d.classList.add('wide');dialog('Erklärvideo: Lehrkraft-Bereich',VIDEO_HTML,[['ok','Schließen',true]]).then(function(){d.classList.remove('wide');$('#dlgB').innerHTML=''})}
 function adRpc(fn,args){return loadSupa().then(function(sb){if(!sb)throw new Error('Keine Verbindung zum Server.');return sb.rpc(fn,args).then(function(r){if(r.error){var m=r.error.message||'';if(/PGRST202|Could not find/i.test(m))throw new Error('Der Lehrkraft-Bereich ist in Supabase noch nicht eingerichtet (scrum-klassen.sql fehlt).');throw new Error(m)}if(r.data&&r.data.error)throw new Error(r.data.error);return r.data})})}
 function genClassCode(){return 'KLASSE-'+genCode().slice(5)}
@@ -945,7 +945,7 @@ function adLoginHtml(){$('#adHead').classList.add('hidden');$('#adTabs').innerHT
  '<div class="row" style="margin-top:14px"><button class="btn p" id="acGo">'+ico('i-plus')+'Klasse anlegen</button></div>'+
  '<p class="small muted">Notiert euch Klassencode und PIN. Die PIN wird verschlüsselt gespeichert und lässt sich nicht wiederherstellen.</p></section></div>'+
  '<p class="small" id="adMsg" aria-live="polite" style="margin-top:12px"></p>'+
- '<section class="card" style="margin-top:18px"><h2>Erklärvideo: So funktioniert der Lehrkraft-Bereich</h2><p class="lead">In gut 7 Minuten: Klasse anlegen, Vorgaben und Material eintragen, Gruppenräume vorbereiten und den Überblick über alle Sprints behalten.</p>'+VIDEO_HTML+'</section>'}
+ '<section class="card" style="margin-top:18px"><h2>Erklärvideo: So funktioniert der Lehrkraft-Bereich</h2><p class="lead">In gut 6 Minuten: Klasse anlegen, Vorgaben und Material eintragen, Gruppenräume vorbereiten und den Überblick über alle Sprints behalten.</p>'+VIDEO_HTML+'</section>'}
 function adLoginBind(){$('#adBack').onclick=closeAdmin;
  var go=function(){var c=$('#alCode').value.trim().toUpperCase(),p=$('#alPin').value;if(!c||!p){adMsg('Bitte Klassencode und PIN eintragen.',true);return}adMsg('Klasse wird geladen …');AD.code=c;AD.pin=p;adLoad().catch(function(e){AD.cls=null;adMsg(e.message,true)})};
  $('#alGo').onclick=go;$('#alPin').addEventListener('keydown',function(e){if(e.key==='Enter')go()});
