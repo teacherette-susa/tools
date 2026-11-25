@@ -114,6 +114,9 @@ label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:1
 .lrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-left:5px solid var(--c,#cbd5e1);border-radius:10px;background:#fff}
 .lrow a.lt{font-weight:700;color:inherit;text-decoration:underline;text-underline-offset:2px;word-break:break-word}
 .lrow .grow{flex:1 1 160px}
+.tmat{border-color:#c7d2fe;background:#f5f7ff}
+.tmat .lrow{border-left-color:#6366f1}
+.lrow .note{display:block;font-size:13px;color:var(--muted,#64748b);margin-top:2px}
 .voter.off{border-style:dashed;color:var(--muted,#64748b);cursor:pointer;font:inherit}
 .voter.off:hover{border-color:var(--accent-2)}
 .voter .st{font-size:11px;margin-top:2px}
@@ -204,6 +207,7 @@ dialog .df{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;borde
   <div class="links">
    <a class="btn p" href="#landingBasics"><svg class="i"><use href="#i-book"/></svg>Scrum verstehen</a>
    <a class="btn p" href="#gateAnchor"><svg class="i"><use href="#i-right"/></svg>Raum betreten</a>
+   <a class="btn" href="?lehrkraft" id="gTeacher"><svg class="i"><use href="#i-team"/></svg>Für Lehrkräfte</a>
    <a class="btn" href="https://teacherette-susa.github.io/tools/kreativitaetstechniken/" target="_blank" rel="noopener"><svg class="i"><use href="#i-bulb"/></svg>Kreativitätstechniken</a>
    <a class="btn" href="https://teacherette-susa.github.io/tools/retrospektiven/" target="_blank" rel="noopener"><svg class="i"><use href="#i-loop"/></svg>Retrospektiven</a>
    <a class="btn" href="https://app.ais-chat.schule/assistants/f43232a9-f081-4a0d-8ef3-687f7a99b7eb" target="_blank" rel="noopener"><svg class="i"><use href="#i-bot"/></svg>Scrummy (AIS.chat)</a>
@@ -238,6 +242,19 @@ dialog .df{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;borde
   <div class="cycle" id="cycleLanding"></div>
  </section>
 </div></div>
+
+<!-- ===================== Lehrkraft-Bereich ===================== -->
+<div id="admin" class="hidden">
+ <header class="top">
+  <div class="topin">
+   <div class="brand"><span class="logo"><svg class="i"><use href="#i-team"/></svg></span><span><span>Lehrkraft-Bereich</span><br><span class="small muted hidden" id="adHead" style="font-weight:500"><span id="adTitle"></span> · <b id="adCode"></b></span></span></div>
+   <button class="btn s" id="adHome"><svg class="i"><use href="#i-home"/></svg>Startseite</button>
+   <button class="btn s ghost" id="adOut" title="Abmelden"><svg class="i"><use href="#i-out"/></svg></button>
+  </div>
+  <nav class="tabs" id="adTabs" aria-label="Lehrkraft-Bereich"></nav>
+ </header>
+ <main class="wrap" id="aview"></main>
+</div>
 
 <!-- ===================== App ===================== -->
 <div id="app" class="hidden">
@@ -285,6 +302,7 @@ var VIEWS=[
  ['material','Material','i-link','Links zu Ordnern, Entwürfen und Lernprodukten sammeln']
 ];
 var LINK_KINDS=['Recherche','Entwurf','Lernprodukt','Feedback','Sonstiges'];
+var TLINK_KINDS=['Hintergrundinformation','Aufgabenstellung','Briefing','Bewertungskriterien','Vorlage','Beispiel','Sonstiges'];
 var REVIEW_FORMATS=['Präsentation (5–7 Min.)','Demo / Prototyp-Durchlauf','Galeriegang / Markt der Möglichkeiten','Quiz mit Begründungen','Leistungscheck / Kurztest','Erklärvideo / Screencast','Poster / Infografik mit Fragerunde','FAQ / How-to aus Nutzersicht','Peer-Teaching (5-Minuten-Lektion)','Mini-Pitch'];
 var RUBRIC=[['goal','Lernziel erreicht'],['evidence','Belege / Evidenz'],['correct','Fachliche Richtigkeit'],['present','Darstellung / Struktur'],['team','Team-Zusammenarbeit']];
 var INVEST=[['I','Unabhängig','lässt sich ohne andere Stories umsetzen'],['N','Verhandelbar','Details dürfen sich noch ändern'],['V','Wertvoll','bringt erkennbaren Nutzen'],['E','Schätzbar','wir können den Aufwand einschätzen'],['S','Klein','passt in einen Sprint'],['T','Testbar','Akzeptanzkriterien sind überprüfbar']];
@@ -359,7 +377,8 @@ function enter(code,mode,data){S.code=code;S.mode=mode;S.items={};S.meta={};
  lsSet('scrum-name',S.name);lsSet('scrum-last',code);setUrlRoom(code);
  $('#landing').classList.add('hidden');$('#app').classList.remove('hidden');
  $('#hCode').textContent=code;setSync(mode==='online'?'online':'nur lokal');
- if(mode==='online'){subscribe();
+ S.classMat=null;
+ if(mode==='online'){subscribe();setTimeout(loadClassMat,0);
   // lokale, noch nicht hochgeladene Änderungen nachreichen
   var up={},um={};Object.keys(S.items).forEach(function(k){var srv=data&&data.items&&data.items[k];if(!srv||(S.items[k].u||0)>(srv.u||0))up[k]=S.items[k]});Object.keys(S.meta).forEach(function(k){var srv=data&&data.meta&&data.meta[k];if(!srv||(S.meta[k].u||0)>(srv.u||0))um[k]=S.meta[k]});
   if(Object.keys(up).length||Object.keys(um).length){S.pending={items:up,meta:um};flush()}}
@@ -408,7 +427,7 @@ R.start=function(){var ts=tasks(),done=ts.filter(function(t){return t.col==='don
  '<div class="grid2" style="margin-top:18px"><section class="card"><h3>Sprint-Ziel</h3><p class="lead">Was soll am Ende dieses Sprints fertig sein? Ein Satz genügt.</p><textarea data-k="goal" id="goal" placeholder="z. B. Wir haben ein getestetes Plakat-Konzept für die Werbekampagne.">'+esc(goal)+'</textarea>'+
  '<div class="row" style="margin-top:10px"><label class="small muted">Sprint Nr. <input type="number" min="1" id="sprintNo" data-k="sprintNo" value="'+M('sprintNo',1)+'" style="width:80px"></label><label class="small muted">Start <input type="date" id="startDate" data-k="startDate" value="'+esc(M('startDate',''))+'" style="width:160px"></label></div>'+
  '<div class="row" style="margin-top:12px">'+(folderHtml()||'<span class="small muted">Noch kein Projektordner. <a href="#material" data-go="material">Im Reiter Material eintragen</a></span>')+'</div></section>'+
- '<section class="card"><h3>Weiterführende Tools</h3><p class="lead">Für Ideenfindung, KI-Begleitung und Reflexion.</p><div class="stack">'+
+ (M('schedule','')?'<section class="card"><h3>Termine</h3><p class="lead">Von der Lehrkraft vorgegeben.</p><div style="white-space:pre-line;line-height:1.6">'+esc(M('schedule',''))+'</div></section>':'')+'<section class="card"><h3>Weiterführende Tools</h3><p class="lead">Für Ideenfindung, KI-Begleitung und Reflexion.</p><div class="stack">'+
  '<div class="row">'+extBtn('kreativ','Kreativitätstechniken','i-bulb')+'<span class="small muted grow">Ideen finden, inklusive 6-Hüte-Methode</span></div>'+
  '<div class="row">'+extBtn('scrummy','Scrummy','i-bot')+'<span class="small muted grow">KI-Assistent in AIS.chat: Pakete, DoD, Kodex</span></div>'+
  '<div class="row">'+extBtn('retro','Retrospektiven','i-loop')+'<span class="small muted grow">14 Retro-Formate mit Live-Tools</span></div></div></section></div>'+
@@ -480,10 +499,28 @@ function linkRow(l,actions){var s=item(l.story)||(item(l.task)&&item(item(l.task
  (actions?'<button class="btn s danger" data-ldel="'+l.id+'" aria-label="Link entfernen">'+ico('i-trash')+'</button>':'')+'</div>'}
 function bindLinkDel(){$$('[data-ldel]').forEach(function(b){b.onclick=function(){del(b.dataset.ldel);toast('Link entfernt – die Datei selbst bleibt erhalten')}})}
 function folderHtml(){var f=M('folder',null);return f&&f.url?'<a class="btn" href="'+esc(f.url)+'" target="_blank" rel="noopener noreferrer">'+ico('i-link')+esc(f.title||'Projektordner')+' ('+esc(svcOf(f.url))+')'+ico('i-ext')+'</a>':''}
+
+function isTeacher(){var po=String(M('po','')||'').trim().toLowerCase(),n=String(S.name||'').trim().toLowerCase();if(!po)return true;return !!n&&(po===n||(n.length>=3&&po.indexOf(n)>=0))}
+function tlinks(){return items('tlink').sort(function(a,b){return (a.order||0)-(b.order||0)})}
+function tlinkRow(l,actions){return '<div class="lrow"><span class="chip">'+ico('i-link')+esc(svcOf(l.url))+'</span><span class="grow"><a class="lt" href="'+esc(l.url)+'" target="_blank" rel="noopener noreferrer">'+esc(l.title||l.url)+'</a>'+(l.note?'<span class="note">'+esc(l.note)+'</span>':'')+'</span><span class="chip grey">'+esc(l.kind||'Sonstiges')+'</span>'+(actions?'<button class="btn s danger" data-tldel="'+l.id+'" aria-label="Material entfernen">'+ico('i-trash')+'</button>':'')+'</div>'}
+function teacherMatHtml(){var tl=tlinks(),t=isTeacher(),po=M('po','');var cm=S.classMat||[];
+ return '<section class="card tmat" style="margin-bottom:18px"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Material der Lehrkraft</h3><span class="chip grey">'+(tl.length+cm.length)+' '+((tl.length+cm.length)===1?'Eintrag':'Einträge')+'</span></div><p class="lead">Hintergrundinformationen, Aufgabenstellung, Briefing, Bewertungskriterien und Vorlagen für das Projekt.</p>'+
+ (cm.length?'<div class="small muted" style="margin:4px 0 6px;font-weight:600">Für die ganze Klasse'+(S.className?' „'+esc(S.className)+'“':'')+'</div><div class="stack">'+cm.map(function(l){return tlinkRow(l,false)}).join('')+'</div>'+(tl.length?'<div class="small muted" style="margin:12px 0 6px;font-weight:600">Nur für diese Gruppe</div>':''):'')+
+ (tl.length?'<div class="stack">'+tl.map(function(l){return tlinkRow(l,t)}).join('')+'</div>':(cm.length?'':'<div class="empty">'+(t?'Noch kein Material. Fügt unten das erste hinzu.':'Die Lehrkraft hat noch kein Material hinterlegt.')+'</div>'))+
+ (t?'<details style="margin-top:14px"'+(tl.length?'':' open')+'><summary class="small" style="cursor:pointer;font-weight:600">Material hinzufügen (nur Lehrkraft)</summary>'+
+  '<div class="grid2" style="gap:12px"><div><label class="f" for="tlUrl">Link</label><input type="url" id="tlUrl" data-keep="tlUrl" placeholder="https://…"></div><div><label class="f" for="tlTitle">Titel</label><input type="text" id="tlTitle" data-keep="tlTitle" maxlength="80" placeholder="z. B. Briefing der Kundin"></div></div>'+
+  '<div class="grid2" style="gap:12px"><div><label class="f" for="tlKind">Art</label><select id="tlKind" data-keep="tlKind">'+TLINK_KINDS.map(function(k){return '<option>'+k+'</option>'}).join('')+'</select></div><div><label class="f" for="tlNote">Hinweis für die Lernenden (optional)</label><input type="text" id="tlNote" data-keep="tlNote" maxlength="160" placeholder="z. B. Bis zur Sprintplanung lesen"></div></div>'+
+  '<div class="row" style="margin-top:12px"><button class="btn p" id="tlAdd">'+ico('i-plus')+'Material speichern</button><span class="small muted">Sichtbar für alle im Raum. Bearbeiten kann, wer mit dem Namen der Product Owner angemeldet ist.</span></div></details>':
+  '<p class="small muted" style="margin-top:10px">Nur die Lehrkraft (Product Owner im Reiter „Team & Kodex“) kann hier Material hinzufügen.</p>')+'</section>'}
+function bindTeacherMat(){var a=$('#tlAdd');if(a)a.onclick=function(){if(!isTeacher())return;var x=safeUrl($('#tlUrl').value);if(!x){toast('Bitte einen gültigen https-Link eintragen');$('#tlUrl').focus();return}
+  var mx=tlinks().reduce(function(m,l){return Math.max(m,l.order||0)},0);
+  put(uid(),{t:'tlink',url:x,title:$('#tlTitle').value.trim()||svcOf(x),kind:$('#tlKind').value,note:$('#tlNote').value.trim(),order:mx+1},true);
+  $('#tlUrl').value='';$('#tlTitle').value='';$('#tlNote').value='';rerender();toast('Material gespeichert')};
+ $$('[data-tldel]').forEach(function(b){b.onclick=function(){if(!isTeacher())return;del(b.dataset.tldel);toast('Material entfernt – die Datei selbst bleibt erhalten')}})}
 R.material=function(){var f=M('folder',null)||{};var ls=links();var st=stories();
  var groups=[{s:null,l:ls.filter(function(l){return !item(l.story)&&!(item(l.task)&&item(item(l.task).story))})}].concat(st.map(function(s){return {s:s,l:ls.filter(function(l){return l.story===s.id||(!item(l.story)&&item(l.task)&&item(l.task).story===s.id)})}}));
- return head('Material','Sammelt hier Links zu euren Dateien, egal wo sie liegen: OneDrive, Nextcloud, Google Docs, Dropbox, Moodle, LOGINEO NRW, Canva … Die Dateien bleiben bei euch, die Werkstatt speichert nur den Link.',folderHtml())+
- '<div class="grid2"><section class="card"><h3>Projektordner</h3><p class="lead">Ein gemeinsamer Ordner für das ganze Projekt. Er erscheint auch auf der Startseite.</p>'+
+ return head('Material','Sammelt hier Links zu euren Dateien, egal wo sie liegen: OneDrive, Nextcloud, Google Docs, Dropbox, Moodle, LOGINEO NRW, Canva … Die Dateien bleiben bei euch, die Werkstatt speichert nur den Link.',folderHtml())+teacherMatHtml()+
+ '<h3 style="margin:6px 0 12px">Material des Teams</h3><div class="grid2"><section class="card"><h3>Projektordner</h3><p class="lead">Ein gemeinsamer Ordner für das ganze Projekt. Er erscheint auch auf der Startseite.</p>'+
  '<label class="f" for="fUrl">Link zum Ordner</label><input type="url" id="fUrl" data-keep="fUrl" placeholder="https://…" value="'+esc(f.url||'')+'">'+
  '<label class="f" for="fTitle">Bezeichnung</label><input type="text" id="fTitle" data-keep="fTitle" maxlength="60" placeholder="z. B. Teamordner Kaffeebohne" value="'+esc(f.title||'')+'">'+
  '<div class="row" style="margin-top:10px"><button class="btn p" id="fSave">'+ico('i-check')+'Speichern</button>'+(f.url?'<button class="btn danger" id="fDel">'+ico('i-trash')+'Entfernen</button>':'')+'</div>'+
@@ -507,7 +544,7 @@ A.material=function(){
   var mx=links().reduce(function(m,l){return Math.max(m,l.order||0)},0);
   put(uid(),{t:'link',url:x,title:ti,kind:$('#lKind').value,who:$('#lWho').value,story:st,task:tk,order:mx+1},true);
   $('#lUrl').value='';$('#lTitle').value='';rerender();toast('Link gespeichert');var e=$('#lUrl');if(e)e.focus()};
- bindLinkDel()};
+ bindLinkDel();bindTeacherMat()};
 
 /* ========== BACKLOG ========== */
 var bFilter='alle';
@@ -863,6 +900,166 @@ $('#hShare').onclick=function(){var u;try{u=new URL(location.href);u.hash='';u.s
 $('#hLeave').onclick=leave;
 
 /* ---------- Start ---------- */
+/* ========== LEHRKRAFT-BEREICH ========== */
+var AD={code:null,pin:null,cls:null,tab:'overview',created:null,tpl:null};
+function adRpc(fn,args){return loadSupa().then(function(sb){if(!sb)throw new Error('Keine Verbindung zum Server.');return sb.rpc(fn,args).then(function(r){if(r.error){var m=r.error.message||'';if(/PGRST202|Could not find/i.test(m))throw new Error('Der Lehrkraft-Bereich ist in Supabase noch nicht eingerichtet (scrum-klassen.sql fehlt).');throw new Error(m)}if(r.data&&r.data.error)throw new Error(r.data.error);return r.data})})}
+function genClassCode(){return 'KLASSE-'+genCode().slice(5)}
+function roomUrl(code){var u;try{u=new URL(location.href);u.hash='';u.search='';u.searchParams.set('raum',code);return u.toString()}catch(e){return code}}
+function adD(k,d){var x=AD.cls&&AD.cls.data&&AD.cls.data[k];return x===undefined||x===null?d:x}
+function adMsg(t,bad){var e=$('#adMsg');if(e){e.textContent=t||'';e.style.color=bad?'var(--bad)':''}}
+function openAdmin(){$('#landing').classList.add('hidden');$('#app').classList.add('hidden');$('#admin').classList.remove('hidden');try{history.replaceState(null,'',location.pathname+'?lehrkraft#lehrkraft')}catch(e){}
+ var c=null,p=null;try{c=sessionStorage.getItem('scrum-ad-code');p=sessionStorage.getItem('scrum-ad-pin')}catch(e){}
+ if(c&&p){AD.code=c;AD.pin=p;adLoad().catch(function(){AD.code=null;AD.pin=null;adRender()})}else adRender();window.scrollTo(0,0)}
+function closeAdmin(){$('#admin').classList.add('hidden');$('#landing').classList.remove('hidden');try{history.replaceState(null,'',location.pathname)}catch(e){}window.scrollTo(0,0)}
+function adLogout(){AD={code:null,pin:null,cls:null,tab:'overview',created:null,tpl:null};try{sessionStorage.removeItem('scrum-ad-code');sessionStorage.removeItem('scrum-ad-pin')}catch(e){}adRender()}
+function adLoad(){return adRpc('scrum_class_get',{p_code:AD.code,p_pin:AD.pin}).then(function(d){AD.cls=d;AD.code=d.code;try{sessionStorage.setItem('scrum-ad-code',AD.code);sessionStorage.setItem('scrum-ad-pin',AD.pin)}catch(e){}lsSet('scrum-ad-last',AD.code);adRender();return d})}
+function adSave(patch,name){return adRpc('scrum_class_save',{p_code:AD.code,p_pin:AD.pin,p_data:patch,p_name:name==null?null:name}).then(function(){if(!AD.cls)return;AD.cls.data=Object.assign({},AD.cls.data||{},patch);if(name!=null)AD.cls.name=name})}
+
+function adRender(){var v=$('#aview');
+ if(!AD.cls){v.innerHTML=adLoginHtml();adLoginBind();return}
+ var T=[['overview','Übersicht','i-chart'],['groups','Gruppen anlegen','i-plus'],['defaults','Vorgaben','i-check'],['material','Material','i-link'],['settings','Einstellungen','i-edit']];
+ $('#adTitle').textContent=AD.cls.name||'Klasse';$('#adCode').textContent=AD.cls.code;$('#adHead').classList.remove('hidden');
+ $('#adTabs').innerHTML=T.map(function(t){return '<button class="tab'+(AD.tab===t[0]?' on':'')+'" data-at="'+t[0]+'">'+ico(t[2])+t[1]+'</button>'}).join('');
+ v.innerHTML=(AD_R[AD.tab]||AD_R.overview)();if(AD_A[AD.tab])AD_A[AD.tab]()}
+var AD_R={},AD_A={};
+
+function adLoginHtml(){$('#adHead').classList.add('hidden');$('#adTabs').innerHTML='';
+ return '<div class="viewhead"><div><h2>Lehrkraft-Bereich</h2><p>Legt eine Klasse an, erstellt Räume für alle Gruppen mit euren Vorgaben und behaltet den Überblick über alle Sprints.</p></div><div class="row noprint"><button class="btn" id="adBack">'+ico('i-left')+'Zur Startseite</button></div></div>'+
+ '<div class="gate"><section class="card"><h2>Klasse öffnen</h2><p class="lead">Mit dem Klassencode und eurer PIN.</p>'+
+ '<label class="f" for="alCode">Klassencode</label><input type="text" id="alCode" maxlength="24" placeholder="z. B. KLASSE-K7P3" autocomplete="off" style="text-transform:uppercase" value="'+esc(lsGet('scrum-ad-last')||'')+'">'+
+ '<label class="f" for="alPin">PIN</label><div class="row"><input class="grow" type="password" id="alPin" maxlength="40" autocomplete="current-password"><button class="btn p" id="alGo">Öffnen</button></div></section>'+
+ '<section class="card"><h2>Neue Klasse anlegen</h2><p class="lead">Eine Klasse bündelt die Räume aller Gruppen.</p>'+
+ '<label class="f" for="acName">Klasse und Fach</label><input type="text" id="acName" maxlength="80" placeholder="z. B. GTA 11a – Präsentationstechniken">'+
+ '<label class="f" for="acTeacher">Dein Name (erscheint als Product Owner)</label><input type="text" id="acTeacher" maxlength="30" placeholder="z. B. Frau Schmidt" value="'+esc(lsGet('scrum-name')||'')+'">'+
+ '<div class="grid2" style="gap:12px"><div><label class="f" for="acPin">PIN (mind. 4 Zeichen)</label><input type="password" id="acPin" maxlength="40" autocomplete="new-password"></div><div><label class="f" for="acPin2">PIN wiederholen</label><input type="password" id="acPin2" maxlength="40" autocomplete="new-password"></div></div>'+
+ '<div class="row" style="margin-top:14px"><button class="btn p" id="acGo">'+ico('i-plus')+'Klasse anlegen</button></div>'+
+ '<p class="small muted">Notiert euch Klassencode und PIN. Die PIN wird verschlüsselt gespeichert und lässt sich nicht wiederherstellen.</p></section></div>'+
+ '<p class="small" id="adMsg" aria-live="polite" style="margin-top:12px"></p>'}
+function adLoginBind(){$('#adBack').onclick=closeAdmin;
+ var go=function(){var c=$('#alCode').value.trim().toUpperCase(),p=$('#alPin').value;if(!c||!p){adMsg('Bitte Klassencode und PIN eintragen.',true);return}adMsg('Klasse wird geladen …');AD.code=c;AD.pin=p;adLoad().catch(function(e){AD.cls=null;adMsg(e.message,true)})};
+ $('#alGo').onclick=go;$('#alPin').addEventListener('keydown',function(e){if(e.key==='Enter')go()});
+ $('#acGo').onclick=function(){var n=$('#acName').value.trim(),t=$('#acTeacher').value.trim(),p=$('#acPin').value,p2=$('#acPin2').value;
+  if(!n){adMsg('Bitte einen Namen für die Klasse eintragen.',true);return}if(!t){adMsg('Bitte deinen Namen eintragen.',true);return}if(p.length<4){adMsg('Die PIN muss mindestens 4 Zeichen haben.',true);return}if(p!==p2){adMsg('Die beiden PINs stimmen nicht überein.',true);return}
+  adMsg('Klasse wird angelegt …');var tries=0;
+  (function attempt(){var c=genClassCode();adRpc('scrum_class_create',{p_code:c,p_name:n,p_pin:p}).then(function(){AD.code=c;AD.pin=p;return adSave({teacher:t,dod:['Ergebnis ist schriftlich dokumentiert','Alle Akzeptanzkriterien sind erfüllt','Ein anderes Teammitglied hat es geprüft','Quellen sind angegeben'],weeks:3})}).then(function(){AD.cls=null;return adLoad()}).then(function(){AD.tab='groups';adRender();toast('Klasse '+c+' angelegt – Code und PIN notieren')}).catch(function(e){if(/exists/.test(e.message)&&tries++<4)return attempt();adMsg(e.message,true)})})()}}
+
+/* --- Übersicht --- */
+function adRoomStats(code){var rd=(AD.cls.roomData||{})[code];if(!rd)return null;var it=rd.items||{},me=rd.meta||{};var L=Object.keys(it).map(function(k){return it[k]}).filter(function(x){return x&&!x.del});
+ var mv=function(k,d){return me[k]&&me[k].v!==undefined?me[k].v:d};var st=L.filter(function(x){return x.t==='story'}),tk=L.filter(function(x){return x.t==='task'});
+ var pts=function(a){return a.reduce(function(s,t){return s+(parseInt(t.pts,10)||0)},0)};
+ return {goal:mv('goal',''),members:(mv('members',[])||[]).filter(Boolean),stories:st.length,storiesDone:st.filter(function(s){return s.status==='done'}).length,inSprint:st.filter(function(s){return s.status==='sprint'}).length,
+  pts:pts(tk),ptsDone:pts(tk.filter(function(t){return t.col==='done'})),blockers:L.filter(function(x){return x.t==='blocker'&&!x.solved}).length,reviews:L.filter(function(x){return x.t==='review'}).length,links:L.filter(function(x){return x.t==='link'}).length,folder:mv('folder',null),updated:rd.updated_at}}
+function fmtAgo(ts){if(!ts)return '–';var d=new Date(ts);if(isNaN(d))return '–';var m=Math.round((Date.now()-d.getTime())/60000);if(m<2)return 'gerade eben';if(m<60)return 'vor '+m+' Min.';var h=Math.round(m/60);if(h<24)return 'vor '+h+' Std.';return d.toLocaleDateString('de-DE')}
+AD_R.overview=function(){var rooms=AD.cls.rooms||[];
+ return head('Übersicht',rooms.length?'Alle Gruppen der Klasse auf einen Blick. Öffnet einen Raum, um mitzulesen oder als Product Owner mitzuarbeiten.':'Noch keine Gruppen. Legt im Reiter „Gruppen anlegen“ die Räume für eure Gruppen an.','<button class="btn" id="adReload">'+ico('i-loop')+'Aktualisieren</button>'+(rooms.length?'<button class="btn" id="adCopyAll">'+ico('i-copy')+'Alle Links kopieren</button><button class="btn" id="adPrint">'+ico('i-dl')+'Linkzettel drucken</button>':''))+
+ (rooms.length?'<div class="stack">'+rooms.map(function(r){var s=adRoomStats(r.code);var pct=s&&s.pts?Math.round(100*s.ptsDone/s.pts):0;
+  return '<section class="card"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><h3 style="margin:0">'+esc(r.name||r.code)+'</h3><div class="small muted">Raum <b>'+esc(r.code)+'</b>'+(s&&s.members.length?' · '+esc(s.members.join(', ')):' · noch keine Mitglieder')+' · zuletzt geändert '+fmtAgo(s&&s.updated)+'</div></div>'+
+  '<div class="row"><a class="btn p s" href="'+esc(roomUrl(r.code))+'" target="_blank" rel="noopener">'+ico('i-ext')+'Öffnen</a><button class="btn s" data-acopy="'+esc(r.code)+'">'+ico('i-copy')+'Link</button><button class="btn s danger" data-arm="'+esc(r.code)+'" aria-label="Aus der Übersicht entfernen">'+ico('i-trash')+'</button></div></div>'+
+  (s?'<p style="margin:10px 0 8px">'+(s.goal?'<b>Sprint-Ziel:</b> '+esc(s.goal):'<span class="muted">Noch kein Sprint-Ziel.</span>')+'</p>'+
+  '<div style="height:8px;border-radius:99px;background:#e2e8f0;overflow:hidden" title="'+pct+' % der Punkte erledigt"><div style="height:100%;width:'+pct+'%;background:var(--accent-2,#14b8a6)"></div></div>'+
+  '<div class="row" style="margin-top:10px;gap:6px"><span class="chip">'+s.ptsDone+' / '+s.pts+' Punkte</span><span class="chip grey">'+s.stories+' Stories · '+s.inSprint+' im Sprint · '+s.storiesDone+' fertig</span><span class="chip '+(s.blockers?'bad':'grey')+'">'+s.blockers+' offene Hindernisse</span><span class="chip grey">'+s.reviews+' Reviews</span><span class="chip grey">'+s.links+' Links</span>'+(s.folder&&s.folder.url?'<a class="chip" href="'+esc(s.folder.url)+'" target="_blank" rel="noopener noreferrer">'+ico('i-link')+'Projektordner</a>':'')+'</div>':'<p class="small muted">Raum nicht gefunden.</p>')+'</section>'}).join('')+'</div>':'<div class="empty">Noch keine Gruppenräume.</div>')};
+AD_A.overview=function(){$('#adReload').onclick=function(){adLoad().then(function(){toast('Aktualisiert')}).catch(function(e){toast(e.message)})};
+ var ca=$('#adCopyAll');if(ca)ca.onclick=function(){copyText((AD.cls.rooms||[]).map(function(r){return (r.name||r.code)+': '+roomUrl(r.code)}).join('\n'))};
+ var pr=$('#adPrint');if(pr)pr.onclick=function(){adPrintSheet(AD.cls.rooms||[])};
+ $$('[data-acopy]').forEach(function(b){b.onclick=function(){copyText(roomUrl(b.dataset.acopy))}});
+ $$('[data-arm]').forEach(function(b){b.onclick=function(){var c=b.dataset.arm;dialog('Gruppe aus der Übersicht entfernen?','<p>Der Raum <b>'+esc(c)+'</b> verschwindet aus eurer Klassenübersicht. Der Raum selbst und alle Inhalte bleiben erhalten und sind weiter über den Code erreichbar.</p>',[['no','Abbrechen'],['yes','Entfernen',true]]).then(function(v){if(v!=='yes')return;adRpc('scrum_class_remove_room',{p_code:AD.code,p_pin:AD.pin,p_room:c}).then(adLoad).then(function(){toast('Aus der Übersicht entfernt')}).catch(function(e){toast(e.message)})})}})};
+
+/* --- QR-Codes und Linkzettel --- */
+var qrPromise=null;
+function loadQr(){if(qrPromise)return qrPromise;qrPromise=new Promise(function(res){if(window.qrcode)return res(true);var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';s.onload=function(){res(!!window.qrcode)};s.onerror=function(){res(false)};document.head.appendChild(s);setTimeout(function(){res(!!window.qrcode)},8000)});return qrPromise}
+function qrSvg(text,cell){try{var q=window.qrcode(0,'M');q.addData(text);q.make();return q.createSvgTag({cellSize:cell||4,margin:2,scalable:true})}catch(e){return ''}}
+function adPrintSheet(rooms){loadQr().then(function(ok){var cls=AD.cls||{};
+ var cards=rooms.map(function(r){var u=roomUrl(r.code);return '<div class="c"><h2>'+esc(r.name||r.code)+'</h2>'+(ok?'<div class="q">'+qrSvg(u,5)+'</div>':'')+'<p class="code">Raumcode: <b>'+esc(r.code)+'</b></p><p class="u">'+esc(u)+'</p><p class="h">Seite öffnen, Vornamen eintragen, „Beitreten“ klicken.</p></div>'}).join('');
+ var html='<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><title>Raumlinks – '+esc(cls.name||'')+'</title><style>body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;margin:24px;color:#0f172a}h1{font-size:20px;margin:0 0 4px}.sub{color:#475569;margin:0 0 18px}.g{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.c{border:2px dashed #94a3b8;border-radius:14px;padding:16px;break-inside:avoid;text-align:center}.c h2{font-size:18px;margin:0 0 8px}.q svg{width:150px;height:150px}.code{font-size:16px;margin:8px 0 4px}.u{font-size:11px;color:#475569;word-break:break-all;margin:0}.h{font-size:12px;margin:8px 0 0}button{font:inherit;padding:8px 14px;margin-bottom:14px}@media print{button{display:none}body{margin:10mm}}</style></head><body><button onclick="window.print()">Drucken</button><h1>Scrum-Werkstatt: '+esc(cls.name||'')+'</h1><p class="sub">Ein Zettel pro Gruppe. Entlang der gestrichelten Linie ausschneiden.</p><div class="g">'+cards+'</div></body></html>';
+ var w=window.open(URL.createObjectURL(new Blob([html],{type:'text/html'})),'_blank');if(!w)toast('Bitte Pop-ups für diese Seite erlauben')})}
+
+/* --- Gruppen anlegen --- */
+AD_R.groups=function(){var tpl=adD('templateRoom','');var cr=AD.created;
+ return head('Gruppen anlegen','Ein Raum pro Gruppe. Jeder Raum startet mit euren Vorgaben, die Gruppen tragen ihre Namen beim Beitreten selbst ein.')+
+ '<div class="grid2"><section class="card"><h3>Gruppennamen</h3><p class="lead">Ein Name pro Zeile, höchstens 40.</p><textarea id="agNames" data-keep="agNames" style="min-height:170px" placeholder="Team Kaffeebohne&#10;Team Pixel&#10;Team Kontrast"></textarea>'+
+ '<h3 style="margin-top:16px">Was soll jeder Raum enthalten?</h3><div class="stack">'+
+ '<label class="check"><input type="checkbox" id="agDef" checked><span><b>Vorgaben</b><br><span class="muted">Product Owner, Definition of Done, Sprint-Start, Dauer und Termine aus dem Reiter „Vorgaben“</span></span></label>'+
+ '<label class="check"><input type="checkbox" id="agSt"'+(tpl?' checked':'')+'><span><b>Vorbereitete User Stories</b><br><span class="muted">aus einem Vorlage-Raum, sie landen im Backlog der Gruppe</span></span></label>'+
+ '<div style="margin-left:30px"><label class="f" for="agTpl" style="margin-top:0">Vorlage-Raum (Code)</label><div class="row"><input class="grow" type="text" id="agTpl" maxlength="24" style="text-transform:uppercase" placeholder="z. B. TEAM-A395" value="'+esc(tpl)+'"><button class="btn s" id="agTplLoad">Prüfen</button></div><p class="small muted" id="agTplInfo">'+(AD.tpl?esc(AD.tpl.info):'Legt die Stories in einem normalen Raum an und tragt hier dessen Code ein.')+'</p>'+
+ '<label class="check"><input type="checkbox" id="agTk"><span>Auch die Aufgaben zu den Stories übernehmen</span></label></div>'+
+ '<label class="check"><input type="checkbox" checked disabled><span><b>Material der Lehrkraft</b><br><span class="muted">Das Material aus dem Reiter „Material“ erscheint automatisch in allen Räumen der Klasse, auch später ergänztes.</span></span></label></div>'+
+ '<div class="row" style="margin-top:16px"><button class="btn p" id="agGo">'+ico('i-plus')+'Räume anlegen</button></div><p class="small" id="adMsg" aria-live="polite"></p></section>'+
+ '<section class="card"><h3>Links für die Gruppen</h3>'+(cr&&cr.length?'<p class="lead">Gerade angelegt. Gebt jeder Gruppe ihren Link oder druckt die Zettel mit QR-Code.</p><div class="row" style="margin-bottom:12px"><button class="btn" id="agCopy">'+ico('i-copy')+'Alle Links kopieren</button><button class="btn" id="agPrint">'+ico('i-dl')+'Linkzettel drucken</button></div><div class="stack" id="agList">'+cr.map(function(r){return '<div class="lrow"><span class="grow"><b>'+esc(r.name)+'</b><br><span class="small muted">'+esc(roomUrl(r.code))+'</span></span><span class="qrs" data-qr="'+esc(roomUrl(r.code))+'" style="width:76px;height:76px"></span><button class="btn s" data-acopy="'+esc(r.code)+'">'+ico('i-copy')+'Link</button></div>'}).join('')+'</div>':
+ '<div class="empty">Hier erscheinen die Links, sobald ihr Räume angelegt habt. Alle Räume der Klasse findet ihr außerdem in der Übersicht.</div>')+'</section></div>'};
+function adLoadTpl(code){code=String(code||'').trim().toUpperCase();if(!code)return Promise.resolve(null);return loadSupa().then(function(sb){if(!sb)throw new Error('Keine Verbindung zum Server.');return sb.rpc('scrum_get',{p_code:code})}).then(function(r){if(r.error)throw new Error(r.error.message);if(!r.data)throw new Error('Den Vorlage-Raum '+code+' gibt es nicht.');
+ var it=r.data.items||{};var L=Object.keys(it).map(function(k){return it[k]}).filter(function(x){return x&&!x.del});var st=L.filter(function(x){return x.t==='story'}).sort(function(a,b){return (a.order||0)-(b.order||0)});var tk=L.filter(function(x){return x.t==='task'});
+ AD.tpl={code:code,stories:st,tasks:tk,info:'„'+((r.data.meta&&r.data.meta.teamName&&r.data.meta.teamName.v)||r.data.name||code)+'“: '+st.length+' Stories, '+tk.length+' Aufgaben'};return AD.tpl})}
+function adBuildRoom(name,code,opt){var now=Date.now(),n=0;var u=function(){return now+(n++)};var meta={},items={};var m=function(k,v){meta[k]={v:v,u:u()}};var d=AD.cls.data||{};
+ m('teamName',name);m('classCode',AD.cls.code);m('className',AD.cls.name||'');m('sprintNo',1);m('week',1);m('members',[]);
+ if(opt.def){if(d.teacher)m('po',d.teacher);if(d.dod&&d.dod.length)m('dod',d.dod);if(d.startDate)m('startDate',d.startDate);m('weeks',parseInt(d.weeks,10)||3);if(d.schedule)m('schedule',d.schedule)}
+ else{m('weeks',6);m('dod',['Ergebnis ist schriftlich dokumentiert','Alle Akzeptanzkriterien sind erfüllt','Ein anderes Teammitglied hat es geprüft','Quellen sind angegeben']);if(d.teacher)m('po',d.teacher)}
+ if(opt.tpl){var map={};opt.tpl.stories.forEach(function(s,i){var id=uid()+i;map[s.id]=id;items[id]={id:id,t:'story',title:s.title||'',role:s.role||'',want:s.want||'',benefit:s.benefit||'',ac:(s.ac||[]).slice(),prio:s.prio||'Soll',color:s.color||COLORS[i%COLORS.length],invest:s.invest||{},order:i+1,status:'backlog',pts:null,u:u(),by:d.teacher||'Lehrkraft'}});
+  if(opt.tasks)opt.tpl.tasks.forEach(function(t,i){if(!map[t.story])return;var id=uid()+'t'+i;items[id]={id:id,t:'task',title:t.title||'',story:map[t.story],pts:t.pts||null,who:'',col:'todo',order:i+1,u:u(),by:d.teacher||'Lehrkraft'}})}
+ return {code:code,name:name,items:items,meta:meta}}
+AD_A.groups=function(){
+ $('#agTplLoad').onclick=function(){var c=$('#agTpl').value;$('#agTplInfo').textContent='Wird geprüft …';adLoadTpl(c).then(function(t){$('#agTplInfo').textContent=t?t.info:'Kein Vorlage-Raum eingetragen.';if(t){$('#agSt').checked=true;adSave({templateRoom:t.code}).catch(function(){})}}).catch(function(e){AD.tpl=null;$('#agTplInfo').textContent=e.message})};
+ $('#agGo').onclick=function(){var names=$('#agNames').value.split('\n').map(function(x){return x.trim().slice(0,80)}).filter(Boolean);
+  if(!names.length){adMsg('Bitte mindestens einen Gruppennamen eintragen.',true);return}if(names.length>40){adMsg('Höchstens 40 Gruppen auf einmal.',true);return}
+  var useSt=$('#agSt').checked,tc=$('#agTpl').value.trim().toUpperCase(),btn=this;btn.disabled=true;adMsg('Räume werden angelegt …');
+  var tplP=useSt?((AD.tpl&&AD.tpl.code===tc)?Promise.resolve(AD.tpl):adLoadTpl(tc)):Promise.resolve(null);
+  tplP.then(function(tpl){if(useSt&&!tpl)throw new Error('Bitte einen Vorlage-Raum eintragen oder „Vorbereitete User Stories“ abwählen.');
+   var opt={def:$('#agDef').checked,tpl:useSt?tpl:null,tasks:$('#agTk').checked};var done=[];
+   var run=function(list,round){var rooms=list.map(function(nm){return adBuildRoom(nm,genCode(),opt)});
+    return adRpc('scrum_class_add_rooms',{p_code:AD.code,p_pin:AD.pin,p_rooms:rooms}).then(function(r){var added=(r&&r.added)||[];var got={};added.forEach(function(a){got[a.code]=1;done.push(a)});
+     var miss=rooms.filter(function(x){return !got[x.code]}).map(function(x){return x.name});if(miss.length&&round<3)return run(miss,round+1);if(miss.length)throw new Error('Nicht angelegt: '+miss.join(', '))})};
+   return run(names,1).then(function(){AD.created=done;if(useSt&&tpl)adSave({templateRoom:tpl.code}).catch(function(){});return adLoad()}).then(function(){$('#agNames')&&($('#agNames').value='');toast(done.length+' Räume angelegt')})}).catch(function(e){adMsg(e.message,true)}).then(function(){var b=$('#agGo');if(b)b.disabled=false})};
+ var c=$('#agCopy');if(c)c.onclick=function(){copyText(AD.created.map(function(r){return r.name+': '+roomUrl(r.code)}).join('\n'))};
+ var p=$('#agPrint');if(p)p.onclick=function(){adPrintSheet(AD.created)};
+ $$('[data-acopy]').forEach(function(b){b.onclick=function(){copyText(roomUrl(b.dataset.acopy))}});
+ if($$('[data-qr]').length)loadQr().then(function(ok){if(!ok)return;$$('[data-qr]').forEach(function(e){e.innerHTML=qrSvg(e.dataset.qr,2);var s=$('svg',e);if(s){s.style.width='76px';s.style.height='76px'}})})};
+
+/* --- Vorgaben --- */
+AD_R.defaults=function(){var dod=adD('dod',[])||[];
+ return head('Vorgaben','Gelten für alle Räume, die ihr ab jetzt anlegt. Bestehende Räume bleiben unverändert, dort können die Gruppen die Werte selbst anpassen.')+
+ '<div class="grid2"><section class="card"><h3>Sprint</h3><label class="f" for="adTeacher">Product Owner (dein Name)</label><input type="text" id="adTeacher" maxlength="30" value="'+esc(adD('teacher',''))+'">'+
+ '<p class="small muted">Mit genau diesem Namen hast du in den Räumen die Rechte der Lehrkraft, zum Beispiel für das Material.</p>'+
+ '<div class="grid2" style="gap:12px"><div><label class="f" for="adStart">Sprint-Start</label><input type="date" id="adStart" value="'+esc(adD('startDate',''))+'"></div><div><label class="f" for="adWeeks">Dauer in Wochen</label><input type="number" id="adWeeks" min="1" max="20" value="'+esc(adD('weeks',3))+'"></div></div>'+
+ '<label class="f" for="adSched">Termine (erscheinen auf der Startseite jedes Raums)</label><textarea id="adSched" style="min-height:150px" placeholder="Di 02.02.: Sprint Planning&#10;Di 09.02.: Stand-up und Arbeitsphase&#10;Di 23.02.: Review und Retrospektive">'+esc(adD('schedule',''))+'</textarea></section>'+
+ '<section class="card"><h3>Definition of Done</h3><p class="lead">Ein Kriterium pro Zeile.</p><textarea id="adDod" style="min-height:170px">'+esc(dod.join('\n'))+'</textarea></section></div>'+
+ '<div class="row" style="margin-top:16px"><button class="btn p" id="adDefSave">'+ico('i-check')+'Vorgaben speichern</button></div>'};
+AD_A.defaults=function(){$('#adDefSave').onclick=function(){var p={teacher:$('#adTeacher').value.trim(),startDate:$('#adStart').value,weeks:Math.max(1,Math.min(20,parseInt($('#adWeeks').value,10)||3)),schedule:$('#adSched').value.trim(),dod:$('#adDod').value.split('\n').map(function(x){return x.trim()}).filter(Boolean)};
+ adSave(p).then(function(){toast('Vorgaben gespeichert')}).catch(function(e){toast(e.message)})}};
+
+/* --- Material der Klasse --- */
+AD_R.material=function(){var mat=adD('material',[])||[];
+ return head('Material für die ganze Klasse','Hintergrundinformationen, Aufgabenstellung, Briefing, Bewertungskriterien oder Vorlagen. Es erscheint in jedem Raum der Klasse im Reiter „Material“ unter „Material der Lehrkraft“.')+
+ '<div class="grid2"><section class="card"><h3>Material hinzufügen</h3><label class="f" for="amUrl">Link</label><input type="url" id="amUrl" placeholder="https://…">'+
+ '<label class="f" for="amTitle">Titel</label><input type="text" id="amTitle" maxlength="80" placeholder="z. B. Briefing der Kundin">'+
+ '<label class="f" for="amKind">Art</label><select id="amKind">'+TLINK_KINDS.map(function(k){return '<option>'+k+'</option>'}).join('')+'</select>'+
+ '<label class="f" for="amNote">Hinweis für die Lernenden (optional)</label><input type="text" id="amNote" maxlength="160" placeholder="z. B. Bis zur Sprintplanung lesen">'+
+ '<div class="row" style="margin-top:12px"><button class="btn p" id="amAdd">'+ico('i-plus')+'Material speichern</button></div>'+
+ '<p class="small muted" style="margin-top:10px">Achtet auf die Freigabe: Alle Lernenden der Klasse müssen den Link öffnen können. Wer den Raumcode kennt, sieht die Links.</p></section>'+
+ '<section class="card tmat"><h3>Hinterlegtes Material ('+mat.length+')</h3>'+(mat.length?'<div class="stack">'+mat.map(function(l,i){return tlinkRow(l,false).replace(/<\/div>$/,'<button class="btn s danger" data-amdel="'+i+'" aria-label="Entfernen">'+ico('i-trash')+'</button></div>')}).join('')+'</div>':'<div class="empty">Noch kein Material.</div>')+'</section></div>'};
+AD_A.material=function(){$('#amAdd').onclick=function(){var x=safeUrl($('#amUrl').value);if(!x){toast('Bitte einen gültigen https-Link eintragen');$('#amUrl').focus();return}
+  var mat=(adD('material',[])||[]).slice();mat.push({id:uid(),url:x,title:$('#amTitle').value.trim()||svcOf(x),kind:$('#amKind').value,note:$('#amNote').value.trim()});
+  adSave({material:mat}).then(function(){adRender();toast('Material gespeichert')}).catch(function(e){toast(e.message)})};
+ $$('[data-amdel]').forEach(function(b){b.onclick=function(){var mat=(adD('material',[])||[]).slice();mat.splice(+b.dataset.amdel,1);adSave({material:mat}).then(function(){adRender();toast('Material entfernt')}).catch(function(e){toast(e.message)})}})};
+
+/* --- Einstellungen --- */
+AD_R.settings=function(){return head('Einstellungen','Name der Klasse, PIN und Abmelden.')+
+ '<div class="grid2"><section class="card"><h3>Klasse</h3><label class="f" for="asName">Name</label><input type="text" id="asName" maxlength="80" value="'+esc(AD.cls.name||'')+'">'+
+ '<p class="small muted">Klassencode: <b>'+esc(AD.cls.code)+'</b>. Mit Code und PIN öffnet ihr die Klasse auch auf einem anderen Gerät.</p><div class="row"><button class="btn p" id="asNameSave">'+ico('i-check')+'Speichern</button></div></section>'+
+ '<section class="card"><h3>PIN ändern</h3><label class="f" for="asPin">Neue PIN (mind. 4 Zeichen)</label><input type="password" id="asPin" maxlength="40" autocomplete="new-password"><label class="f" for="asPin2">Neue PIN wiederholen</label><input type="password" id="asPin2" maxlength="40" autocomplete="new-password">'+
+ '<div class="row" style="margin-top:12px"><button class="btn p" id="asPinSave">PIN ändern</button><button class="btn" id="asOut">'+ico('i-out')+'Abmelden</button></div>'+
+ '<p class="small muted">Nach fünf falschen PIN-Eingaben ist die Klasse zehn Minuten gesperrt.</p></section></div>'};
+AD_A.settings=function(){$('#asNameSave').onclick=function(){var n=$('#asName').value.trim();if(!n)return;adSave({},n).then(function(){adRender();toast('Gespeichert')}).catch(function(e){toast(e.message)})};
+ $('#asPinSave').onclick=function(){var p=$('#asPin').value,p2=$('#asPin2').value;if(p.length<4){toast('Die PIN muss mindestens 4 Zeichen haben');return}if(p!==p2){toast('Die PINs stimmen nicht überein');return}
+  adRpc('scrum_class_set_pin',{p_code:AD.code,p_pin:AD.pin,p_new_pin:p}).then(function(){AD.pin=p;try{sessionStorage.setItem('scrum-ad-pin',p)}catch(e){}$('#asPin').value='';$('#asPin2').value='';toast('PIN geändert')}).catch(function(e){toast(e.message)})};
+ $('#asOut').onclick=adLogout};
+
+$('#adTabs').addEventListener('click',function(e){var b=e.target.closest('[data-at]');if(!b)return;AD.tab=b.dataset.at;adRender();window.scrollTo(0,0)});
+$('#adOut').onclick=adLogout;$('#adHome').onclick=closeAdmin;
+$('#gTeacher').onclick=function(e){e.preventDefault();openAdmin()};
+
+/* --- Klassenmaterial im Raum --- */
+function loadClassMat(){var c=M('classCode','');if(!c||S.mode!=='online'||!S.sb){S.classMat=null;return}
+ S.sb.rpc('scrum_class_public',{p_code:c}).then(function(r){if(r.error||!r.data){S.classMat=null;return}S.classMat=r.data.material||[];S.className=r.data.name||'';if(S.view==='material'||S.view==='start')renderView(true)},function(){})}
+
 $('#landingBasics').innerHTML=basicsHtml(false);bindBasics($('#landingBasics'));
 $('#cycleLanding').innerHTML=cycleHtml();$$('#cycleLanding .step').forEach(function(b){b.disabled=true;b.style.cursor='default'});
 $('#gName').value=lsGet('scrum-name')||'';
@@ -872,6 +1069,7 @@ $('#gJoin').onclick=join;$('#gCreate').onclick=create;$('#gCode').addEventListen
 $('#gLocal').onclick=function(){if(!getName())return;var c='LOKAL-'+genCode().slice(5);enter(c,'local');seedDefaults();toast('Lokaler Testraum – nur in diesem Browser')};
 checkBackend().then(function(b){backend=b;var t=$('#gSupa');if(b==='ok')t.textContent='Online-Räume verfügbar: Änderungen werden gespeichert und live geteilt.';else if(b==='notable')t.innerHTML='<b>Online-Räume noch nicht eingerichtet:</b> In Supabase fehlt die Tabelle „scrum_rooms“. Bis dahin funktioniert die Werkstatt nur lokal in diesem Browser.';else t.textContent='Keine Verbindung zum Server: Räume werden nur in diesem Browser gespeichert.';
  if(qp&&$('#gName').value){join()}});
+if(/[?&]lehrkraft\b/.test(location.search)||location.hash==='#lehrkraft')openAdmin();
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')flush()});
 window.addEventListener('beforeunload',function(){flush()});
 })();
