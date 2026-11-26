@@ -130,6 +130,74 @@
     .karte { box-shadow: none; margin: 0; max-width: none; animation: none; }
     details { border: none; }
   }
+
+/* Modern Winter Edition – ausschließlich lokale Systemschriften */
+@media screen {
+:root { --nacht:#10192d; --nacht2:#233650; --gold:#ffd77a; --rot:#a92e59; --gruen:#126b61; --creme:#f7fafc; --text:#17263a; --sand:#e8f3f3; }
+body { background: radial-gradient(ellipse at 85% 0%, #34415e 0%, transparent 48%), radial-gradient(ellipse at 0% 45%, #163c49 0%, transparent 55%), #10192d; }
+.wrap { max-width:1100px; padding:36px 24px 48px; }
+header { text-align:left; position:relative; padding:32px; border:1px solid #ffffff25; border-radius:26px; background:linear-gradient(120deg,#ffffff0c,#ffffff03); overflow:hidden; }
+header:before { content:'01 — 24 / DEZEMBER'; display:block; color:#a8e6db; font-size:.78rem; font-weight:800; letter-spacing:.19em; margin-bottom:14px; }
+header h1 { font-family:inherit; font-size:clamp(2rem,6vw,4.2rem); font-weight:850; letter-spacing:-.055em; line-height:1.05; color:#fff; overflow-wrap:anywhere; }
+header p { color:#dce7f5; font-size:clamp(1rem,2.4vw,1.25rem); margin-top:12px; }
+.girlande { position:absolute; right:24px; top:18px; opacity:.7; margin:0; }
+.girlande:before { display:none; }
+.lampe { width:5px; height:5px; margin:0 3px; border-radius:50%; animation:none; }
+.deko-reihe,.baeume { display:none; }
+.hinweis { margin:24px 0 0; max-width:none; background:#ffffff0c; border:1px solid #ffffff20; border-radius:12px; padding:13px 16px; color:#f4f8ff; }
+.fortschritt { margin:18px 0 0; max-width:100%; color:#c9d8e9; font-size:.85rem; font-weight:600; }
+.balken { height:6px; margin-top:10px; background:#ffffff20; }
+.balken div { background:linear-gradient(90deg,#75dfc8,#ffd77a); }
+.grid { gap:14px; margin-top:20px; }
+.tuer-rahmen { padding-top:100%; }
+.innen,.klappe { border-radius:18px; }
+.innen { background:#e7f5f2; color:#17263a; box-shadow:inset 0 0 0 1px #a8d5cc; font-size:2.4rem; }
+.klappe { font-family:inherit; font-size:clamp(1.8rem,4vw,3.1rem); font-weight:850; letter-spacing:-.06em; color:#fff; border:1px solid #ffffff30; box-shadow:0 6px 18px #0003; overflow:hidden; isolation:isolate; }
+.klappe:before,.klappe:after { content:''; position:absolute; z-index:-1; pointer-events:none; }
+.klappe:before { width:85%; height:85%; right:-35%; top:-35%; border:1px solid #ffffff35; border-radius:50%; box-shadow:0 0 0 12px #ffffff0b,0 0 0 24px #ffffff09; }
+.klappe:after { width:65%; height:65%; left:-32%; bottom:-42%; transform:rotate(45deg); background:#ffffff13; border:1px solid #ffffff20; }
+.farbe0 .klappe { background:linear-gradient(145deg,#245c72,#17374e); }
+.farbe1 .klappe { background:linear-gradient(145deg,#247c72,#174b50); }
+.farbe2 .klappe { background:linear-gradient(145deg,#795caa,#42365f); }
+.farbe3 .klappe { background:linear-gradient(145deg,#a64d68,#65364e); }
+.farbe1 .klappe:before { border-radius:12px; transform:rotate(35deg); }
+.farbe2 .klappe:before { border-radius:0; transform:rotate(45deg); }
+.farbe3 .klappe:after { border-radius:50%; }
+.eck-deko { top:10px; left:12px; font-size:.85rem; opacity:.85; letter-spacing:0; }
+.schloss { right:10px; bottom:9px; font-size:.75rem; letter-spacing:0; opacity:.9; }
+.tuer.gesperrt .klappe { filter:saturate(.75); }
+.tuer.heute .klappe { border:3px solid var(--gold); color:#fff; }
+.tuer.heute:not(.offen) .klappe:after { content:'HEUTE'; z-index:1; width:auto; height:auto; left:50%; bottom:9px; transform:translateX(-50%); background:var(--gold); color:#17263a; border:0; border-radius:20px; padding:3px 8px; font-size:.58rem; letter-spacing:.08em; }
+.tuer.offen .innen:after { content:'✓'; position:absolute; right:10px; bottom:8px; font-size:1rem; color:#126b61; font-weight:800; }
+@media (hover:hover) { .tuer:not(.offen):not(.gesperrt):hover .klappe { transform:translateY(-4px); box-shadow:0 12px 24px #0005; } }
+.schnee { opacity:.3; z-index:0; }
+.sterne { opacity:.45; }
+footer { color:#cbd8e9; opacity:1; line-height:1.6; margin:28px auto 0; max-width:680px; }
+.overlay { background:#07111cce; }
+.karte { max-width:680px; border-radius:24px; border-top:6px solid #53bfae; padding:32px; box-shadow:0 24px 80px #0006; line-height:1.65; }
+.karte .gross { text-align:left; font-size:2.2rem; margin-bottom:8px; }
+.karte .tag { color:#126b61; font-size:.75rem; letter-spacing:.15em; }
+.karte blockquote { font-family:inherit; font-weight:800; font-size:clamp(1.45rem,4vw,2rem); letter-spacing:-.035em; line-height:1.25; margin:12px 0 24px; }
+.box { border:0; border-radius:14px; padding:18px; background:#e5f3ef; }
+.box strong.titel { font-size:.78rem; text-transform:uppercase; letter-spacing:.09em; margin-bottom:8px; }
+.extra { border-top:1px solid #d5e0e9; padding-top:22px; }
+.extra h3 { font-family:inherit; font-size:1.45rem; line-height:1.25; letter-spacing:-.025em; margin:12px 0; }
+.badge { background:#e7e8f6; color:#453c77; padding:5px 12px; }
+.extra h4 { color:#126b61; }
+.schliessen { background:#e8edf2; color:#17263a; border-radius:50%; width:44px; height:44px; top:16px; right:16px; }
+.frage,details,.sprachen div { border:1px solid #d5e0e9; border-radius:14px; padding:14px; }
+.opt { border:1px solid #b8c9d5; border-radius:10px; background:#f3f7fa; padding:12px 14px; }
+.opt.richtig,.opt.falsch,.opt.gewaehlt { border-width:2px; }
+.knopf { border-radius:12px; }
+.schritte label { padding:10px 0; border-bottom:1px solid #d5e0e9; }
+.schritte input { accent-color:#126b61; }
+button:focus-visible,summary:focus-visible,input:focus-visible { outline:3px solid #9b6b19; outline-offset:3px; }
+.toast { border-radius:16px; font-weight:600; }
+@media(max-width:760px) { .wrap { padding:20px 16px 32px; } header { padding:24px; } .grid { gap:10px; } }
+@media(max-width:420px) { .wrap { padding:12px 12px 28px; } header { padding:22px 16px; border-radius:20px; } .girlande { display:none; } .klappe,.innen { border-radius:14px; } .karte { padding:22px 18px; border-radius:18px; } .sprachen { grid-template-columns:1fr; } }
+@media(prefers-reduced-motion:reduce) { .klappe,.balken div,.toast { transition:none; } .wackeln { animation:none; } }
+}
+
 </style>
 </head>
 <body>
@@ -146,14 +214,39 @@
     <h1>Adventskalender</h1>
     <p>24 Türchen für Mut, Haltung und kreative Ideen</p>
     <div class="deko-reihe" aria-hidden="true">🕯️🕯️🕯️🕯️</div>
-    <div class="hinweis" id="hinweis"></div>
+    <div class="hinweis" id="hinweis">Vorschau – zum Öffnen der Türchen bitte im Browser mit aktiviertem JavaScript aufrufen.</div>
     <div class="fortschritt" id="fortschritt">
-      <span id="fortschrittText"></span>
+      <span id="fortschrittText">0 von 24 Türchen geöffnet</span>
       <div class="balken"><div id="fortschrittBalken"></div></div>
     </div>
   </header>
 
-  <div class="grid" id="grid"></div>
+  <div class="grid" id="grid">
+<div class="tuer-rahmen farbe0"><button type="button" class="tuer gesperrt" data-tag="7" aria-label="Türchen 7" disabled><div class="innen">✦</div><div class="klappe">7<span class="eck-deko" aria-hidden="true">🎀</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe1"><button type="button" class="tuer gesperrt" data-tag="15" aria-label="Türchen 15" disabled><div class="innen">✦</div><div class="klappe">15<span class="eck-deko" aria-hidden="true">❄️</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe2"><button type="button" class="tuer gesperrt" data-tag="2" aria-label="Türchen 2" disabled><div class="innen">✦</div><div class="klappe">2<span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe3"><button type="button" class="tuer gesperrt" data-tag="20" aria-label="Türchen 20" disabled><div class="innen">✦</div><div class="klappe">20<span class="eck-deko" aria-hidden="true">🌿</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe0"><button type="button" class="tuer gesperrt" data-tag="11" aria-label="Türchen 11" disabled><div class="innen">✦</div><div class="klappe">11<span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe1"><button type="button" class="tuer gesperrt" data-tag="24" aria-label="Türchen 24" disabled><div class="innen">✦</div><div class="klappe">24<span class="eck-deko" aria-hidden="true">⭐</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe2"><button type="button" class="tuer gesperrt" data-tag="4" aria-label="Türchen 4" disabled><div class="innen">✦</div><div class="klappe">4<span class="eck-deko" aria-hidden="true">🎀</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe3"><button type="button" class="tuer gesperrt" data-tag="18" aria-label="Türchen 18" disabled><div class="innen">✦</div><div class="klappe">18<span class="eck-deko" aria-hidden="true">❄️</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe0"><button type="button" class="tuer gesperrt" data-tag="9" aria-label="Türchen 9" disabled><div class="innen">✦</div><div class="klappe">9<span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe1"><button type="button" class="tuer gesperrt" data-tag="13" aria-label="Türchen 13" disabled><div class="innen">✦</div><div class="klappe">13<span class="eck-deko" aria-hidden="true">🌿</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe2"><button type="button" class="tuer gesperrt" data-tag="1" aria-label="Türchen 1" disabled><div class="innen">✦</div><div class="klappe">1<span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe3"><button type="button" class="tuer gesperrt" data-tag="22" aria-label="Türchen 22" disabled><div class="innen">✦</div><div class="klappe">22<span class="eck-deko" aria-hidden="true">⭐</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe0"><button type="button" class="tuer gesperrt" data-tag="16" aria-label="Türchen 16" disabled><div class="innen">✦</div><div class="klappe">16<span class="eck-deko" aria-hidden="true">🎀</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe1"><button type="button" class="tuer gesperrt" data-tag="6" aria-label="Türchen 6" disabled><div class="innen">✦</div><div class="klappe">6<span class="eck-deko" aria-hidden="true">❄️</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe2"><button type="button" class="tuer gesperrt" data-tag="19" aria-label="Türchen 19" disabled><div class="innen">✦</div><div class="klappe">19<span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe3"><button type="button" class="tuer gesperrt" data-tag="3" aria-label="Türchen 3" disabled><div class="innen">✦</div><div class="klappe">3<span class="eck-deko" aria-hidden="true">🌿</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe0"><button type="button" class="tuer gesperrt" data-tag="12" aria-label="Türchen 12" disabled><div class="innen">✦</div><div class="klappe">12<span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe1"><button type="button" class="tuer gesperrt" data-tag="23" aria-label="Türchen 23" disabled><div class="innen">✦</div><div class="klappe">23<span class="eck-deko" aria-hidden="true">⭐</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe2"><button type="button" class="tuer gesperrt" data-tag="10" aria-label="Türchen 10" disabled><div class="innen">✦</div><div class="klappe">10<span class="eck-deko" aria-hidden="true">🎀</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe3"><button type="button" class="tuer gesperrt" data-tag="5" aria-label="Türchen 5" disabled><div class="innen">✦</div><div class="klappe">5<span class="eck-deko" aria-hidden="true">❄️</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe0"><button type="button" class="tuer gesperrt" data-tag="21" aria-label="Türchen 21" disabled><div class="innen">✦</div><div class="klappe">21<span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe1"><button type="button" class="tuer gesperrt" data-tag="14" aria-label="Türchen 14" disabled><div class="innen">✦</div><div class="klappe">14<span class="eck-deko" aria-hidden="true">🌿</span><span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe2"><button type="button" class="tuer gesperrt" data-tag="8" aria-label="Türchen 8" disabled><div class="innen">✦</div><div class="klappe">8<span class="schloss">🔒</span></div></button></div>
+<div class="tuer-rahmen farbe3"><button type="button" class="tuer gesperrt" data-tag="17" aria-label="Türchen 17" disabled><div class="innen">✦</div><div class="klappe">17<span class="eck-deko" aria-hidden="true">⭐</span><span class="schloss">🔒</span></div></button></div>
+</div>
   <div class="baeume" aria-hidden="true">🌲🎄⛄🎄🌲</div>
   <footer>Jeden Tag öffnet sich ein neues Türchen – mit Spruch, Impuls und Extra: Rätsel, Quiz, Rezepte, Bastelideen und mehr.</footer>
 </div>
@@ -443,6 +536,7 @@ fortschritt();
 
 /* ===================== Raster ===================== */
 var grid = document.getElementById("grid");
+grid.innerHTML = "";
 REIHENFOLGE.forEach(function (tag, i) {
   var rahmen = document.createElement("div");
   rahmen.className = "tuer-rahmen farbe" + (i % 4);
